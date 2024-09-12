@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <div class="loginparent">
-      <div class="loginbox">
-        <div class="brandname"><h1>Login</h1></div>
-        <div class="login">
-          <mat-form-field>
-            <h2>Introduce tu correo</h2>
-            <input type="email" placeholder="Email">
-            <input type="password" placeholder="Password">
-          </mat-form-field>
-          <div class="button">
-            <button mat-flat-button>Siguiente</button>
-          </div>
+<div class="loginparent">
+  <div class="loginbox">
+    <div class="brandname"><h1>Login</h1></div>
+    <div class="login">
+      @if (valid) {
+        <p class="hidden">Usuario o contraseña incorrecta</p>
+      } @else {
+        <p class="error">Usuario o contraseña incorrecta</p>
+      }
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <input mat-field type="email" placeholder="Email" formControlName="email">
+        <input matInput type="password" placeholder="Password" formControlName="password">
+        <div class="button">
+          <button mat-flat-button type="submit">Siguiente</button>
         </div>
-      </div>
+      </form>
     </div>
-  </body>
-  </html>
+  </div>
+</div>

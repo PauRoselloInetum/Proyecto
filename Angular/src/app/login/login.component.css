@@ -1,6 +1,17 @@
-html, body {
-  overflow: hidden
+@keyframes hidden {
+  from{
+    opacity: 0;
+    height: 0;
+    margin: 0px 10px;
+    padding: 0px 10px;
+  }
+  to{
+    margin: 15px 10px;
+    padding: 5px 10px;
+    height: 100%;
+  }
 }
+
 
 .loginparent {
   display: flex;
@@ -10,7 +21,8 @@ html, body {
   width: 100vw;
   height: 100vh;
   font-size: 1em;
-  scale: 1.5;
+  transform: scale(1.5);
+  transition: all 0.5s ease;
 }
 
 .loginbox {
@@ -24,6 +36,23 @@ html, body {
   text-align: center;
 }
 
+.hidden{
+  opacity: 0;
+  height: 0;
+  margin: 0px 10px;
+  padding: 0px 10px;
+  border-radius: 5px;
+}
+
+.error{
+  animation: hidden 0.5s ease;
+  margin: 15px 10px;
+  padding: 5px 10px;
+  height: 100%;
+  border-radius: 5px;
+  background-color: #ff3535ac;
+}
+
 .mat-form-field,
 button {
   background-color: #ffffff;
@@ -31,16 +60,20 @@ button {
 }
 
 input {
+  display: block;
   padding: 5px 10px !important;
   font-size: 0.8rem;
   width: 100%;
   border: #444 1px solid !important;
   border-radius: 3px;
   outline: none !important;
+  margin-top: 25px;
 }
 
 input + input {
   margin-top: 10px;
+  margin-bottom: 25px;
+
 }
 
 h1 {
@@ -52,12 +85,6 @@ h2 {
   margin-bottom: 5px;
   font-size: 1.4rem;
   font-weight: normal;
-}
-
-mat-form-field {
-  outline: none !important;
-  margin: auto;
-  width: 280px;
 }
 
 .button {
