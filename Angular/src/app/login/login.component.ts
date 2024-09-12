@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule} from '@angular/material/button';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   valid: boolean = true;
 
-  constructor() {
+  constructor(private router: Router) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)])
@@ -28,6 +28,9 @@ export class LoginComponent {
       const password = this.loginForm.get('password')?.value;
       console.log('Email:', email);
       console.log('Password:', password);
+
+      this.router.navigate(['/profile']);
+
     } else {
       this.valid = false;
       console.log('Formulario no válido');
