@@ -1,0 +1,62 @@
+html, body {
+  overflow: hidden
+}
+
+.loginparent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  font-size: 1em;
+  scale: 1.5;
+}
+
+.loginbox {
+  padding: 25px 30px;
+  border-radius: 15px;
+  background-color: #ffffffa8;
+  position: relative;
+}
+
+.brandname {
+  text-align: center;
+}
+
+.mat-form-field,
+button {
+  background-color: #ffffff;
+  color: black;
+}
+
+input {
+  padding: 5px 10px !important;
+  font-size: 0.8rem;
+  width: 100%;
+  border: #444 1px solid !important;
+  border-radius: 3px;
+  outline: none !important;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 1.4rem;
+  font-weight: normal;
+}
+
+mat-form-field {
+  outline: none !important;
+  margin: auto;
+  width: 280px;
+}
+
+.button {
+  margin: auto;
+  width: fit-content;
+}
