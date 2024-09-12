@@ -3,9 +3,9 @@
     <div class="brandname"><h1>Login</h1></div>
     <div class="login">
       @if (valid) {
-        <p class="hidden">Usuario o contraseña incorrecta</p>
+        <p class="hidden">{{this.error}}</p>
       } @else {
-        <p class="error">Usuario o contraseña incorrecta</p>
+        <p class="error">{{this.error}}</p>
       }
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <input mat-field type="email" placeholder="Email" formControlName="email">

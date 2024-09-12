@@ -14,6 +14,7 @@ import { Router, RouterModule } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
   valid: boolean = true;
+  error: string = '';
 
   constructor(private router: Router) {
     this.loginForm = new FormGroup({
@@ -23,9 +24,9 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    const email = this.loginForm.get('email')?.value;
+    const password = this.loginForm.get('password')?.value;
     if (this.loginForm.valid) {
-      const email = this.loginForm.get('email')?.value;
-      const password = this.loginForm.get('password')?.value;
       console.log('Email:', email);
       console.log('Password:', password);
 
@@ -33,7 +34,18 @@ export class LoginComponent {
 
     } else {
       this.valid = false;
-      console.log('Formulario no válido');
+
+      if (email === '' || password === '') {
+        this.error = 'Rellena todos los campos';
+      }
+
+      if (!email.valid) {
+        this.error = 'El correo no es válido';
+      }
+
+      if (password.length < 6) {
+        this.error = 'La contraseña debe tener al menos 6 caracteres';
+      }
     }
   }
 }

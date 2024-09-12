@@ -12,12 +12,10 @@
   }
 }
 
-
 .loginparent {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   width: 100vw;
   height: 100vh;
   font-size: 1em;
@@ -29,11 +27,14 @@
   padding: 25px 30px;
   border-radius: 15px;
   background-color: #ffffffa8;
-  position: relative;
 }
 
 .brandname {
   text-align: center;
+}
+
+.hidden, .error{
+  width: 300px;
 }
 
 .hidden{
