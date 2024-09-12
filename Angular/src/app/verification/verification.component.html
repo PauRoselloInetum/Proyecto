@@ -1,89 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        .box {
-            width: 500px;
-            height: 500px;
-            background-color: white;
-            position: relative;
-            top: 220px; 
-            left: 38%; 
-            border-radius: 20px;
-        }
-        .text {
-            position: relative;
-            top: -150px; 
-            left: 770px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 11px;
-            color: #000000; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .título {
-            width: 500px;
-            height: 500px;
-            position: relative;
-            top: -270px; 
-            left: 910px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 20px;
-            color: #000000; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .texto {
-            width: 400px;
-            height: 500px;
-            position: relative;
-            top: -630px; 
-            left: 770px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 20px;
-            color: #000000; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .example-button-row {
-            width: 400px;
-            height: 500px;
-            position: relative;
-            top: -1028px; 
-            left: 1085px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 20px;
-            color: #000000; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .example-button-row2 {
-            width: 400px;
-            height: 500px;
-            position: relative;
-            top: -1530px; 
-            left: 755px; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 20px;
-            color: #000000; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
-    <div class="box"></div>
-    <div class="text"><h1>Verifica tu correo</h1></div>
-    <div class="título"><h1>Título</h1></div>
-    <div class="texto"><mat-card appearance="outlined"><mat-card-content>Introduce el codigo</mat-card-content></mat-card></div>
-    <div class="example-button-row"><button mat-flat-button>Enviar</button></div>
-    <div class="example-button-row2"><button mat-flat-button>Volver a enviar</button></div>
-
+  <div class="verifyparent">
+    <div class="verifybox">
+      <div class="brandname"><h1>Título</h1></div>
+      <div class="verify">
+        <h1>Verifica tu correo</h1>
+        <mat-card appearance="outlined">
+          <mat-card-content>Introduce el codigo</mat-card-content>
+        </mat-card>
+      </div>
+      <div class="buttons">
+        <button mat-flat-button>Enviar</button>
+        <button mat-flat-button>Volver a enviar</button>
+      </div>
+    </div>
+  </div>
 </body>
+</html>

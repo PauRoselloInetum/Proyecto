@@ -1,0 +1,15 @@
+.verifyparent {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.verifybox {
+  padding: 50px 75px;
+  border-radius: 15px;
+  height: fit-content;
+  background-color: #fff;
+
+}
