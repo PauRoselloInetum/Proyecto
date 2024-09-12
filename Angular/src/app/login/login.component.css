@@ -39,8 +39,13 @@ input {
   outline: none !important;
 }
 
+input + input {
+  margin-top: 10px;
+}
+
 h1 {
   font-size: 2em;
+  margin-bottom: 0;
 }
 
 h2 {
