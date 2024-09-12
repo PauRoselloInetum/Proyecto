@@ -39,13 +39,15 @@ export class LoginComponent {
         this.error = 'Rellena todos los campos';
       }
 
-      if (!email.valid) {
+      else if (password.length < 6) {
+        this.error = 'La contraseña debe tener al menos 6 caracteres';
+      }
+
+      else if (!email.valid) {
         this.error = 'El correo no es válido';
       }
 
-      if (password.length < 6) {
-        this.error = 'La contraseña debe tener al menos 6 caracteres';
-      }
+
     }
   }
 }
