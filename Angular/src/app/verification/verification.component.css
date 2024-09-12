@@ -55,7 +55,7 @@ mat-form-field {
   width: 280px;
 }
 
-button:nth-child(1) {
+button:nth-child(2) {
   border: solid black 1px;
 }
 
@@ -70,5 +70,5 @@ button:nth-child(1) {
 }
 
 button + button {
-  margin-left: 35px;
+  margin-left: 30px;
 }
