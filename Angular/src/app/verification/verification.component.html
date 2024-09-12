@@ -7,17 +7,18 @@
 <body>
   <div class="verifyparent">
     <div class="verifybox">
-      <div class="brandname"><h1>Título</h1></div>
+      <div class="brandname"><h1>Nombre</h1></div>
       <div class="verify">
-        <h2>Verifica tu correo</h2>
-        <mat-card appearance="outlined">
-          <mat-card-content>Introduce el codigo</mat-card-content>
-        </mat-card>
+        <mat-form-field>
+          <h2>Verifica tu correo</h2>
+          <input matInput>
+        </mat-form-field>
+        <div class="buttons">
+          <button mat-flat-button>Enviar</button>
+          <button mat-flat-button>Volver a enviar</button>
+        </div>
       </div>
-      <div class="buttons">
-        <button mat-flat-button>Enviar</button>
-        <button mat-flat-button>Volver a enviar</button>
-      </div>
+
     </div>
   </div>
 </body>

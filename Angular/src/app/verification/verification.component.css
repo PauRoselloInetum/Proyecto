@@ -1,19 +1,74 @@
 .verifyparent {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 0.8em;
 }
 
 .verifybox {
-  padding: 50px 75px;
+  padding: 25px 30px;
   border-radius: 15px;
   height: fit-content;
-  background-color: #fff;
+  width: fit-content;
+  background-color: #ffffffa8;
 
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
 }
 
 .brandname {
   text-align: center;
+}
+
+.mat-form-field,
+button {
+  background-color: #ffffff;
+  color: black;
+}
+
+input {
+  padding: 5px 10px !important;
+  font-size: 0.7rem;
+  width: 100%;
+}
+
+input:focus {
+  outline: none !important;
+}
+
+h2 {
+  margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: normal;
+}
+
+mat-form-field {
+  outline: none !important;
+}
+
+button:nth-child(1) {
+  border: solid black 1px;
+}
+
+.buttons {
+  margin: auto;
+  width: fit-content;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+  width: 0 !important;
+}
+
+button {
+  font-size: 0.9em;
+}
+
+button + button {
+  margin-left: 10px;
 }
