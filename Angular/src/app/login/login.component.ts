@@ -1,55 +1,12 @@
 import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  ReactiveFormsModule,
-  FormGroup,
-  FormControl,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [MatButtonModule, ReactiveFormsModule, MatFormFieldModule],
+  imports: [],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-  error: string = '';
 
-  passwordlength: number = 6;
-
-  constructor(private router: Router) {
-    this.loginForm = new FormGroup({
-      email: new FormControl('', [
-        Validators.required,
-        Validators.email]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(this.passwordlength),
-      ]),
-    });
-  }
-
-  onSubmit() {
-    const email = this.loginForm.get('email')?.value;
-    const password = this.loginForm.get('password')?.value;
-    if (this.loginForm.valid) {
-      console.log('Email:', email);
-      console.log('Password:', password);
-
-      this.router.navigate(['/profile']);
-    } else {
-      if (email === '' || password === '') {
-        this.error = 'Rellena todos los campos';
-      } else if (password.length < this.passwordlength) {
-        this.error = 'La contraseña debe tener al menos 6 caracteres';
-      } else if (!email.valid) {
-        this.error = 'El correo no es válido';
-      }
-    }
-  }
 }
