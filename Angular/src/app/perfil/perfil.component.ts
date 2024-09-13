@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [],
+  imports: [HeaderComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css'
 })

@@ -1,0 +1,26 @@
+html, body {
+    overflow: hidden
+  }
+
+
+.profilebox{
+    width: 100px;
+    height: 100px;
+    bottom: 40px;
+    padding: 20px 165px;
+    border-radius: 3px;
+    background-color: white;
+    position: relative;
+
+}
+
+.namebox{
+    padding: 20px 225px;
+    border-radius: 3px;
+    bottom: 20px;
+    background-color:black;
+    position: relative;
+}
+
+
+
