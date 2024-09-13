@@ -1,0 +1,52 @@
+* {
+  outline: none;
+  transition: all 0.4s ease-in-out;
+}
+
+*:focus,
+*:active {
+  border-color: #14ca8d;
+}
+
+.loading-parent {
+  background-color: #2f2f2f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  color: #ffffff;
+}
+
+.loading-container {
+  background: linear-gradient(135deg, #3a3a3a, #40473d);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
+  width: 300px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #00ffab;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+h2 {
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 24px;
+}
