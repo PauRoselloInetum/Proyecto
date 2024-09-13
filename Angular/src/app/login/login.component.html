@@ -2,7 +2,7 @@
   <div class="loginbox">
     <div class="brandname"><h1>Login</h1></div>
     <div class="login">
-      @if (valid) {
+      @if (this.error === '') {
         <p class="hidden">{{this.error}}</p>
       } @else {
         <p class="error">{{this.error}}</p>
