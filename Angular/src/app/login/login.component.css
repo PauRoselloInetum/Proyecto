@@ -29,10 +29,6 @@
   background-color: #ffffffa8;
 }
 
-.brandname {
-  text-align: center;
-}
-
 .hidden, .error{
   width: 300px;
 }
@@ -80,6 +76,7 @@ input + input {
 h1 {
   font-size: 2em;
   margin-bottom: 0;
+  text-align: center;
 }
 
 h2 {
