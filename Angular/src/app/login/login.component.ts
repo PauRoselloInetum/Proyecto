@@ -10,4 +10,7 @@ export class LoginComponent {
   login() {
     alert('LoggedIn');
   }
+  register() {
+    window.location.href = "./register/register.component";
+  }
 }
