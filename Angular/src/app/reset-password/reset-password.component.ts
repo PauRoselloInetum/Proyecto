@@ -8,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './reset-password.component.css'
 })
 export class ResetPasswordComponent {
-
+  restart() {
+    alert('RegisterIn');
+  }
 }
