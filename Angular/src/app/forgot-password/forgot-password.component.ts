@@ -8,7 +8,4 @@ import { Component } from '@angular/core';
   styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent {
-  password() {
-    alert('LoggedIn');
-  }
 }

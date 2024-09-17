@@ -5,6 +5,7 @@ import { LoadingComponent } from './loading/loading.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { VerificationComponent } from './verification/verification.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login' , pathMatch: 'full' },
@@ -13,7 +14,7 @@ export const routes: Routes = [
   { path: 'loading', component: LoadingComponent , pathMatch: 'full' },
   { path: 'reset-password', component: ResetPasswordComponent , pathMatch: 'full' },
   { path: 'forgot-password', component: ForgotPasswordComponent , pathMatch: 'full' },
-  // { path: 'login/verify', component: VerificationComponent , pathMatch: 'full' },
+  { path: 'verify', component: VerificationComponent , pathMatch: 'full' },
   // { path: 'profile', component: PerfilComponent , pathMatch: 'full' },
 
   { path: '**', component: WrongRouteComponent, pathMatch: 'full' },
