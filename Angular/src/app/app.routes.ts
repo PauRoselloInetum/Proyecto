@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: 'loading', component: LoadingComponent , pathMatch: 'full' },
   { path: 'login/reset-password', component: ResetPasswordComponent , pathMatch: 'full' },
   { path: 'login/forgot-password', component: ForgotPasswordComponent , pathMatch: 'full' },
-  { path: 'verify', component: VerificationComponent , pathMatch: 'full' },
+  { path: 'login/verify', component: VerificationComponent , pathMatch: 'full' },
   // { path: 'profile', component: PerfilComponent , pathMatch: 'full' },
 
   { path: '**', component: WrongRouteComponent, pathMatch: 'full' },
