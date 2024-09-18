@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './verification.component.html',
-  styleUrl: './verification.component.css'
+  styleUrl: '../../assets/css/auth.css'
 })
 export class VerificationComponent {
 
