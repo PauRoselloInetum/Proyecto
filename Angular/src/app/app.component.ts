@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -14,5 +14,4 @@ import { VerificationComponent } from './verification/verification.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'proyecto-inetum';
 }
