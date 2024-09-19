@@ -93,10 +93,23 @@ button {
   margin-bottom: 10px;
 }
 
+.register + button {
+  margin-top: 15px;
+}
+
 a {
   color: #a7ffeb;
   text-decoration: none;
   font-size: 14px;
   display: block;
   margin-top: 10px;
+}
+
+.info p{
+  padding: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+.error{
+  color: red;
 }

@@ -9,7 +9,9 @@
       <a href="./loading">LoadingComponent</a>
       <a href="./register">RegisterComponent</a>
       <br>
+      @if (this.session) {
       <a (click)="clearCookies()" style="color:red; cursor: pointer;">clearCookies</a>
+      }
     </div>
   </div>
 </div>

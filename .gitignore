@@ -3,3 +3,5 @@ Proyecto/API_CLIENTES_3/API_CLIENTES_3/.vs
 LoginJWT/PruebaDefinitivo/.vs
 LoginJWT-Maxim/JwtWebApiTutorial/.vs
 LoginJWT/PruebaDefinitivo/Models/Path.cs
+LoginJWT/PruebaDefinitivo/bin/*
+LoginJWT/PruebaDefinitivo/obj/*
