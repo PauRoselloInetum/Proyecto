@@ -31,11 +31,11 @@ export class LoginComponent {
   ngOnInit() {
     if (this.cookieService.get('token')) {
       this.info = 'Ya estas logeado, redireccionando...';
-      // setTimeout(() =>
-      //   {
-      //     window.location.href = '/';
-      //   },
-      //   3000);
+      setTimeout(() =>
+        {
+          window.location.href = '/';
+        },
+        1500);
     }
   }
 
@@ -48,16 +48,15 @@ export class LoginComponent {
 
     this.postLogin(loginData).subscribe({
       next: (response) => {
-        console.log('Login exitoso');
         this.cookieService.set('token', response);
         this.error = '';
         this.loading = false;
-        this.info = 'Login exitoso';
+        this.info = 'Login exitoso, redireccionando...';
         setTimeout(() =>
           {
             window.location.href = '/';
           },
-          3000);
+          1500);
       },
       error: (error) => {
         this.error = error.status;
@@ -67,10 +66,10 @@ export class LoginComponent {
   }
 
   postLogin(data: { email: string; password: string }): Observable<any> {
-    const apiUrl = 'https://localhost:7272/api/Controlador/login';
+    const apiUrl = 'https://localhost:7272/api/login';
 
     const headers = new HttpHeaders({
-      Accept: 'application/json',
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Allow-Origin': '*',
     });

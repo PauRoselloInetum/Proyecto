@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Prueba_definitivo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class Controlador : ControllerBase
     {

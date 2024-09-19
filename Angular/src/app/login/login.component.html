@@ -1,25 +1,48 @@
-@if (!loading) {
-  @if (this.info) {<div class="info"><p>{{ this.info }}</p></div>}@else{
 <title>Login</title>
-<div class="parent">
-  <div class="child">
-    <h2>Iniciar Sesión</h2>
-    @if (this.error) {<div class="error"><p>{{ this.error }}</p></div>}
-    <form (submit)="login()">
-      <div class="input-group">
-        <i class="fas fa-user"></i>
-        <input type="text" placeholder="Usuario" [(ngModel)]="email" name="email" required />
+@if (!loading) {
+  @if (this.info) {
+    <div class="parent">
+      <div class="info child">
+        <p>{{ this.info }}</p>
       </div>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required />
+    </div>
+  } @else {
+    <div class="parent">
+      <div class="child">
+        <h2>Iniciar Sesión</h2>
+        @if (this.error) {
+          <div class="error">
+            <p>{{ this.error }}</p>
+          </div>
+        }
+        <form (submit)="login()">
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              placeholder="Usuario"
+              [(ngModel)]="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              [(ngModel)]="password"
+              name="password"
+              required
+            />
+          </div>
+          <button type="submit">Iniciar Sesión</button>
+        </form>
+        <a href="./login/forgot-password">Olvidé mi contraseña</a>
+        <a href="./register">Registrarse</a>
       </div>
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-    <a href="./login/forgot-password">Olvidé mi contraseña</a>
-    <a href="./register">Registrarse</a>
-  </div>
-</div>
-}}@else {
-<app-loading></app-loading>
+    </div>
+  }
+} @else {
+  <app-loading></app-loading>
 }

@@ -100,3 +100,8 @@ a {
   display: block;
   margin-top: 10px;
 }
+
+.info p{
+  padding: 0px !important;
+  margin-bottom: 0px !important;
+}
