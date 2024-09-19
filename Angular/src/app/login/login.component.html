@@ -1,3 +1,4 @@
+@if (!loading) {
 <title>Login</title>
 <div class="parent">
   <div class="child">
@@ -17,3 +18,6 @@
     <a href="./register">Registrarse</a>
   </div>
 </div>
+}@else {
+<app-loading></app-loading>
+}

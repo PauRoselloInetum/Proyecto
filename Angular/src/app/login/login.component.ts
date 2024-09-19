@@ -1,44 +1,48 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'; // Importamos HttpHeaders
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { LoadingComponent } from '../loading/loading.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, HttpClientModule], // Importa FormsModule y HttpClientModule
+  imports: [FormsModule, HttpClientModule, LoadingComponent],
   templateUrl: './login.component.html',
   styleUrls: ['../../assets/css/auth.css']
 })
 export class LoginComponent {
-  email: string = ''; // Variable para capturar el email/usuario
-  password: string = ''; // Variable para capturar la contraseña
+  email: string = '';
+  password: string = '';
+  loading: boolean = false;
 
-  constructor(private http: HttpClient) {} // Inyectamos HttpClient
 
-  // Método para iniciar sesión
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
+
   login() {
+    this.loading = true;
     const loginData = {
       email: this.email,
       password: this.password
     };
 
-    // Realiza la solicitud POST
     this.postLogin(loginData).subscribe({
       next: (response) => {
-        console.log('Login exitoso', response);
+        console.log('Login exitoso');
+        this.cookieService.set('token', response.text);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error en el login', error);
+        this.loading = false;
       }
     });
   }
 
-  // Función que hace la solicitud POST al API
   postLogin(data: { email: string; password: string }): Observable<any> {
     const apiUrl = 'https://localhost:7272/api/Controlador/login';
 
-    // Definir las cabeceras de la solicitud
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json',
