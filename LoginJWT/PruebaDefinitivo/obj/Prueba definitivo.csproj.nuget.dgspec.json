@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj": {}
+    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj": {
+    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
+        "projectUniqueName": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
         "projectName": "Prueba definitivo",
-        "projectPath": "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
-        "packagesPath": "C:\\Users\\pau.rosello.ext\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\PruebaDefinitivo\\obj\\",
+        "projectPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
+        "packagesPath": "C:\\Users\\marta.flores.ext\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\pau.rosello.ext\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\marta.flores.ext\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
