@@ -59,7 +59,12 @@ export class LoginComponent {
           1500);
       },
       error: (error) => {
-        this.error = error.status;
+        if (error.status === 401 ){
+          this.error = "Usuario o Contraseña Incorrectas."
+        }
+        else {
+          this.error = "Error con el Servidor. Prueba otra vez."
+        }
         this.loading = false;
       },
     });
