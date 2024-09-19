@@ -27,6 +27,22 @@
   },
   {
     "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "Method": "Register",
+    "RelativePath": "api/Controlador/registro",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "registerRequest",
+        "Type": "Prueba_definitivo.Models.RegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
     "Method": "GetUsuarios",
     "RelativePath": "api/Controlador/usuarios",
     "HttpMethod": "GET",
