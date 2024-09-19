@@ -1,4 +1,5 @@
 @if (!loading) {
+  @if (this.info) {<div class="info"><p>{{ this.info }}</p></div>}@else{
 <title>Login</title>
 <div class="parent">
   <div class="child">
@@ -19,6 +20,6 @@
     <a href="./register">Registrarse</a>
   </div>
 </div>
-}@else {
+}}@else {
 <app-loading></app-loading>
 }
