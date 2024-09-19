@@ -5,11 +5,11 @@
     <form (submit)="login()">
       <div class="input-group">
         <i class="fas fa-user"></i>
-        <input type="text" placeholder="Usuario" required />
+        <input type="text" placeholder="Usuario" [(ngModel)]="email" name="email" required />
       </div>
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Contraseña" required />
+        <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required />
       </div>
       <button type="submit">Iniciar Sesión</button>
     </form>
