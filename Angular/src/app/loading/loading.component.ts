@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './loading.component.html',
-  styleUrl: '../../assets/css/auth.css'
+  styleUrl: './loading.component.css'
 })
 export class LoadingComponent {
 
