@@ -16,6 +16,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   loading: boolean = false;
+  error: string = '';
 
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
@@ -31,10 +32,11 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login exitoso');
         this.cookieService.set('token', response);
+        this.error = '';
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error en el login', error);
+        this.error = error.status;
         this.loading = false;
       }
     });
