@@ -2,7 +2,7 @@
   {
     "ContainingType": "Prueba_definitivo.Controllers.Controlador",
     "Method": "Login",
-    "RelativePath": "api/Controlador/login",
+    "RelativePath": "api/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -28,7 +28,7 @@
   {
     "ContainingType": "Prueba_definitivo.Controllers.Controlador",
     "Method": "Register",
-    "RelativePath": "api/Controlador/registro",
+    "RelativePath": "api/registro",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -44,7 +44,7 @@
   {
     "ContainingType": "Prueba_definitivo.Controllers.Controlador",
     "Method": "GetUsuarios",
-    "RelativePath": "api/Controlador/usuarios",
+    "RelativePath": "api/usuarios",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
