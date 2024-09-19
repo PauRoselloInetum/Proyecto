@@ -1,25 +1,58 @@
 <title>Register</title>
-<div class="parent">
-    <div class="child">
-        <h2>Registrarse</h2>
-        <form (submit)="register()">
-            <!-- <div class="register input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Nombre" required>
-            </div> -->
-            <div class="register input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Correo" required>
-            </div>
-            <div class="register input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Contraseña" required />
-            </div>
-            <div class="register input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Confirmar Contraseña" required />
-            </div>
-            <button onclick="window.location.href='./login/verify';">Registrarse</button>
-        </form>
+@if (!loading) {
+  @if (this.info) {
+    <div class="parent">
+      <div class="info child">
+        <p>{{ this.info }}</p>
+      </div>
     </div>
-</div>
+  } @else {
+    <div class="parent">
+      <div class="child">
+        <h2>Regístrate</h2>
+        @if (this.error) {
+          <div class="error">
+            <p>{{ this.error }}</p>
+          </div>
+        }
+        <form (submit)="register()">
+          <div class="register input-group">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              placeholder="Correo Electronico"
+              [(ngModel)]="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="register input-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              [(ngModel)]="password"
+              name="password"
+              required
+            />
+          </div>
+          <div class="register input-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              placeholder="Confirma la contraseña"
+              [(ngModel)]="passwordconfirm"
+              name="passwordconfirm"
+              required
+            />
+          </div>
+          <button type="submit">Regístrarse</button>
+        </form>
+        <a href="./login/forgot-password">Olvidé mi contraseña</a>
+        <a href="./login">Iniciar Sesión</a>
+      </div>
+    </div>
+  }
+} @else {
+  <app-loading></app-loading>
+}

@@ -93,6 +93,10 @@ button {
   margin-bottom: 10px;
 }
 
+.register + button {
+  margin-top: 15px;
+}
+
 a {
   color: #a7ffeb;
   text-decoration: none;

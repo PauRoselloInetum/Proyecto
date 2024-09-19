@@ -63,7 +63,7 @@ export class LoginComponent {
           this.error = "Usuario o Contraseña Incorrectas."
         }
         else {
-          this.error = "Error con el Servidor. Prueba otra vez."
+          this.error = "Error con Servidor. Prueba otra vez."
         }
         this.loading = false;
       },
