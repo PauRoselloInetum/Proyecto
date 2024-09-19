@@ -61,3 +61,14 @@ C:\Users\maxim.klym.ext\Desktop\.net test\API_CLIENTES_3\API_CLIENTES_3\bin\Debu
 C:\Users\maxim.klym.ext\Desktop\.net test\API_CLIENTES_3\API_CLIENTES_3\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\maxim.klym.ext\Desktop\.net test\API_CLIENTES_3\API_CLIENTES_3\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\maxim.klym.ext\Desktop\.net test\API_CLIENTES_3\API_CLIENTES_3\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.csproj.AssemblyReference.cache
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.AssemblyInfoInputs.cache
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.AssemblyInfo.cs
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.csproj.CoreCompileInputs.cache
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.sourcelink.json
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.dll
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\refint\API_CLIENTES_3.dll
+C:\Users\marta.flores.ext\Documents\Proyecto\Proyecto\API_CLIENTES_3\API_CLIENTES_3\obj\Debug\net8.0\API_CLIENTES_3.pdb

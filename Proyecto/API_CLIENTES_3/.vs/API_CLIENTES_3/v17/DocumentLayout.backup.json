@@ -1,34 +1,34 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\",
+  "WorkspaceRootPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\controllers\\clientecontrollerfirebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\clientecontrollerfirebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\controllers\\controlador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\controlador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\controllers\\clientecontrollerfirebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\clientecontrollerfirebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\proyecto\\api_clientes_3\\api_clientes_3\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|c:\\users\\maxim.klym.ext\\desktop\\.net test\\api_clientes_3\\api_clientes_3\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1B2C1E43-2AC7-49A4-B14A-92C41B1A33AF}|API_CLIENTES_3\\API_CLIENTES_3.csproj|solutionrelative:api_clientes_3\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,97 +38,95 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Program.cs",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\Program.cs",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Program.cs",
-              "RelativeToolTip": "API_CLIENTES_3\\Program.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAYwCUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-10T08:34:00.303Z",
-              "IsPinned": true,
+              "WhenOpened": "2024-09-18T14:04:32.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-18T14:04:29.734Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Controlador.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\Controlador.cs",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\Controlador.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\Controlador.cs",
+              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\Controlador.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwDEAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-18T14:03:12.835Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAIAAAAAAAAAA==",
+              "Title": "ClienteController.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteController.cs",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\ClienteController.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteController.cs",
+              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\ClienteController.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T08:52:18.246Z",
+              "WhenOpened": "2024-09-18T14:03:08.606Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\appsettings.json",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\appsettings.json",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\appsettings.json",
-              "RelativeToolTip": "API_CLIENTES_3\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-09-12T08:40:04.014Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Properties\\launchSettings.json",
-              "RelativeToolTip": "API_CLIENTES_3\\Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-09-10T10:38:34.072Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "ClienteControllerFirebase.cs",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
               "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
               "RelativeToolTip": "API_CLIENTES_3\\Controllers\\ClienteControllerFirebase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwBAAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-10T10:23:25.76Z",
+              "WhenOpened": "2024-09-18T14:00:44.196Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "ClienteController.cs",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteController.cs",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\Controllers\\ClienteController.cs",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Controllers\\ClienteController.cs",
-              "RelativeToolTip": "API_CLIENTES_3\\Controllers\\ClienteController.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAqwB8AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-10T08:09:22.663Z"
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Properties\\launchSettings.json",
+              "RelativeToolTip": "API_CLIENTES_3\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-18T13:48:28.625Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Cliente.cs",
-              "DocumentMoniker": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Cliente.cs",
-              "RelativeDocumentMoniker": "API_CLIENTES_3\\Cliente.cs",
-              "ToolTip": "C:\\Users\\maxim.klym.ext\\Desktop\\.net test\\API_CLIENTES_3\\API_CLIENTES_3\\Cliente.cs",
-              "RelativeToolTip": "API_CLIENTES_3\\Cliente.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAewA8AAAAFAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Program.cs",
+              "RelativeDocumentMoniker": "API_CLIENTES_3\\Program.cs",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Proyecto\\API_CLIENTES_3\\API_CLIENTES_3\\Program.cs",
+              "RelativeToolTip": "API_CLIENTES_3\\Program.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABwAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-10T08:06:37.802Z"
+              "WhenOpened": "2024-09-18T13:47:10.569Z",
+              "EditorCaption": ""
             }
           ]
         }

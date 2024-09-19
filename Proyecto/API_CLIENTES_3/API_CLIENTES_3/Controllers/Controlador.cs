@@ -19,11 +19,11 @@ namespace API_CLIENTES_3.Controllers
 
         public UsuarioController()
         {
-            string path = "C:\\Users\\maxim.klym.ext\\Downloads\\test-2f0bb-firebase-adminsdk-n67ny-dfd406d337.json"; // Ruta del archivo de credenciales
+            string path = "C:\\Users\\marta.flores.ext\\Downloads\test-2f0bb-firebase-adminsdk-n67ny-dfd406d337.json"; // Ruta del archivo de credenciales
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _firestoreDb = FirestoreDb.Create("test-2f0bb");
         }
-
+/*
         [HttpPost("login")]
         public async Task<ActionResult<Usuario>> Login([FromBody] Usuario loginRequest)
         {
@@ -47,7 +47,7 @@ namespace API_CLIENTES_3.Controllers
         private string GenerarToken(Usuario usuario)
         {
 
-        }
+        }*/
 
     }
 }
