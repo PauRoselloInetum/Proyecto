@@ -16,10 +16,12 @@ namespace Prueba_definitivo.Controllers
     {
         private FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
+        public Models.Path _path;
 
         public Controlador(IConfiguration configuracion)
         {
-            string path = "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\hire-a-pro-database-firebase-adminsdk-li89b-91df74c135.json"; // Ruta del archivo de credenciales
+            _path = new Models.Path();
+            string path = _path.path; // Ruta del archivo de credenciales
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _firestoreDb = FirestoreDb.Create("hire-a-pro-database");
             _configuracion = configuracion;

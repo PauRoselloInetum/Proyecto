@@ -30,7 +30,7 @@ export class LoginComponent {
     this.postLogin(loginData).subscribe({
       next: (response) => {
         console.log('Login exitoso');
-        this.cookieService.set('token', response.text);
+        this.cookieService.set('token', response);
         this.loading = false;
       },
       error: (error) => {
