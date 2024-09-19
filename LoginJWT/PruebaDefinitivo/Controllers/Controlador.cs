@@ -19,7 +19,7 @@ namespace Prueba_definitivo.Controllers
 
         public Controlador(IConfiguration configuracion)
         {
-            string path = "C:\\Users\\marta.flores.ext\\Downloads\\firestoredb-78f93-firebase-adminsdk-zy2a4-a94bcce693.json"; // Ruta del archivo de credenciales
+            string path = "C:\\Users\\pau.rosello.ext\\Proyecto\\LoginJWT\\firestoredb-78f93-firebase-adminsdk-zy2a4-a94bcce693.json"; // Ruta del archivo de credenciales
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _firestoreDb = FirestoreDb.Create("firestoredb-78f93");
             _configuracion = configuracion;
