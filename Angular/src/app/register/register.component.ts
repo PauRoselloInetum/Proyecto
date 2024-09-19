@@ -55,7 +55,7 @@ export class RegisterComponent {
         this.cookieService.set('token', response);
         this.error = '';
         this.loading = false;
-        this.info = 'Login exitoso, redireccionando...';
+        this.info = 'Registro exitoso, redireccionando...';
         setTimeout(() =>
           {
             window.location.href = '/';
