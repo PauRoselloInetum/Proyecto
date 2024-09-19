@@ -44,6 +44,7 @@ namespace Prueba_definitivo.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest)
         {
+          
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
             string password = loginRequest.Password;
@@ -77,7 +78,7 @@ namespace Prueba_definitivo.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
+            var newToken = new JwtSecurityToken(
                     jwt.Issuer,
                     jwt.Audience,
                     claims,
@@ -86,7 +87,7 @@ namespace Prueba_definitivo.Controllers
 
                 );
             //Retorna el token en formato de cadena de texto
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
         }
         [HttpPost("registro")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest)
@@ -97,12 +98,15 @@ namespace Prueba_definitivo.Controllers
 
             //Busca si existe el documento con los datos proporcionados en la request
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+            Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+            QuerySnapshot respuestaCorreo = await consultaCorreo.GetSnapshotAsync();
+
 
             //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
-            if (respuestaDb.Documents.Count == 0)
+            if (respuestaDb.Documents.Count == 0 && respuestaCorreo.Documents.Count == 0)
             {
                 //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
                 CollectionReference referencia = _firestoreDb.Collection("users");
