@@ -3,6 +3,7 @@
 <div class="parent">
   <div class="child">
     <h2>Iniciar Sesión</h2>
+    @if (this.error) {<div class="error"><p>{{ this.error }}</p></div>}
     <form (submit)="login()">
       <div class="input-group">
         <i class="fas fa-user"></i>
