@@ -81,7 +81,7 @@ namespace Prueba_definitivo.Controllers
                     jwt.Issuer,
                     jwt.Audience,
                     claims,
-                    expires: DateTime.Now.AddDays(30),//cambiar por addDays enla version definitiva
+                    expires: DateTime.Now.AddDays(30),
                     signingCredentials: signIn
 
                 );
