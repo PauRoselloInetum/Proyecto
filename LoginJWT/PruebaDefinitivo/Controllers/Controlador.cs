@@ -94,19 +94,19 @@ namespace Prueba_definitivo.Controllers
         {
             //Consigue las credenciales de registerRequest
             string correo = registerRequest.Email;
-            string password = registerRequest.Password;
+           // string password = registerRequest.Password;
 
             //Busca si existe el documento con los datos proporcionados en la request
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+           // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
             Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
-            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+           // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
             QuerySnapshot respuestaCorreo = await consultaCorreo.GetSnapshotAsync();
 
 
             //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
-            if (respuestaDb.Documents.Count == 0 && respuestaCorreo.Documents.Count == 0)
+            if (respuestaCorreo.Documents.Count == 0)
             {
                 //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
                 CollectionReference referencia = _firestoreDb.Collection("users");
@@ -118,9 +118,31 @@ namespace Prueba_definitivo.Controllers
 
                 return Ok("Usuario registrado");
             }
-            return Unauthorized("Este usuario ya existe");
+            return Unauthorized("Ya existe un usuario con este correo");
             }
-        
-        
+
+        [HttpDelete("eliminarUsuario")]
+        public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
+        {
+            //Consigue las credenciales de registerRequest
+            string correo = deleteRequest.Email;
+
+            //Busca si existe el documento con los datos proporcionados en la request
+            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
+            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+
+            if (respuestaDb.Documents.Count == 0)
+            {
+                return NotFound("No se encontró el usuario con el correo y la contraseña proporcionados.");
+            }
+
+            // Elimina cada documento que coincida con la consulta
+            foreach (var document in respuestaDb.Documents)
+            {
+                await _firestoreDb.Collection("users").Document(document.Id).DeleteAsync();
+            }
+            return Ok("Usuario eliminado.");
+        }
+
     }
 }
