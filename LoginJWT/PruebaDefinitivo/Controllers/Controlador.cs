@@ -19,16 +19,16 @@ namespace Prueba_definitivo.Controllers
 
         public Controlador(IConfiguration configuracion)
         {
-            string path = "C:\\Users\\marta.flores.ext\\Downloads\\firestoredb-78f93-firebase-adminsdk-zy2a4-a94bcce693.json"; // Ruta del archivo de credenciales
+            string path = "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\hire-a-pro-database-firebase-adminsdk-li89b-91df74c135.json"; // Ruta del archivo de credenciales
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
-            _firestoreDb = FirestoreDb.Create("firestoredb-78f93");
+            _firestoreDb = FirestoreDb.Create("hire-a-pro-database");
             _configuracion = configuracion;
         }
         [HttpGet("usuarios")] //Función de prueba para comprobar que están todos los usuarios en la base de datos
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
         {
             var usuarios = new List<Usuario>();
-            Query consulta = _firestoreDb.Collection("coleccion");
+            Query consulta = _firestoreDb.Collection("users");
             QuerySnapshot snapshot = await consulta.GetSnapshotAsync();
 
             foreach (var document in snapshot.Documents) {
@@ -47,7 +47,7 @@ namespace Prueba_definitivo.Controllers
             string password = loginRequest.Password;
 
             //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
-            Query consulta = _firestoreDb.Collection("coleccion").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
@@ -79,7 +79,7 @@ namespace Prueba_definitivo.Controllers
                     jwt.Issuer,
                     jwt.Audience,
                     claims,
-                    expires: DateTime.Now.AddSeconds(10),//cambiar por addDays enla version definitiva
+                    expires: DateTime.Now.AddDays(30),//cambiar por addDays enla version definitiva
                     signingCredentials: signIn
 
                 );
@@ -94,7 +94,7 @@ namespace Prueba_definitivo.Controllers
             string password = registerRequest.Password;
 
             //Busca si existe el documento con los datos proporcionados en la request
-            Query consulta = _firestoreDb.Collection("coleccion").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
@@ -103,7 +103,7 @@ namespace Prueba_definitivo.Controllers
             if (respuestaDb.Documents.Count == 0)
             {
                 //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
-                CollectionReference referencia = _firestoreDb.Collection("coleccion");
+                CollectionReference referencia = _firestoreDb.Collection("users");
                 DocumentReference nuevoUserRef = await referencia.AddAsync(new
                 {
                     email = registerRequest.Email,
