@@ -77,10 +77,11 @@ namespace Prueba_definitivo.Controllers
                     jwt.Issuer,
                     jwt.Audience,
                     claims,
+                    expires: DateTime.Now.AddSeconds(10),
                     signingCredentials: signIn
 
                 );
-            return Ok(new { token });
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
         
         
