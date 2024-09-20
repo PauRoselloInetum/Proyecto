@@ -5,6 +5,15 @@
   src: url("./assets/fonts/Poppins-Regular.ttf");
 }
 
+@keyframes FadeIn {
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -19,4 +28,8 @@ body {
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
+}
+
+.child{
+  animation: FadeIn .3s ease-in-out;
 }
