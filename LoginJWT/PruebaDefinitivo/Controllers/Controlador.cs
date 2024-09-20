@@ -140,6 +140,44 @@ namespace Prueba_definitivo.Controllers
                 return builder.ToString();
             }
         }
+        [HttpPost("home")]
+        public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
+        {
+            string token = authenticateRequest.Token;
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token no proporcionado");
+            }
+            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(jwt.Key);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = jwt.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwt.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+            if (validatedToken != null && validatedToken.ValidTo > DateTime.UtcNow)
+            {
+                return Ok("Token válido");
+            }
+            else
+            {
+                return Unauthorized("Token expirado o no válido");
+            }
+
+        }
+
+
 
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
