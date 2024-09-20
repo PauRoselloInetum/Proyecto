@@ -1,20 +1,52 @@
-<div class="parent">
-  <div class="child">
-    <h1>COMPONENTS</h1>
-    <div>
-      <a href="./login">LoginComponent</a>
-      <a href="./login/reset-password">ResetPasswordComponent</a>
-      <a href="./login/forgot-password">ForgotPasswordComponent</a>
-      <a href="./login/verify">VerificationComponent</a>
-      <a href="./loading">LoadingComponent</a>
-      <a href="./register">RegisterComponent</a>
-      <a href="./loading">LoadingComponent</a>
-      <br>
-      <a href="https://localhost:7272/api/usuarios" target="_blank" style="color: lightblue;">Usuario Registrados</a>
-      <br>
-      @if (this.session) {
-      <a (click)="clearCookies()" style="color:red; cursor: pointer;">clearCookies</a>
+@if (this.loading) {
+  <app-loading></app-loading>
+} @else {
+  <div class="parent">
+    <div class="child">
+      <h1>COMPONENTS</h1>
+      @if (this.info){
+        <br><p>{{this.info}}</p><br>
       }
+      @if (this.error) {
+        <p style="color: red">{{this.error}}</p>
+      }
+      <div>
+        <a href="./login">LoginComponent</a>
+        <a href="./login/reset-password">ResetPasswordComponent</a>
+        <a href="./login/forgot-password">ForgotPasswordComponent</a>
+        <a href="./login/verify">VerificationComponent</a>
+        <a href="./loading">LoadingComponent</a>
+        <a href="./register">RegisterComponent</a>
+        <a href="./loading">LoadingComponent</a>
+        <br />
+        <a
+          href="https://localhost:7272/api/usuarios"
+          target="_blank"
+          style="color: lightblue"
+          >Usuario Registrados</a
+        >
+        <br />
+        @if (this.loggedIn) {
+          <a (click)="clearCookies()" style="color: red; cursor: pointer"
+            >clearCookies</a
+          >
+        }
+        @if (this.deleteuser) {
+          <form (submit)="borraruser()">
+            <input
+              type="text"
+              [(ngModel)]="email"
+              name="email"
+              placeholder="Eliminar Usuario"
+            />
+            <button style="cursor: pointer">Eliminar</button>
+          </form>
+        } @else {
+          <a (click)="deleteuser=true" style="color: red; cursor: pointer"
+            >Eliminar Usuario</a
+          >
+        }
+      </div>
     </div>
   </div>
-</div>
+}
