@@ -75,7 +75,7 @@ export class RegisterComponent {
   }
 
   postLogin(data: { email: string; password: string }): Observable<any> {
-    const apiUrl = 'https://localhost:7272/api/registro';
+    const apiUrl = 'https://localhost:7272/api/register';
 
     const headers = new HttpHeaders({
       'Accept': 'application/json',
