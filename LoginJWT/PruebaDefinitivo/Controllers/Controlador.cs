@@ -140,6 +140,77 @@ namespace Prueba_definitivo.Controllers
                 return builder.ToString();
             }
         }
+        [HttpPost("home")]
+        public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
+        {
+            string token = authenticateRequest.Token;
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token no proporcionado");
+            }
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+                throw new InvalidOperationException("JWT no tiene 3 partes.");
+
+            var payload = parts[1];
+            var base64 = payload
+                .Replace('-', '+') // Base64Url usa '-' en lugar de '+'
+                .Replace('_', '/'); // Base64Url usa '_' en lugar de '/'
+
+            // Añadir relleno si es necesario
+            switch (base64.Length % 4)
+            {
+                case 2:
+                    base64 += "==";
+                    break;
+                case 3:
+                    base64 += "=";
+                    break;
+            }
+
+            try
+            {
+                var jsonBytes = Convert.FromBase64String(base64);
+                var json = Encoding.UTF8.GetString(jsonBytes);
+                return Ok(json);
+                /*
+            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(jwt.Key);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = jwt.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwt.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+            if (validatedToken != null && validatedToken.ValidTo > DateTime.UtcNow)
+            {
+                return Ok("Token válido");
+            }
+            else
+            {
+                return Unauthorized("Token expirado o no válido");
+            }*/
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al validar el token: {ex.Message}");
+            }
+            
+
+        }
+      
+
+
 
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
