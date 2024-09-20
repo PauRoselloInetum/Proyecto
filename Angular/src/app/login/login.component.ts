@@ -31,11 +31,9 @@ export class LoginComponent {
   ngOnInit() {
     if (this.cookieService.get('token')) {
       this.info = 'Ya estas logeado, redireccionando...';
-      setTimeout(() =>
-        {
-          window.location.href = '/';
-        },
-        1500);
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
     }
   }
 
@@ -52,18 +50,15 @@ export class LoginComponent {
         this.error = '';
         this.loading = false;
         this.info = 'Login exitoso, redireccionando...';
-        setTimeout(() =>
-          {
-            window.location.href = '/';
-          },
-          1500);
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
       },
       error: (error) => {
-        if (error.status === 401 ){
-          this.error = "Usuario o Contraseña Incorrectas."
-        }
-        else {
-          this.error = "Error con Servidor. Prueba otra vez."
+        if (error.status === 401) {
+          this.error = 'Usuario o Contraseña Incorrectas.';
+        } else {
+          this.error = 'Error con Servidor. Prueba otra vez.';
         }
         this.loading = false;
       },
@@ -74,7 +69,7 @@ export class LoginComponent {
     const apiUrl = 'https://localhost:7272/api/login';
 
     const headers = new HttpHeaders({
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       'Allow-Origin': '*',
     });

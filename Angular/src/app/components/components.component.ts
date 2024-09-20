@@ -19,7 +19,8 @@ import { Observable } from 'rxjs';
 export class ComponentsComponent {
   loggedIn: boolean = false;
   deleteuser: boolean = false;
-  email: string = "";
+  deleteemail: string = "";
+  sessionemail: string = "";
   loading: boolean = false;
   error: string = "";
   info: string = "";
@@ -42,8 +43,9 @@ export class ComponentsComponent {
   borraruser(){
     this.deleteuser = false
     this.loading = true;
+    email: String;
     const loginData = {
-      email: this.email,
+      email: this.deleteemail,
     };
 
     this.DeleteUser(loginData).subscribe({
@@ -51,7 +53,7 @@ export class ComponentsComponent {
         this.error = '';
         this.loading = false;
         this.info = 'Usuario Eliminado Correctamente';
-        this.email = ""
+        this.deleteemail = ""
         setTimeout(() =>
           {
             this.info = ""
