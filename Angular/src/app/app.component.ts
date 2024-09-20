@@ -33,6 +33,7 @@ import {
 export class AppComponent {
   session = '';
   email = '';
+  error = '';
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
@@ -49,13 +50,15 @@ export class AppComponent {
       };
       this.postValidate(sessionData).subscribe({
         next: (response) => {
-          console.log(response);
           const decodedToken = this.decodeToken(this.session);
           this.email = decodedToken.email;
-          console.log(this.email);
+          this.error = ""
+          console.log(this.email)
+          console.log(this.session)
         },
         error: (error) => {
           console.log(error);
+          this.error = "Token no valido"
         },
       });
     } else {

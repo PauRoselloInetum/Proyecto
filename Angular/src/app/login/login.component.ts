@@ -21,6 +21,7 @@ export class LoginComponent {
   password: string = '';
   loading: boolean = false;
   error: string = '';
+  errors: number = 0;
   info: string = '';
 
   constructor(
@@ -58,7 +59,13 @@ export class LoginComponent {
         if (error.status === 401) {
           this.error = 'Usuario o Contraseña Incorrectas.';
         } else {
-          this.error = 'Error con Servidor. Prueba otra vez.';
+          if (this.errors > 2){
+            console.log("Hey")
+            this.errors += 1;
+            this.login()
+          }else{
+            this.error = 'Error con Servidor. .Prueba otra vez.';
+          }
         }
         this.loading = false;
       },
