@@ -1,11 +1,13 @@
-﻿using Google.Cloud.Firestore;
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Prueba_definitivo.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Prueba_definitivo.Controllers
@@ -47,7 +49,7 @@ namespace Prueba_definitivo.Controllers
           
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
-            string password = loginRequest.Password;
+            string password = ComputeSha256Hash(loginRequest.Password);
 
             //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
@@ -89,15 +91,17 @@ namespace Prueba_definitivo.Controllers
             //Retorna el token en formato de cadena de texto
             return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
         }
-        [HttpPost("registro")]
+        [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest)
         {
             //Consigue las credenciales de registerRequest
             string correo = registerRequest.Email;
-           // string password = registerRequest.Password;
+            // string password = registerRequest.Password;
+
+            string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
             //Busca si existe el documento con los datos proporcionados en la request
-           // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+            // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
             Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
@@ -113,13 +117,29 @@ namespace Prueba_definitivo.Controllers
                 DocumentReference nuevoUserRef = await referencia.AddAsync(new
                 {
                     email = registerRequest.Email,
-                    contra = registerRequest.Password,
+                    contra = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                 });
 
                 return Ok("Usuario registrado");
             }
             return Unauthorized("Ya existe un usuario con este correo");
             }
+
+        // Función para generar el hash SHA-256 dentro del mismo controlador
+        private string ComputeSha256Hash(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2")); // Convertir a hexadecimal
+                }
+                return builder.ToString();
+            }
+        }
 
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
@@ -143,7 +163,6 @@ namespace Prueba_definitivo.Controllers
             }
             return Ok("Usuario eliminado.");
         }
-        
 
     }
 }
