@@ -148,6 +148,32 @@ namespace Prueba_definitivo.Controllers
             {
                 return Unauthorized("Token no proporcionado");
             }
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+                throw new InvalidOperationException("JWT no tiene 3 partes.");
+
+            var payload = parts[1];
+            var base64 = payload
+                .Replace('-', '+') // Base64Url usa '-' en lugar de '+'
+                .Replace('_', '/'); // Base64Url usa '_' en lugar de '/'
+
+            // Añadir relleno si es necesario
+            switch (base64.Length % 4)
+            {
+                case 2:
+                    base64 += "==";
+                    break;
+                case 3:
+                    base64 += "=";
+                    break;
+            }
+
+            try
+            {
+                var jsonBytes = Convert.FromBase64String(base64);
+                var json = Encoding.UTF8.GetString(jsonBytes);
+                return Ok(json);
+                /*
             var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(jwt.Key);
@@ -173,9 +199,16 @@ namespace Prueba_definitivo.Controllers
             else
             {
                 return Unauthorized("Token expirado o no válido");
+            }*/
             }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al validar el token: {ex.Message}");
+            }
+            
 
         }
+      
 
 
 
