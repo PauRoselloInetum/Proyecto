@@ -9,6 +9,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Prueba_definitivo.Controllers
 {
@@ -143,19 +145,23 @@ namespace Prueba_definitivo.Controllers
         [HttpPost("home")]
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
         {
+            //Conseguir el token desde la request
             string token = authenticateRequest.Token;
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("Token no proporcionado");
             }
+            //Divide el token en 3, todos los JWT tienen 3 partes: headers, payload y firma
+            //Guarda en un array las distintas partes
             var parts = token.Split('.');
             if (parts.Length != 3)
-                throw new InvalidOperationException("JWT no tiene 3 partes.");
+                return Unauthorized("Token incorrecto");
 
+            //El payload está codificado en Base64Url
             var payload = parts[1];
             var base64 = payload
-                .Replace('-', '+') // Base64Url usa '-' en lugar de '+'
-                .Replace('_', '/'); // Base64Url usa '_' en lugar de '/'
+                .Replace('-', '+') 
+                .Replace('_', '/'); 
 
             // Añadir relleno si es necesario
             switch (base64.Length % 4)
@@ -170,36 +176,44 @@ namespace Prueba_definitivo.Controllers
 
             try
             {
+                //Convertir el texto en base64Url a un string, el cual tiene un formato JSON
                 var jsonBytes = Convert.FromBase64String(base64);
-                var json = Encoding.UTF8.GetString(jsonBytes);
-                return Ok(json);
-                /*
-            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(jwt.Key);
+                string json = Encoding.UTF8.GetString(jsonBytes);
 
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidIssuer = jwt.Issuer,
-                ValidateAudience = true,
-                ValidAudience = jwt.Audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+                //Inicializar las variables para poder utilizarlas después, al validar el token
+                string email = "";
+                string contra = "";
+                long exp = 0;
+               
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
+                    JsonElement root = doc.RootElement;
 
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                    email = root.GetProperty("email").GetString();
+                    contra = root.GetProperty("contra").GetString();
+                    exp = root.GetProperty("exp").GetInt64();
 
-            if (validatedToken != null && validatedToken.ValidTo > DateTime.UtcNow)
-            {
-                return Ok("Token válido");
-            }
-            else
-            {
-                return Unauthorized("Token expirado o no válido");
-            }*/
+                }
+                //Una vez que las variables contienen el texto del token, se realiza la consulta a la base de datos
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("contra", contra);
+                QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+
+                //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
+                DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
+                DateTime currentDate = DateTime.UtcNow;
+
+                //Se compara si la fecha de actual es mayor que la de expiración
+                //También si el email y la contraseña se encuentran en la base de datos
+                //Si alguna de las dos condiciones se cumple, el acceso no es autorizado
+                if(currentDate > expirationDate || respuestaDb.Documents.Count == 0)
+                {
+                    return Unauthorized("El token no es correcto o ha expirado");
+                }
+
+                //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
+                return Ok(email);
+                
             }
             catch (Exception ex)
             {
@@ -209,9 +223,6 @@ namespace Prueba_definitivo.Controllers
 
         }
       
-
-
-
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
         {
