@@ -25,8 +25,21 @@ export class RegisterComponent {
     this.error = '';
     this.info = '';
 
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+
+    if (!emailRegex.test(this.email)) {
+      this.error = 'Formato de correo inválido';
+      return;
+    }
+
     if (this.password !== this.passwordconfirm) {
       this.error = 'Las contraseñas no coinciden';
+      return;
+    }
+
+    if (!passwordRegex.test(this.password)) {
+      this.error = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial';
       return;
     }
 
@@ -47,4 +60,5 @@ export class RegisterComponent {
       this.loading = false;
     }
   }
+
 }
