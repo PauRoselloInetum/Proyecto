@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace Prueba_definitivo.Models
+namespace HireAProBackend.Models
 {
 
     [FirestoreData]

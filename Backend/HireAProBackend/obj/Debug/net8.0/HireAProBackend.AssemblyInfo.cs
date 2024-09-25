@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HireAProBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed5b64db2cf7982e0302c9b3be63e4eb4ddcb23e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ccfc5fd029d5691be7cdeb0ab58f7251bd19f575")]
 [assembly: System.Reflection.AssemblyProductAttribute("HireAProBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HireAProBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

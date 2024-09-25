@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Prueba_definitivo.Controllers
+namespace HireAProBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -1,4 +1,4 @@
-namespace Prueba_definitivo
+namespace HireAProBackend
 {
     public class WeatherForecast
     {

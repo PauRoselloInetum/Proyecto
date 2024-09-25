@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Prueba_definitivo.Models;
+using HireAProBackend.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Prueba_definitivo.Controllers
+namespace HireAProBackend.Controllers
 {
     [Route("api/")]
     [ApiController]
@@ -237,6 +237,13 @@ namespace Prueba_definitivo.Controllers
             {
                 return Unauthorized($"Error al validar el token: {ex.Message} " + ex);
             }
+        }
+
+        //Correo recuperación, que envíe una url a la página de regenerar contraseña y tenga una caducidad
+        [HttpPost("ForgotPassword")]
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
+        {
+
         }
 
         [HttpDelete("eliminarUsuario")]
