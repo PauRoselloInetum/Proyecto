@@ -33,7 +33,7 @@ export class AppComponent {
 
   constructor(
     private authservice: AuthService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
   ) {}
 
   ngOnInit() {

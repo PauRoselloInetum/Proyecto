@@ -19,7 +19,10 @@ export class AuthService {
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+  ) {}
 
   login(email: string, password: string): Promise<any> {
     this.loading = true;
@@ -40,7 +43,7 @@ export class AuthService {
             error.status === 401
               ? 'Usuario o Contraseña incorrectas.'
               : 'Error con el Servidor. Intente nuevamente.';
-        }
+        },
       );
   }
 
@@ -63,7 +66,7 @@ export class AuthService {
             error.status === 401
               ? 'Ya estas registrado'
               : 'Error con el Servidor. Intente nuevamente.';
-        }
+        },
       );
   }
 
@@ -82,18 +85,16 @@ export class AuthService {
 
   postAuth(data: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'Access-Control-Allow-Origin': '*',
     });
     return this.http.post(this.authUrl, data, { headers });
   }
 
   postValidate(data: { token: string }): Observable<any> {
     const headers = new HttpHeaders({
-      Accept: 'application/json',
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Allow-Origin': '*',
     });
     return this.http.post(this.validateUrl, data, { headers });
   }

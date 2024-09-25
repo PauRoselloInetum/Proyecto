@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './404.component.html',
-  styleUrl: './404.component.css'
+  styleUrl: './../../assets/css/404.css'
 })
 export class WrongRouteComponent {
 
