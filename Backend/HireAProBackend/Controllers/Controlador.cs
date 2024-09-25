@@ -187,7 +187,7 @@ namespace Prueba_definitivo.Controllers
 
                 //Inicializar las variables para poder utilizarlas después, al validar el token
                 string jti = "";
-                DateTime iat;
+                string iat;
                 string email = "";
                 string contra = "";
                 long exp = 0;
@@ -197,7 +197,7 @@ namespace Prueba_definitivo.Controllers
                     //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
                     JsonElement root = doc.RootElement;
                     jti = root.GetProperty("jti").GetString();
-                    iat = root.GetProperty("iat").GetDateTime();
+                    iat = root.GetProperty("iat").GetString();
                     email = root.GetProperty("email").GetString();
                     contra = root.GetProperty("contra").GetString();
                     exp = root.GetProperty("exp").GetInt64();
@@ -218,7 +218,7 @@ namespace Prueba_definitivo.Controllers
                 {
                 new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
-                new Claim(JwtRegisteredClaimNames.Iat,iat.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat,iat),
                 new Claim("email", email),
                 new Claim("contra", contra)
 
@@ -242,7 +242,7 @@ namespace Prueba_definitivo.Controllers
                 if (currentDate > expirationDate || respuestaDb.Documents.Count == 0 || !NToken.Equals(authenticateRequest.Token))
                 {
                     
-                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ "\n"+ authenticateRequest.Token);
+                    return Unauthorized("El token no es correcto o ha expirado\n" + newToken.ToString()+ "\n"+ "\n"+ jti +" "+iat+ " "+email+" "+ contra +" "+exp+"\n"+ authenticateRequest.Token);
                 }
                 
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
@@ -251,12 +251,79 @@ namespace Prueba_definitivo.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error al validar el token: {ex.Message}");
+                return BadRequest($"Error al validar el token: {ex.Message} "+ex);
             }
             
 
         }
-      
+        [HttpPost("home1")] // Ruta cambiada a "home1"
+        public async Task<ActionResult> ValidateToken1([FromBody] Models.AuthenticateRequest authenticateRequest) // Nombre de la función cambiado a "ValidateToken1"
+        {
+            // Obtener el token desde la request
+            string token = authenticateRequest.Token;
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token no proporcionado");
+            }
+
+            try
+            {
+                // Configuración de validación
+                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true, // Validar si el token ha expirado
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwt.Issuer,
+                    ValidAudience = jwt.Audience,
+                    IssuerSigningKey = key,
+                    ClockSkew = TimeSpan.Zero // Para asegurarse de que no haya diferencia de tiempo al validar
+                };
+
+                // Intentar validar el token y obtener los claims
+                ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+                // Validar que el token sea un JWT (opcional pero recomendado)
+                if (!(validatedToken is JwtSecurityToken jwtToken) || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return Unauthorized("Token inválido");
+                }
+
+                // Obtener claims del token
+                var email = principal.FindFirst("email")?.Value;
+                var contra = principal.FindFirst("contra")?.Value;
+
+                // Consultar en la base de datos usando email y contraseña
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("contra", contra);
+                QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+
+                // Verificar si los datos existen en la base de datos
+                if (respuestaDb.Documents.Count == 0)
+                {
+                    return Unauthorized("Credenciales incorrectas");
+                }
+
+                // Si todo es correcto, devolver la respuesta positiva
+                return Ok($"Token válido para el usuario: {email}");
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                return Unauthorized("El token ha expirado");
+            }
+            catch (SecurityTokenValidationException)
+            {
+                return Unauthorized("Token inválido");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al validar el token: {ex.Message}");
+            }
+        }
+
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
         {
