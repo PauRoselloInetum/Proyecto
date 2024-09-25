@@ -1,6 +1,22 @@
 [
   {
-    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
+    "Method": "ChangePassword",
+    "RelativePath": "api/changeRequest",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "changeRequest",
+        "Type": "HireAProBackend.Models.ChangeRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
     "Method": "DeleteUser",
     "RelativePath": "api/eliminarUsuario",
     "HttpMethod": "DELETE",
@@ -9,15 +25,31 @@
     "Parameters": [
       {
         "Name": "deleteRequest",
-        "Type": "Prueba_definitivo.Models.DeleteRequest",
+        "Type": "HireAProBackend.Models.DeleteRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
-    "Method": "ValidateToken1",
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
+    "Method": "ForgottenPassword",
+    "RelativePath": "api/forgotPassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "passwordRequest",
+        "Type": "HireAProBackend.Models.PasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
+    "Method": "ValidateToken",
     "RelativePath": "api/home",
     "HttpMethod": "POST",
     "IsController": true,
@@ -25,14 +57,14 @@
     "Parameters": [
       {
         "Name": "authenticateRequest",
-        "Type": "Prueba_definitivo.Models.AuthenticateRequest",
+        "Type": "HireAProBackend.Models.AuthenticateRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
     "Method": "Login",
     "RelativePath": "api/login",
     "HttpMethod": "POST",
@@ -41,13 +73,13 @@
     "Parameters": [
       {
         "Name": "loginRequest",
-        "Type": "Prueba_definitivo.Models.LoginRequest",
+        "Type": "HireAProBackend.Models.LoginRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "Prueba_definitivo.Models.Usuario",
+        "Type": "HireAProBackend.Models.Usuario",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -58,7 +90,7 @@
     ]
   },
   {
-    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
     "Method": "Register",
     "RelativePath": "api/register",
     "HttpMethod": "POST",
@@ -67,14 +99,14 @@
     "Parameters": [
       {
         "Name": "registerRequest",
-        "Type": "Prueba_definitivo.Models.RegisterRequest",
+        "Type": "HireAProBackend.Models.RegisterRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
     "Method": "GetUsuarios",
     "RelativePath": "api/usuarios",
     "HttpMethod": "GET",
@@ -83,7 +115,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[Prueba_definitivo.Models.Usuario, HireAProBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[HireAProBackend.Models.Usuario, HireAProBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -94,7 +126,7 @@
     ]
   },
   {
-    "ContainingType": "Prueba_definitivo.Controllers.WeatherForecastController",
+    "ContainingType": "HireAProBackend.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",
     "HttpMethod": "GET",
@@ -103,7 +135,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Prueba_definitivo.WeatherForecast, HireAProBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HireAProBackend.WeatherForecast, HireAProBackend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
