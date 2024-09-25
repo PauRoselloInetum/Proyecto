@@ -5,15 +5,10 @@ import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { VerificationComponent } from './verification/verification.component';
-
-import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 import { CookieService } from 'ngx-cookie-service';
 
-import {
-  HttpClient,
-  HttpClientModule,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -29,56 +24,36 @@ import {
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
+  providers: [AuthService],
 })
 export class AppComponent {
-  session = '';
-  email = '';
-  error = '';
+  loading: boolean = false;
+  email: string = '';
+  error: string = '';
+  info: string = '';
   constructor(
-    private http: HttpClient,
+    private authservice: AuthService,
     private cookieService: CookieService,
+    private http: HttpClient,
   ) {}
+
   ngOnInit() {
-    this.ValidateSession();
+    if (
+      window.location.pathname === '/login' ||
+      window.location.pathname === '/register'
+    ) {
+    } else {
+      this.ValidateSession();
+    }
   }
   ValidateSession() {
-    this.session = this.cookieService.get('token');
+    this.loading = true;
+    const session = this.cookieService.get('token');
+    this.authservice.validateSession(session);
 
-    const sessionData = {
-      token: this.session,
-    };
-    this.postValidate(sessionData).subscribe({
-      next: (response) => {
-        const decodedToken = this.decodeToken(this.session);
-        this.email = decodedToken.email;
-        this.error = '';
-        console.log(this.email);
-      },
-      error: (error) => {
-        if (
-          window.location.pathname === '/login' ||
-          window.location.pathname === '/register'
-        ) {
-        } else {
-          window.location.href = '/login';
-        }
-      },
-    });
-  }
-  postValidate(data: { token: string }): Observable<any> {
-    const apiUrl = 'https://localhost:7272/api/home';
-
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Allow-Origin': '*',
-    });
-
-    return this.http.post(apiUrl, data, { headers });
-  }
-  decodeToken(token: string): any {
-    const payload = token.split('.')[1];
-    const decodedPayload = atob(payload);
-    return JSON.parse(decodedPayload);
+    this.loading = false;
+    this.error = this.authservice.error;
+    this.info = this.authservice.info;
+    this.email = this.authservice.email;
   }
 }

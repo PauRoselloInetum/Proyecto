@@ -38,12 +38,12 @@ export class ComponentsComponent {
   clearCookies(){
     this.cookieService.deleteAll()
     this.loggedIn = false
+    window.location.reload();
   }
 
   borraruser(){
     this.deleteuser = false
     this.loading = true;
-    email: String;
     const loginData = {
       email: this.deleteemail,
     };
