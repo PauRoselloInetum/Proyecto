@@ -42,34 +42,28 @@ export class AppComponent {
     this.ValidateSession();
   }
   ValidateSession() {
-    if (this.cookieService.get('token')) {
-      this.session = this.cookieService.get('token');
+    this.session = this.cookieService.get('token');
 
-      const sessionData = {
-        token: this.session,
-      };
-      this.postValidate(sessionData).subscribe({
-        next: (response) => {
-          const decodedToken = this.decodeToken(this.session);
-          this.email = decodedToken.email;
-          this.error = ""
-          console.log(this.email)
-          console.log(this.session)
-        },
-        error: (error) => {
-          console.log(error);
-          this.error = "Token no valido"
-        },
-      });
-    } else {
-      if (
-        window.location.pathname === '/login' ||
-        window.location.pathname === '/register'
-      ) {
-      } else {
-        window.location.href = '/login';
-      }
-    }
+    const sessionData = {
+      token: this.session,
+    };
+    this.postValidate(sessionData).subscribe({
+      next: (response) => {
+        const decodedToken = this.decodeToken(this.session);
+        this.email = decodedToken.email;
+        this.error = '';
+        console.log(this.email);
+      },
+      error: (error) => {
+        if (
+          window.location.pathname === '/login' ||
+          window.location.pathname === '/register'
+        ) {
+        } else {
+          window.location.href = '/login';
+        }
+      },
+    });
   }
   postValidate(data: { token: string }): Observable<any> {
     const apiUrl = 'https://localhost:7272/api/home';
