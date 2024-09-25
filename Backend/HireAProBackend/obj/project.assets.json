@@ -1013,6 +1013,19 @@
           }
         }
       },
+      "RestSharp/107.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.4.0": {
         "type": "package",
         "dependencies": {
@@ -3198,6 +3211,24 @@
         "packageIcon.png"
       ]
     },
+    "RestSharp/107.0.0": {
+      "sha512": "k8UsiF+OnzNFipktUFlpmpP+aujaEuTmm3ySCWk3+jEcUPi2aPC1FRRXl/JZQMYqJSkd7ds6tWy6Z5jGTn1maw==",
+      "type": "package",
+      "path": "restsharp/107.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net5.0/RestSharp.dll",
+        "lib/net5.0/RestSharp.xml",
+        "lib/net6.0/RestSharp.dll",
+        "lib/net6.0/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.107.0.0.nupkg.sha512",
+        "restsharp.nuspec",
+        "restsharp.png"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.4.0": {
       "sha512": "eUBr4TW0up6oKDA5Xwkul289uqSMgY0xGN4pnbOIBqCcN9VKGGaPvHX3vWaG/hvocfGDP+MGzMA0bBBKz2fkmQ==",
       "type": "package",
@@ -3808,6 +3839,7 @@
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.8",
       "Newtonsoft.Json >= 13.0.3",
+      "RestSharp >= 107.0.0",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "Swashbuckle.AspNetCore.Swagger >= 6.7.3",
       "System.IdentityModel.Tokens.Jwt >= 8.0.2"
@@ -3880,6 +3912,10 @@
             "target": "Package",
             "version": "[13.0.3, )"
           },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[107.0.0, )"
+          },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.4.0, )"
@@ -3915,5 +3951,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "El paquete \"RestSharp\" 107.0.0 tiene una vulnerabilidad de gravedad moderada conocida, https://github.com/advisories/GHSA-4rr6-2v9v-wcpc",
+      "libraryId": "RestSharp",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
