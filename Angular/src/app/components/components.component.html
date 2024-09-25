@@ -4,6 +4,7 @@
   <div class="parent">
     <div class="child">
       <h1>COMPONENTS</h1>
+      @if (this.email){<h2>Hola, <span style="color: #a7ffeb;">{{this.email}}</span></h2>}
       @if (this.info){
         <br><p>{{this.info}}</p><br>
       }

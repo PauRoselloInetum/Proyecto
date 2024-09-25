@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from './auth.service';
 import { RouterOutlet } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { VerificationComponent } from './verification/verification.component';
-import { AuthService } from './auth.service';
-import { CookieService } from 'ngx-cookie-service';
-
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -28,13 +27,13 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   loading: boolean = false;
-  email: string = '';
+  public email: string = '';
   error: string = '';
   info: string = '';
+
   constructor(
     private authservice: AuthService,
-    private cookieService: CookieService,
-    private http: HttpClient,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {
@@ -43,17 +42,20 @@ export class AppComponent {
       window.location.pathname === '/register'
     ) {
     } else {
-      this.ValidateSession();
+      this.validateSession();
     }
+
+    this.authservice.email$.subscribe((email) => {
+      this.email = email;
+    });
   }
-  ValidateSession() {
+
+  validateSession() {
     this.loading = true;
     const session = this.cookieService.get('token');
     this.authservice.validateSession(session);
-
     this.loading = false;
     this.error = this.authservice.error;
     this.info = this.authservice.info;
-    this.email = this.authservice.email;
   }
 }
