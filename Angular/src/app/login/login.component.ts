@@ -64,7 +64,7 @@ export class LoginComponent {
             this.errors += 1;
             this.login()
           }else{
-            this.error = 'Error con Servidor. .Prueba otra vez.';
+            this.error = 'Error con Servidor. Prueba otra vez.';
           }
         }
         this.loading = false;
