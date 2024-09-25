@@ -1,0 +1,47 @@
+#container-fotos {
+    background-color: lightgray;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    position: relative; /* Necesario para que los hijos absolutamentes se posicionen en relación al contenedor */
+}
+
+.foto {
+    flex: 1;
+    height: 100%;
+    border: 1px solid black;
+    display: flex; /* Para centrar el círculo */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    position: relative; /* Permite que los hijos se posicionen correctamente */
+    overflow: hidden; /* Ocultar el contenido fuera de este div */
+    transition: opacity 0.3s; /* Para suavizar la opacidad */
+}
+
+.circle {
+    width: 50px; /* Ancho del círculo */
+    height: 50px; /* Alto del círculo */
+    background-color: white; /* Color de fondo blanco */
+    border-radius: 50%; /* Hace que el div sea circular */
+    position: absolute; /* Permite centrarlo con transform */
+    top: 50%; /* Mueve el círculo hacia abajo al 50% del div padre */
+    left: 50%; /* Mueve el círculo hacia la derecha al 50% del div padre */
+    transform: translate(-50%, -50%); /* Ajusta la posición para centrar el círculo */
+    transition: transform 0.5s; /* Suaviza la animación de movimiento */
+}
+
+#1{
+    z-index: 0;
+}
+
+#2{
+    z-index: 1;
+}
+
+#3{
+    z-index: 2;
+}
+
+#4{
+    z-index: 3;
+}
