@@ -1,18 +1,14 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  HttpClient,
-  HttpClientModule,
-  HttpHeaders,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
 import { LoadingComponent } from '../loading/loading.component';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, HttpClientModule, LoadingComponent],
+  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrls: ['../../assets/css/auth.css'],
 })
@@ -21,66 +17,35 @@ export class LoginComponent {
   password: string = '';
   loading: boolean = false;
   error: string = '';
-  errors: number = 0;
   info: string = '';
 
-  constructor(
-    private http: HttpClient,
-    private cookieService: CookieService,
-  ) {}
+  constructor(private authservice: AuthService) {}
 
-  ngOnInit() {
-    if (this.cookieService.get('token')) {
-      this.info = 'Ya estas logeado, redireccionando...';
+  async login() {
+    if (this.email.trim() === '' || this.password.trim() === '') {
+      this.error = 'Email y Contraseña son requeridos.';
+      return;
+    }
+
+    this.error = '';
+    this.info = '';
+
+    this.loading = true;
+
+    try {
+      await this.authservice.login(this.email, this.password);
+      this.info = this.authservice.info;
+      this.error = this.authservice.error;
+      if (this.info){
       setTimeout(() => {
         window.location.href = '/';
-      }, 1500);
+      }, 3500);}
+    } catch (err) {
+      this.error = this.authservice.error;
+    } finally {
+      this.loading = false;
     }
   }
 
-  login() {
-    this.loading = true;
-    const loginData = {
-      email: this.email,
-      password: this.password,
-    };
-
-    this.postLogin(loginData).subscribe({
-      next: (response) => {
-        this.cookieService.set('token', response);
-        this.error = '';
-        this.loading = false;
-        this.info = 'Login exitoso, redireccionando...';
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
-      },
-      error: (error) => {
-        if (error.status === 401) {
-          this.error = 'Usuario o Contraseña Incorrectas.';
-        } else {
-          if (this.errors > 2){
-            console.log("Hey")
-            this.errors += 1;
-            this.login()
-          }else{
-            this.error = 'Error con Servidor. Prueba otra vez.';
-          }
-        }
-        this.loading = false;
-      },
-    });
-  }
-
-  postLogin(data: { email: string; password: string }): Observable<any> {
-    const apiUrl = 'https://localhost:7272/api/login';
-
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Allow-Origin': '*',
-    });
-
-    return this.http.post(apiUrl, data, { headers });
-  }
+  ngOnInit() {}
 }
