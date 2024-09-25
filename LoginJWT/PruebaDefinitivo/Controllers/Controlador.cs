@@ -159,28 +159,44 @@ namespace Prueba_definitivo.Controllers
             if (parts.Length != 3)
                 return Unauthorized("Token incorrecto");
 
+            var header = parts[0]
+                .Replace('-','+')
+                .Replace('-','/');
+
             //El payload está codificado en Base64Url
-            var payload = parts[1];
-            var base64 = payload
-                .Replace('-', '+') 
-                .Replace('_', '/'); 
+            var payload = parts[1]
+                .Replace('-', '+')
+                .Replace('_', '/');   
 
             // Añadir relleno si es necesario
-            switch (base64.Length % 4)
+            switch (payload.Length % 4)
             {
                 case 2:
-                    base64 += "==";
+                    payload += "==";
                     break;
                 case 3:
-                    base64 += "=";
+                    payload += "=";
+                    break;
+            }
+
+            switch (header.Length % 4)
+            {
+                case 2:
+                    header += "==";
+                    break;
+                case 3:
+                    header += "=";
                     break;
             }
 
             try
             {
                 //Convertir el texto en base64Url a un string, el cual tiene un formato JSON
-                var jsonBytes = Convert.FromBase64String(base64);
+                
+                var jsonBytes = Convert.FromBase64String(payload);
+                var jsonBytes1 = Convert.FromBase64String(header);
                 string json = Encoding.UTF8.GetString(jsonBytes);
+                string json1 = Encoding.UTF8.GetString(jsonBytes1);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el token
                 string email = "";
@@ -229,14 +245,13 @@ namespace Prueba_definitivo.Controllers
 
                     );
                 string NToken = newToken.ToString();
-                string tokenString = token.ToString();
                 //Se compara si la fecha de actual es mayor que la de expiración
                 //También si el email y la contraseña se encuentran en la base de datos
                 //Si alguna de las dos condiciones se cumple, el acceso no es autorizado
                 if (currentDate > expirationDate || respuestaDb.Documents.Count == 0 || !NToken.Equals(authenticateRequest.Token))
                 {
                     
-                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ tokenString);
+                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ "\n"+ header + payload);
                 }
                 
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
