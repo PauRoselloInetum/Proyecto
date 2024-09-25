@@ -10,8 +10,8 @@ namespace HireAProBackend.Models
         [FirestoreProperty("email")]  // Nombre exacto del campo en Firestore
         public string Email { get; set; }
 
-        [FirestoreProperty("contra")]  // Nombre exacto del campo en Firestore
-        public string Contra { get; set; }
+        [FirestoreProperty("password")]  // Nombre exacto del campo en Firestore
+        public string Password { get; set; }
 
         public Usuario() { }
 
