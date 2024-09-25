@@ -159,9 +159,7 @@ namespace Prueba_definitivo.Controllers
             if (parts.Length != 3)
                 return Unauthorized("Token incorrecto");
 
-            var header = parts[0]
-                .Replace('-','+')
-                .Replace('-','/');
+           
 
             //El payload está codificado en Base64Url
             var payload = parts[1]
@@ -179,26 +177,17 @@ namespace Prueba_definitivo.Controllers
                     break;
             }
 
-            switch (header.Length % 4)
-            {
-                case 2:
-                    header += "==";
-                    break;
-                case 3:
-                    header += "=";
-                    break;
-            }
-
+           
             try
             {
                 //Convertir el texto en base64Url a un string, el cual tiene un formato JSON
                 
                 var jsonBytes = Convert.FromBase64String(payload);
-                var jsonBytes1 = Convert.FromBase64String(header);
                 string json = Encoding.UTF8.GetString(jsonBytes);
-                string json1 = Encoding.UTF8.GetString(jsonBytes1);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el token
+                string jti = "";
+                DateTime iat;
                 string email = "";
                 string contra = "";
                 long exp = 0;
@@ -207,7 +196,8 @@ namespace Prueba_definitivo.Controllers
                 {
                     //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
                     JsonElement root = doc.RootElement;
-
+                    jti = root.GetProperty("jti").GetString();
+                    iat = root.GetProperty("iat").GetDateTime();
                     email = root.GetProperty("email").GetString();
                     contra = root.GetProperty("contra").GetString();
                     exp = root.GetProperty("exp").GetInt64();
@@ -227,8 +217,8 @@ namespace Prueba_definitivo.Controllers
                 var claims = new[]
                 {
                 new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),//hay que cambiar esta fecha, por la fecha en la que se crea el otro token
+                new Claim(JwtRegisteredClaimNames.Jti, jti),
+                new Claim(JwtRegisteredClaimNames.Iat,iat.ToString()),
                 new Claim("email", email),
                 new Claim("contra", contra)
 
@@ -244,14 +234,15 @@ namespace Prueba_definitivo.Controllers
                         signingCredentials: signIn
 
                     );
-                string NToken = newToken.ToString();
+                string NToken = new JwtSecurityTokenHandler().WriteToken(newToken);
+
                 //Se compara si la fecha de actual es mayor que la de expiración
                 //También si el email y la contraseña se encuentran en la base de datos
                 //Si alguna de las dos condiciones se cumple, el acceso no es autorizado
                 if (currentDate > expirationDate || respuestaDb.Documents.Count == 0 || !NToken.Equals(authenticateRequest.Token))
                 {
                     
-                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ "\n"+ header + payload);
+                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ "\n"+ authenticateRequest.Token);
                 }
                 
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK

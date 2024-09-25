@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj": {}
+    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Backend\\HireAProBackend\\HireAProBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj": {
+    "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Backend\\HireAProBackend\\HireAProBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj",
+        "projectUniqueName": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Backend\\HireAProBackend\\HireAProBackend.csproj",
         "projectName": "HireAProBackend",
-        "projectPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj",
+        "projectPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Backend\\HireAProBackend\\HireAProBackend.csproj",
         "packagesPath": "C:\\Users\\marta.flores.ext\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\obj\\",
+        "outputPath": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\Backend\\HireAProBackend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marta.flores.ext\\AppData\\Roaming\\NuGet\\NuGet.Config",
