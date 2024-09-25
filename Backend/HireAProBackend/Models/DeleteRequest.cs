@@ -1,4 +1,4 @@
-﻿namespace Prueba_definitivo.Models
+﻿namespace HireAProBackend.Models
 {
     public class DeleteRequest
     {

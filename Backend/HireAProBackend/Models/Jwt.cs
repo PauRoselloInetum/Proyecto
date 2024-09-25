@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Prueba_definitivo.Models
+namespace HireAProBackend.Models
 {
     public class Jwt
     {

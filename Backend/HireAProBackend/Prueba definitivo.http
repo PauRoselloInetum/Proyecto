@@ -1,6 +1,6 @@
-@Prueba_definitivo_HostAddress = http://localhost:5103
+@HireAProBackend_HostAddress = http://localhost:5103
 
-GET {{Prueba_definitivo_HostAddress}}/weatherforecast/
+GET {{HireAProBackend_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
