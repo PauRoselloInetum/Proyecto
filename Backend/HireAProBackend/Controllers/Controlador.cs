@@ -1,4 +1,5 @@
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
@@ -88,7 +89,7 @@ namespace Prueba_definitivo.Controllers
                     jwt.Issuer,
                     jwt.Audience,
                     claims,
-                    expires: DateTime.Now.AddDays(30),
+                    expires: DateTime.Now.AddSeconds(10),
                     signingCredentials: signIn
 
                 );
@@ -144,7 +145,7 @@ namespace Prueba_definitivo.Controllers
                 return builder.ToString();
             }
         }
-        public string ComputeHMACSha256Hash(string data, string secretKey)
+        private string ComputeHMACSha256Hash(string data, string secretKey)
         {
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             using (var hmacsha256 = new HMACSHA256(keyBytes))
@@ -155,7 +156,7 @@ namespace Prueba_definitivo.Controllers
             }
         }
 
-        [HttpPost("home")] //Hay que comprobar la firma y el header
+        /*[HttpPost("home")] //Hay que comprobar la firma y el header
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
         {
             //Conseguir el token desde la request
@@ -286,7 +287,7 @@ namespace Prueba_definitivo.Controllers
                 }
                 
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
-                return Ok(email);*/
+                return Ok(email);
                 
             }
             catch (Exception ex)
@@ -295,9 +296,67 @@ namespace Prueba_definitivo.Controllers
             }
             
 
+        }*/
+
+        [HttpPost("home")] //COmprueba si la firma es correcta pero ha de validar la fecha
+        public async Task<ActionResult> ValidateToken1([FromBody] Models.AuthenticateRequest authenticateRequest)
+        {
+            string token = authenticateRequest.Token;
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token no proporcionado");
+            }
+
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+            {
+                return Unauthorized("Token incorrecto");
+            }
+
+            // Extraer el encabezado, el payload y la firma
+            var header = parts[0];
+            var payload = parts[1];
+            var signature = parts[2];
+
+            // Convertir Base64Url a Base64 estándar para decodificación
+            string base64Header = header.Replace('-', '+').Replace('_', '/');
+            string base64Payload = payload.Replace('-', '+').Replace('_', '/');
+
+            // Añadir relleno si es necesario
+            base64Header = base64Header.PadRight(base64Header.Length + ((4 - base64Header.Length % 4) % 4), '=');
+            base64Payload = base64Payload.PadRight(base64Payload.Length + ((4 - base64Payload.Length % 4) % 4), '=');
+
+            try
+            {
+                // Decodificar el encabezado y el payload
+                var jsonBytesHeader = Convert.FromBase64String(base64Header);
+                var jsonBytesPayload = Convert.FromBase64String(base64Payload);
+                string headerJson = Encoding.UTF8.GetString(jsonBytesHeader);
+                string payloadJson = Encoding.UTF8.GetString(jsonBytesPayload);
+
+                // Recuperar la clave secreta desde la configuración
+                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+
+                // Generar la firma esperada
+                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.Key);
+
+                // Comparar la firma esperada con la firma del token
+                if (expectedSignature == signature)
+                {
+                    return Ok("Token válido");
+                }
+                else
+                {
+                    return Unauthorized("El token no es válido");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Error al validar el token: {ex.Message} " + ex);
+            }
         }
 
-      
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
         {
