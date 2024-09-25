@@ -45,6 +45,8 @@ namespace Prueba_definitivo.Controllers
             return usuarios;
         }
 
+
+
         [HttpPost("login")]
         public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest)
         {
@@ -142,7 +144,7 @@ namespace Prueba_definitivo.Controllers
                 return builder.ToString();
             }
         }
-        [HttpPost("home")]
+        [HttpPost("home")] //Hay que comprobar la firma y el header
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
         {
             //Conseguir el token desde la request
@@ -203,14 +205,40 @@ namespace Prueba_definitivo.Controllers
                 DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
                 DateTime currentDate = DateTime.UtcNow;
 
+                //Prueba
+                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+
+                var claims = new[]
+                {
+                new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),//hay que cambiar esta fecha, por la fecha en la que se crea el otro token
+                new Claim("email", email),
+                new Claim("contra", contra)
+
+            };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var newToken = new JwtSecurityToken(
+                        jwt.Issuer,
+                        jwt.Audience,
+                        claims,
+                        expires: expirationDate,
+                        signingCredentials: signIn
+
+                    );
+                string NToken = newToken.ToString();
+                string tokenString = token.ToString();
                 //Se compara si la fecha de actual es mayor que la de expiración
                 //También si el email y la contraseña se encuentran en la base de datos
                 //Si alguna de las dos condiciones se cumple, el acceso no es autorizado
-                if(currentDate > expirationDate || respuestaDb.Documents.Count == 0)
+                if (currentDate > expirationDate || respuestaDb.Documents.Count == 0 || !NToken.Equals(authenticateRequest.Token))
                 {
-                    return Unauthorized("El token no es correcto o ha expirado");
+                    
+                    return Unauthorized("El token no es correcto o ha expirado\n" + NToken+ "\n"+ tokenString);
                 }
-
+                
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
                 return Ok(email);
                 
