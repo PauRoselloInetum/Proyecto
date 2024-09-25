@@ -57,7 +57,7 @@ namespace HireAProBackend.Controllers
             string password = ComputeSha256Hash(loginRequest.Password);
 
             //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
@@ -79,7 +79,7 @@ namespace HireAProBackend.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim("email", usuario.Email),
-                new Claim("contra", usuario.Contra)
+                new Claim("password", usuario.Password)
 
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
@@ -122,7 +122,7 @@ namespace HireAProBackend.Controllers
                 DocumentReference nuevoUserRef = await referencia.AddAsync(new
                 {
                     email = registerRequest.Email,
-                    contra = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
+                    password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                 });
 
                 return Ok("Usuario registrado");
@@ -202,7 +202,7 @@ namespace HireAProBackend.Controllers
 
                 //Inicializar las variables para poder utilizarlas después, al validar el 
                 string email = "";
-                string contra = "";
+                string password = "";
                 long exp = 0;
 
                 using (JsonDocument doc = JsonDocument.Parse(payloadJson))
@@ -210,13 +210,13 @@ namespace HireAProBackend.Controllers
                     //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
                     JsonElement root = doc.RootElement;
                     email = root.GetProperty("email").GetString();
-                    contra = root.GetProperty("contra").GetString();
+                    password = root.GetProperty("password").GetString();
                     exp = root.GetProperty("exp").GetInt64();
 
                 }
 
                 //Una vez que las variables contienen el texto del token, se realiza la consulta a la base de datos
-                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("contra", contra);
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("password", password);
                 QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
@@ -244,12 +244,13 @@ namespace HireAProBackend.Controllers
         public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
         {
             string email = passwordRequest.Email;
+            //Comprueba la existencia del usuario en la base de datos para posteriormente enviarle un correo
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
             if (respuestaDb.Documents.Count == 0)
             {
-                return Unauthorized("Este usuario no existe en la base de datos");
+                return NotFound("Este usuario no existe en la base de datos");
             }
             return Ok("Revisa tu correo");
         }
@@ -259,10 +260,22 @@ namespace HireAProBackend.Controllers
         public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
         {
             string email = changeRequest.Email;
-            string password = changeRequest.Password;
+            string newPass = ComputeSha256Hash(changeRequest.Password);
 
-           // Query consulta = _firestoreDb.Collection("users").
+            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
+            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
+          if (respuestaDb.Documents.Count == 0)
+                {
+                    return NotFound("Este usuario no existe en la base de datos");
+                }
+
+            DocumentReference docRef = respuestaDb.Documents[0].Reference;
+
+            await docRef.UpdateAsync(new Dictionary<string, object>
+            {
+                {"password",newPass}
+            });
             return Ok("Contraseña actualizada");
         }
 
