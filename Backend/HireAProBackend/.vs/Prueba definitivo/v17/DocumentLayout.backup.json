@@ -23,8 +23,8 @@
       "RelativeMoniker": "D:0:0:{C5A253AB-CBCF-45D4-A746-AA514D6893CF}|Prueba definitivo.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5A253AB-CBCF-45D4-A746-AA514D6893CF}|Prueba definitivo.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\loginjwt\\pruebadefinitivo\\prueba definitivo.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{C5A253AB-CBCF-45D4-A746-AA514D6893CF}|Prueba definitivo.csproj|solutionrelative:prueba definitivo.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{C5A253AB-CBCF-45D4-A746-AA514D6893CF}|HireAProBackend.csproj|c:\\users\\marta.flores.ext\\documents\\proyecto\\loginjwt\\pruebadefinitivo\\hireaprobackend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C5A253AB-CBCF-45D4-A746-AA514D6893CF}|HireAProBackend.csproj|solutionrelative:hireaprobackend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -44,9 +44,10 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAIBJwA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-20T10:02:55Z"
+              "WhenOpened": "2024-09-20T10:02:55Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -78,13 +79,14 @@
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "Prueba definitivo.csproj",
-              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
-              "RelativeDocumentMoniker": "Prueba definitivo.csproj",
-              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Prueba definitivo.csproj",
-              "RelativeToolTip": "Prueba definitivo.csproj",
+              "DocumentMoniker": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj",
+              "RelativeDocumentMoniker": "HireAProBackend.csproj",
+              "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\HireAProBackend.csproj",
+              "RelativeToolTip": "HireAProBackend.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-09-20T08:01:34.09Z"
+              "WhenOpened": "2024-09-20T08:01:34.09Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -107,7 +109,7 @@
               "RelativeDocumentMoniker": "Controllers\\Controlador.cs",
               "ToolTip": "C:\\Users\\marta.flores.ext\\Documents\\Proyecto\\LoginJWT\\PruebaDefinitivo\\Controllers\\Controlador.cs",
               "RelativeToolTip": "Controllers\\Controlador.cs",
-              "ViewState": "AgIAANgAAAAAAAAAAADwv/0AAABwAAAAAAAAAA==",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAkwIsAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-20T06:43:50.882Z",
               "EditorCaption": ""
