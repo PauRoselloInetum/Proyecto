@@ -144,6 +144,17 @@ namespace Prueba_definitivo.Controllers
                 return builder.ToString();
             }
         }
+        public string ComputeHMACSha256Hash(string data, string secretKey)
+        {
+            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            using (var hmacsha256 = new HMACSHA256(keyBytes))
+            {
+                var dataBytes = Encoding.UTF8.GetBytes(data);
+                var hashBytes = hmacsha256.ComputeHash(dataBytes);
+                return Convert.ToBase64String(hashBytes).Replace('+', '-').Replace('/', '_').TrimEnd('='); // Convertir a Base64Url
+            }
+        }
+
         [HttpPost("home")] //Hay que comprobar la firma y el header
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
         {
@@ -164,7 +175,11 @@ namespace Prueba_definitivo.Controllers
             //El payload está codificado en Base64Url
             var payload = parts[1]
                 .Replace('-', '+')
-                .Replace('_', '/');   
+                .Replace('_', '/');
+            var header = parts[0];
+
+            
+            var signature = parts[2];
 
             // Añadir relleno si es necesario
             switch (payload.Length % 4)
@@ -176,23 +191,48 @@ namespace Prueba_definitivo.Controllers
                     payload += "=";
                     break;
             }
+            switch (header.Length % 4)
+            {
+                case 2:
+                    header += "==";
+                    break;
+                case 3:
+                    header += "=";
+                    break;
+            }
 
-           
+
             try
             {
                 //Convertir el texto en base64Url a un string, el cual tiene un formato JSON
-                
-                var jsonBytes = Convert.FromBase64String(payload);
-                string json = Encoding.UTF8.GetString(jsonBytes);
 
-                //Inicializar las variables para poder utilizarlas después, al validar el token
+                var jsonBytes = Convert.FromBase64String(payload);
+                var jsonBytes1 = Convert.FromBase64String(header);
+                string payloadS = Encoding.UTF8.GetString(jsonBytes);
+                string headerS = Encoding.UTF8.GetString(jsonBytes1);
+                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+
+
+                string newSignature = ComputeHMACSha256Hash(header + "." + payload, jwt.Key);
+
+                if (newSignature == parts[2])
+                {
+                    return Ok("Token válido");
+
+                }
+                else
+                {
+                    return Unauthorized("El token no es válido");
+                }
+            
+               /* //Inicializar las variables para poder utilizarlas después, al validar el token
                 string jti = "";
                 string iat;
                 string email = "";
                 string contra = "";
                 long exp = 0;
                
-                using (JsonDocument doc = JsonDocument.Parse(json))
+                using (JsonDocument doc = JsonDocument.Parse(payloadS))
                 {
                     //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
                     JsonElement root = doc.RootElement;
@@ -212,7 +252,6 @@ namespace Prueba_definitivo.Controllers
                 DateTime currentDate = DateTime.UtcNow;
 
                 //Prueba
-                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
 
                 var claims = new[]
                 {
@@ -223,7 +262,8 @@ namespace Prueba_definitivo.Controllers
                 new Claim("contra", contra)
 
             };
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+
+                var keyY = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
                 var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var newToken = new JwtSecurityToken(
@@ -246,7 +286,7 @@ namespace Prueba_definitivo.Controllers
                 }
                 
                 //Si el email y la contraseña existen en la BD y el token no ha expirado, todo OK
-                return Ok(email);
+                return Ok(email);*/
                 
             }
             catch (Exception ex)
@@ -256,74 +296,8 @@ namespace Prueba_definitivo.Controllers
             
 
         }
-        [HttpPost("home1")] // Ruta cambiada a "home1"
-        public async Task<ActionResult> ValidateToken1([FromBody] Models.AuthenticateRequest authenticateRequest) // Nombre de la función cambiado a "ValidateToken1"
-        {
-            // Obtener el token desde la request
-            string token = authenticateRequest.Token;
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token no proporcionado");
-            }
 
-            try
-            {
-                // Configuración de validación
-                var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true, // Validar si el token ha expirado
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwt.Issuer,
-                    ValidAudience = jwt.Audience,
-                    IssuerSigningKey = key,
-                    ClockSkew = TimeSpan.Zero // Para asegurarse de que no haya diferencia de tiempo al validar
-                };
-
-                // Intentar validar el token y obtener los claims
-                ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-
-                // Validar que el token sea un JWT (opcional pero recomendado)
-                if (!(validatedToken is JwtSecurityToken jwtToken) || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Unauthorized("Token inválido");
-                }
-
-                // Obtener claims del token
-                var email = principal.FindFirst("email")?.Value;
-                var contra = principal.FindFirst("contra")?.Value;
-
-                // Consultar en la base de datos usando email y contraseña
-                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("contra", contra);
-                QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-
-                // Verificar si los datos existen en la base de datos
-                if (respuestaDb.Documents.Count == 0)
-                {
-                    return Unauthorized("Credenciales incorrectas");
-                }
-
-                // Si todo es correcto, devolver la respuesta positiva
-                return Ok($"Token válido para el usuario: {email}");
-            }
-            catch (SecurityTokenExpiredException)
-            {
-                return Unauthorized("El token ha expirado");
-            }
-            catch (SecurityTokenValidationException)
-            {
-                return Unauthorized("Token inválido");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error al validar el token: {ex.Message}");
-            }
-        }
-
+      
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
         {

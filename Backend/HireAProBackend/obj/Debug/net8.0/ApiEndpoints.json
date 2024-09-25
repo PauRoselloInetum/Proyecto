@@ -1,6 +1,37 @@
 [
   {
     "ContainingType": "Prueba_definitivo.Controllers.Controlador",
+    "Method": "ComputeHMACSha256Hash",
+    "RelativePath": "api",
+    "HttpMethod": "",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "data",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "secretKey",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Prueba_definitivo.Controllers.Controlador",
     "Method": "DeleteUser",
     "RelativePath": "api/eliminarUsuario",
     "HttpMethod": "DELETE",
