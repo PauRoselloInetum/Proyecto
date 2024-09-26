@@ -1,0 +1,163 @@
+
+/* ESTILOS GENERALES*/
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-display: block;
+    font-weight: 400;
+    src: url('../font/poppins-latin-400-normal.woff2') format('woff2');
+    unicode-range: U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+25CC,U+A830-A839,U+A8E0-A8FF;
+  }
+  
+  /* poppins-latin-ext-400-normal */
+  @font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-display: block;
+    font-weight: 400;
+    src: url('../font/poppins-latin-400-normal.woff2') format('woff2');
+    unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;
+  }
+  
+  /* poppins-latin-400-normal */
+  @font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-display: block;
+    font-weight: 400;
+    src: url('../font/poppins-latin-400-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+body{
+    font-family: 'Poppins';
+    box-sizing: border-box;
+    margin: 0; /* Elimina el margen del body */
+    padding: 0; /* Elimina el padding del body (si lo hay) */
+
+
+}
+
+.nombre{
+    font-weight: bold;
+    font-size: large;
+    color: #277493;
+}
+
+/* PANTALLAS DE ORDENADOR*/
+@media only screen and (min-width: 1200px){
+    #container-fotos {
+        background-color: lightgray;
+        width: 100%;
+        height: 474px;
+        display: flex;
+        position: relative;
+    }
+    
+    .foto {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        transition: flex 0.5s ease, opacity 0.3s, z-index 0.3s;
+    }
+    
+    .circle {
+        width: 300px; /* Tamaño fijo del círculo */
+        height: 300px; /* Tamaño fijo del círculo */
+        background-color: white;
+        border-radius: 50%; /* Hace el círculo redondo */
+        position: absolute;
+        top: 50%;
+        left: 50%; /* Inicia centrado horizontalmente */
+        transform: translate(-50%, -50%); /* Centra el círculo en el div */
+        transition: left 0.5s ease, transform 0.5s ease; /* Suaviza la transición cuando se mueve el círculo */
+        overflow: hidden; /* Para asegurarse de que las imágenes no sobresalgan */
+    }
+    
+    .circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Hace que la imagen llene el círculo sin deformarse */
+        border-radius: 50%; /* Mantiene la imagen en forma circular */
+    }
+    
+    .foto:hover .circle {
+        left: 20px; /* Mueve el círculo a la izquierda con un margen de 20px */
+        transform: translate(0, -50%); /* Asegura que permanezca centrado verticalmente */
+    }
+    
+    /* Estilos para el texto que aparecerá */
+    .texto {
+        position: absolute;
+        left: 25%; /* Coloca el texto a la derecha del círculo */
+        width: 50%;
+        top: 50%;
+        transform: translate(0, -50%); /* Asegura que esté alineado verticalmente con el círculo */
+        opacity: 0; /* Oculta el texto inicialmente */
+        pointer-events: none; /* Evita interacciones con el texto cuando está oculto */
+    }
+    
+    .foto:hover .texto {
+        opacity: 1; /* Muestra el texto al hacer hover */
+        transition: opacity 0.5s ease 0.4s; /* Transición para suavizar la visibilidad */
+    }
+    
+    .foto:not(:hover) .texto {
+        transition: opacity 0.1s ease 0s; /* Transición para ocultar el texto rápidamente */
+    }
+}
+
+
+
+
+/* PANTALLA DE MOVIL */
+@media only screen and (max-width: 1200px) {
+    #container-fotos {
+        flex-direction: column; /* Apila los elementos verticalmente */
+        height: auto; /* Permite que el contenedor ajuste su altura */
+        background-color: lightgray;
+        width: 100%;
+        
+    }
+
+    .foto {
+        height: auto; /* Permite que cada foto ajuste su altura */
+        display: block; /* Mantiene el uso de flexbox */
+        flex-direction: column; /* Apila el círculo y el texto verticalmente */
+        align-items: center; /* Centra el contenido */
+        margin-bottom: 20px; /* Espacio entre cada elemento .foto */
+        margin-bottom: 15%;
+    }
+
+    .circle {
+        position: relative; /* Cambia a posición relativa para que no se superponga */
+        width: 80%; /* Tamaño fijo para mantener la proporción */
+        height: auto; /* Tamaño fijo para mantener la proporción */
+        aspect-ratio: 1/1;
+        margin: 0 auto; /* Centra el círculo horizontalmente */
+        border-radius: 50%; /* Mantiene la forma circular */
+        overflow: hidden; /* Asegura que la imagen no sobresalga */
+        margin-bottom: 5%;
+    }
+
+    .circle img {
+        width: 100%; /* Asegura que la imagen llene el círculo */
+        height: 100%; /* Asegura que la imagen llene el círculo */
+        object-fit: cover; /* Hace que la imagen llene el círculo sin deformarse */
+        border-radius: 50%; /* Mantiene la imagen en forma circular */
+    }
+
+    .texto {
+        margin-top: 10px; /* Agrega un margen superior para separación */
+        opacity: 1; /* Muestra el texto sin animaciones */
+        transition: none; /* Desactiva la transición */
+        text-align: center; /* Centra el texto */
+        width: 90%; /* Ajusta el ancho del texto en móviles */
+        margin: 10px auto; /* Centra el texto y agrega un margen */
+        text-align: justify;
+    }
+}
