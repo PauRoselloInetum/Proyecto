@@ -13,8 +13,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
-using RestSharp;
-using RestSharp.Authenticators;
 using System.IO;
 using static Google.Rpc.Context.AttributeContext.Types;
 
@@ -27,6 +25,7 @@ namespace HireAProBackend.Controllers
         private FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
         public Models.Path _path;
+
 
         public Controlador(IConfiguration configuracion)
         {
@@ -273,60 +272,9 @@ namespace HireAProBackend.Controllers
             {
                 return NotFound("Este usuario no existe en la base de datos");
             }
-
-            // Genera un token único para el restablecimiento de contraseña
-            string resetToken = Guid.NewGuid().ToString();
-
-            // Guarda el token en la base de datos junto con su fecha de expiración
-            var userDocRef = respuestaDb.Documents[0].Reference;
-            await userDocRef.Collection("resetTokens").AddAsync(new
-            {
-                Token = resetToken,
-                Expiry = DateTime.UtcNow.AddHours(1) // Expira en 1 hora
-            });
-
-            // Envía el correo electrónico con el enlace de restablecimiento
-            string resetLink = $"http://localhost:5000/resetPassword?token={resetToken}";
-            var emailSent = SendResetPasswordEmail(email, resetLink);
-
-            if (!emailSent)
-            {
-                return StatusCode(500, "Error al enviar el correo de restablecimiento");
-            }
-
-            return Ok("Revisa tu correo para instrucciones sobre cómo restablecer tu contraseña");
+            return Ok("revisa tu correo");
         }
-
-        private bool SendResetPasswordEmail(string toEmail, string resetLink)
-        {
-            try
-            {
-                var client = new RestClient("https://api.mailgun.net/v3");
-               
-                client.Authenticator = new HttpBasicAuthenticator("api", "f96c5bd70ee8aba3cfce1c455ae751ea-1b5736a5-2759435c");
-
-                var request = new RestRequest();
-                request.AddParameter("domain", "sandboxf54c3daca8594baaa42b9eede10bc465.mailgun.org", ParameterType.UrlSegment);
-                request.Resource = "sandboxf54c3daca8594baaa42b9eede10bc465.mailgun.org/messages";
-                request.AddParameter("from", "test@sandboxf54c3daca8594baaa42b9eede10bc465.mailgun.org");
-                request.AddParameter("to", toEmail);
-                request.AddParameter("subject", "Restablecimiento de contraseña");
-                request.AddParameter("text", $"Haga clic en el siguiente enlace para restablecer su contraseña: {resetLink}");
-                request.Method = Method.Post;
-
-                var response = client.ExecutePostAsync(request);
-                var respuesta = response.Result;
-                return response.IsCompleted;
-                
-            }
-            catch (Exception ex)
-            {
-                // Manejar excepción, posiblemente registrar el error
-                Console.WriteLine($"Error:"+ex);
-
-                return false;
-            }
-        }
+       
 
         //Paso intermedio
 
