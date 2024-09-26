@@ -2,14 +2,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using HireAProBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 IdentityModelEventSource.ShowPII = true;
+
 
 // Agregar servicios al contenedor
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // Configuración de CORS para permitir solicitudes desde Angular (localhost:4200)
 builder.Services.AddCors(options =>
@@ -35,6 +38,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
+
+//Configuracion servicio de correo
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 var app = builder.Build();
 

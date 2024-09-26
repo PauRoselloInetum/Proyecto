@@ -54,6 +54,10 @@
               "target": "Package",
               "version": "[3.8.0, )"
             },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.7.1.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.8, )"
@@ -67,10 +71,6 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
-            },
-            "RestSharp": {
-              "target": "Package",
-              "version": "[107.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

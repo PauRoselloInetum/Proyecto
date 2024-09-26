@@ -40,8 +40,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "passwordRequest",
-        "Type": "HireAProBackend.Models.PasswordRequest",
+        "Name": "emailRequest",
+        "Type": "HireAProBackend.Models.EmailDTO",
         "IsRequired": true
       }
     ],
