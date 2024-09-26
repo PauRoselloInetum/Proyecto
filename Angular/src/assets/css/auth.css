@@ -108,3 +108,8 @@ a {
 .error {
   color: red;
 }
+
+.bottomlinks > a:last-child {
+  color: #ff781f;
+  font-size: 1.1rem;
+}

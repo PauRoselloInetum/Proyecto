@@ -47,10 +47,13 @@ export class AuthService {
       },
       error: (error) => {
         this.loadingSubject.next(false);
-        this.errorSubject.next(error.status === 401
-          ? 'Usuario o Contraseña incorrectas.'
-          : 'Error con el Servidor. Intente nuevamente.')
-
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Usuario o Contraseña incorrectas.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el Servidor. Intente nuevamente.',
+        );
       },
     });
   }
@@ -69,9 +72,13 @@ export class AuthService {
       },
       error: (error) => {
         this.loadingSubject.next(false);
-        this.errorSubject.next(error.status === 401
-          ? 'Ya estás registrado'
-          : 'Error con el Servidor. Intente nuevamente.')
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Ya estás registrado'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el Servidor. Intente nuevamente.',
+        );
       },
     });
   }
@@ -85,7 +92,7 @@ export class AuthService {
       },
       error: (error) => {
         window.location.href = '/login';
-        console.log(error)
+        console.log(error);
       },
     });
   }
