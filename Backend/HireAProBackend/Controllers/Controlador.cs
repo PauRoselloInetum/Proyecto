@@ -15,6 +15,8 @@ using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
 using System.IO;
 using static Google.Rpc.Context.AttributeContext.Types;
+using HireAProBackend.Services;
+
 
 namespace HireAProBackend.Controllers
 {
@@ -25,15 +27,16 @@ namespace HireAProBackend.Controllers
         private FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
         public Models.Path _path;
+        private readonly IEmailService _emailService;
 
-
-        public Controlador(IConfiguration configuracion)
+        public Controlador(IConfiguration configuracion, IEmailService emailService)
         {
             _path = new Models.Path();
             string path = _path.path; // Ruta del archivo de credenciales
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _firestoreDb = FirestoreDb.Create("hire-a-pro-database");
             _configuracion = configuracion;
+            _emailService = emailService;
         }
         [HttpGet("usuarios")] //Función de prueba para comprobar que están todos los usuarios en la base de datos
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
@@ -244,9 +247,11 @@ namespace HireAProBackend.Controllers
         }
 
         [HttpPost("forgotPassword")]
-        public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.EmailDTO emailRequest)
         {
-            string email = passwordRequest.Email;
+            string email = emailRequest.To;
+            string subject = emailRequest.Subject;
+            string body = emailRequest.Body;
 
             // Comprueba la existencia del usuario en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
@@ -256,6 +261,8 @@ namespace HireAProBackend.Controllers
             {
                 return NotFound("Este usuario no existe en la base de datos");
             }
+            
+            _emailService.SendEmail(emailRequest);
             return Ok("revisa tu correo");
         }
        
