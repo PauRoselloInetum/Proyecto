@@ -19,6 +19,12 @@ export class AuthService {
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
 
+  private errorSubject = new BehaviorSubject<string>('');
+  error$ = this.errorSubject.asObservable();
+
+  private infoSubject = new BehaviorSubject<string>('');
+  info$ = this.infoSubject.asObservable();
+
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
@@ -36,15 +42,15 @@ export class AuthService {
       next: (response) => {
         this.loadingSubject.next(false);
         this.cookieService.set('token', response);
-        this.error = '';
+        this.errorSubject.next('');
         this.info = 'Inicio de sesión exitoso, redireccionando...';
       },
       error: (error) => {
         this.loadingSubject.next(false);
-        this.error =
-          error.status === 401
-            ? 'Usuario o Contraseña incorrectas.'
-            : 'Error con el Servidor. Intente nuevamente.';
+        this.errorSubject.next(error.status === 401
+          ? 'Usuario o Contraseña incorrectas.'
+          : 'Error con el Servidor. Intente nuevamente.')
+
       },
     });
   }
@@ -58,15 +64,14 @@ export class AuthService {
       next: (response) => {
         this.loadingSubject.next(false);
         this.cookieService.set('token', response);
-        this.error = '';
+        this.errorSubject.next('');
         this.info = 'Registro exitoso, redireccionando...';
       },
       error: (error) => {
         this.loadingSubject.next(false);
-        this.error =
-          error.status === 401
-            ? 'Ya estás registrado'
-            : 'Error con el Servidor. Intente nuevamente.';
+        this.errorSubject.next(error.status === 401
+          ? 'Ya estás registrado'
+          : 'Error con el Servidor. Intente nuevamente.')
       },
     });
   }
@@ -78,8 +83,9 @@ export class AuthService {
         this.emailSubject.next(response);
         this.error = '';
       },
-      error: () => {
+      error: (error) => {
         window.location.href = '/login';
+        console.log(error)
       },
     });
   }

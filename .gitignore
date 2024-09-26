@@ -1,7 +1,5 @@
-Angular/.vscode
-Proyecto/API_CLIENTES_3/API_CLIENTES_3/.vs
-Backend/HireAProBackend/.vs
-LoginJWT-Maxim/JwtWebApiTutorial/.vs
-Backend/HireAProBackend/Models/Path.cs
-Backend/HireAProBackend/bin/*
-Backend/HireAProBackend/obj/*
+.vscode/
+.vs/
+Path.cs
+bin/
+obj/

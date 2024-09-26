@@ -9,7 +9,6 @@ import { AuthService } from '../auth.service';
   imports: [FormsModule, LoadingComponent],
   templateUrl: './register.component.html',
   styleUrls: ['../../assets/css/auth.css'],
-  providers: [AuthService],
 })
 export class RegisterComponent {
   email: string = '';
@@ -20,6 +19,20 @@ export class RegisterComponent {
   info: string = '';
 
   constructor(private authservice: AuthService) {}
+
+  ngOnInit() {
+    this.authservice.loading$.subscribe((loading) => {
+      this.loading = loading;
+    });
+
+    this.authservice.error$.subscribe((error) => {
+      this.error = error;
+    });
+
+    this.authservice.info$.subscribe((info) => {
+      this.info = info;
+    });
+  }
 
   async register() {
     this.error = '';
@@ -43,12 +56,8 @@ export class RegisterComponent {
       return;
     }
 
-    this.loading = true;
-
     try {
       await this.authservice.register(this.email, this.password);
-      this.info = this.authservice.info;
-      this.error = this.authservice.error;
       if (this.info) {
         setTimeout(() => {
           window.location.href = '/';
@@ -56,8 +65,6 @@ export class RegisterComponent {
       }
     } catch (err) {
       this.error = this.authservice.error;
-    } finally {
-      this.loading = false;
     }
   }
 }
