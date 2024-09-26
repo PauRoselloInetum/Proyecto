@@ -40,8 +40,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "emailRequest",
-        "Type": "HireAProBackend.Models.EmailDTO",
+        "Name": "changeRequest",
+        "Type": "HireAProBackend.Models.ChangeRequest",
         "IsRequired": true
       }
     ],

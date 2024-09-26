@@ -112,30 +112,52 @@ namespace HireAProBackend.Controllers
 
             string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
-            //Busca si existe el documento con los datos proporcionados en la request
+            int timeout = 5000;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            try
+            {
+                //Busca si existe el documento con los datos proporcionados en la request
             // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
             Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
 
             //Realiza la consulta a la base de datos y la almacena en respuestaDb
-           // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-            QuerySnapshot respuestaCorreo = await consultaCorreo.GetSnapshotAsync();
+            // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
-
-            //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
-            if (respuestaCorreo.Documents.Count == 0)
-            {
-                //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
-                CollectionReference referencia = _firestoreDb.Collection("users");
-                DocumentReference nuevoUserRef = await referencia.AddAsync(new
+                var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
+                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-                    email = registerRequest.Email,
-                    password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
-                });
+                QuerySnapshot respuestaCorreo = await queryTask;
 
-                return Ok("Usuario registrado");
+                    //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
+                    if (respuestaCorreo.Documents.Count == 0)
+                    {
+                        //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
+                        CollectionReference referencia = _firestoreDb.Collection("users");
+                        DocumentReference nuevoUserRef = await referencia.AddAsync(new
+                        {
+                            email = registerRequest.Email,
+                            password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
+                        });
+
+                        return Ok("Usuario registrado");
+                    }
+                    return Unauthorized("Ya existe un usuario con este correo");
+                }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+                        
+                }
             }
-            return Unauthorized("Ya existe un usuario con este correo");
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada, ha tardado demasiado");
             }
+            
+            }
+            
 
         // Función para generar el hash SHA-256 dentro del mismo controlador
         private string ComputeSha256Hash(string rawData)
@@ -168,6 +190,10 @@ namespace HireAProBackend.Controllers
         {
             //Obtiene el token en formato de string, desde el frontend
             string token = authenticateRequest.Token;
+
+            
+
+           
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("Token no proporcionado");
@@ -192,6 +218,9 @@ namespace HireAProBackend.Controllers
             base64Header = base64Header.PadRight(base64Header.Length + ((4 - base64Header.Length % 4) % 4), '=');
             base64Payload = base64Payload.PadRight(base64Payload.Length + ((4 - base64Payload.Length % 4) % 4), '=');
 
+            //Variables del timeout
+            int timeout = 5000;
+            var cancellationTokenSource = new CancellationTokenSource();
             try
             {
                 //Decodificar el encabezado y el payload
@@ -224,8 +253,12 @@ namespace HireAProBackend.Controllers
 
                 //Una vez que las variables contienen el texto del token, se realiza la consulta a la base de datos
                 Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email).WhereEqualTo("password", password);
-                QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
+                //Consulta con timeout
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+                    QuerySnapshot respuestaDb = await queryTask;
                 //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
                 DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
                 DateTime currentDate = DateTime.UtcNow;
@@ -239,6 +272,17 @@ namespace HireAProBackend.Controllers
                 {
                     return Ok(email);
                 }
+                }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+                }
+
+            }
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada");
             }
             catch (Exception ex)
             {
@@ -247,11 +291,15 @@ namespace HireAProBackend.Controllers
         }
 
         [HttpPost("forgotPassword")]
-        public async Task<ActionResult> ForgottenPassword([FromBody] Models.EmailDTO emailRequest)
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.ChangeRequest changeRequest)
         {
-            string email = emailRequest.To;
-            string subject = emailRequest.Subject;
-            string body = emailRequest.Body;
+            EmailDTO emailRequest = new EmailDTO();
+            string email = changeRequest.Email;
+            
+            emailRequest.To = email;
+            emailRequest.Subject = "Solicitud de regeneración de contraseña";
+            emailRequest.Body = "Haz click aquí para regenerar la contraseña";
+            
 
             // Comprueba la existencia del usuario en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
