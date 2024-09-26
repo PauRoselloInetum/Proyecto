@@ -14,7 +14,7 @@ export class RegisterComponent {
   email: string = '';
   password: string = '';
   passwordconfirm: string = '';
-  loading: boolean = false;
+  loading: string = '';
   error: string = '';
   info: string = '';
 

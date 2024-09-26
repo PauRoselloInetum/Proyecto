@@ -14,7 +14,7 @@ export class AuthService {
   error: string = '';
   info: string = '';
   session: string = this.cookieService.get('token');
-  loading: boolean = false;
+  loading: string = '';
 
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -25,7 +25,7 @@ export class AuthService {
   private infoSubject = new BehaviorSubject<string>('');
   info$ = this.infoSubject.asObservable();
 
-  private loadingSubject = new BehaviorSubject<boolean>(false);
+  private loadingSubject = new BehaviorSubject<string>('');
   loading$ = this.loadingSubject.asObservable();
 
   constructor(
@@ -34,19 +34,19 @@ export class AuthService {
   ) {}
 
   login(email: string, password: string): void {
-    this.loadingSubject.next(true);
+    this.loadingSubject.next('Iniciando Sesión...');
     this.authUrl = this.loginUrl;
     const loginData = { email, password };
 
     this.postAuth(loginData).subscribe({
       next: (response) => {
-        this.loadingSubject.next(false);
+        this.loadingSubject.next('');
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.info = 'Inicio de sesión exitoso, redireccionando...';
       },
       error: (error) => {
-        this.loadingSubject.next(false);
+        this.loadingSubject.next('');
         this.errorSubject.next(
           error.status === 401
             ? 'Usuario o Contraseña incorrectas.'
@@ -59,19 +59,19 @@ export class AuthService {
   }
 
   register(email: string, password: string): void {
-    this.loadingSubject.next(true);
+    this.loadingSubject.next("Registrándote...");
     this.authUrl = this.registerUrl;
     const loginData = { email, password };
 
     this.postAuth(loginData).subscribe({
       next: (response) => {
-        this.loadingSubject.next(false);
+        this.loadingSubject.next('');
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.info = 'Registro exitoso, redireccionando...';
       },
       error: (error) => {
-        this.loadingSubject.next(false);
+        this.loadingSubject.next('');
         this.errorSubject.next(
           error.status === 401
             ? 'Ya estás registrado'

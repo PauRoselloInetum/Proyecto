@@ -2,7 +2,6 @@ header {
   background-color: #2f2f2f;
   color: white;
   text-align: center;
-  transition: transform 0.5s ease;
   padding: 5px 10px;
   top: 0;
   width: 100%;
@@ -11,13 +10,19 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all 0.5s ease;
 }
 
 header.compact {
-  transform: scale(0.9);
+  transform: scale(0.85);
+  width: 250px;
   border-radius: 5px;
+  margin-top: 20px;
 }
 
+header.compact nav {
+  flex-direction: row;
+}
 header h1 {
   margin: 0;
   font-size: 24px;
@@ -31,21 +36,19 @@ nav {
   gap: 20px;
 }
 
-header.compact nav {
-  flex-direction: row;
-}
-
 nav a {
   color: white;
-  text-decoration: none;
   padding: 7px 10px;
-  margin: px;
-  transition: background-color 0.5s ease;
+  text-decoration: none;
+  margin: 5px;
+  transition: all 0.5s ease;
   border-radius: 5px;
+
 }
 
 nav a:hover {
-  background-color: #555;
+  color: #ff781f;
+  text-decoration: solid;
 }
 
 p {
@@ -54,25 +57,4 @@ p {
 
 main {
   padding-top: 80px;
-}
-
-@media (max-width: 550px) {
-  header {
-    flex-direction: column;
-    padding: 10px 5px;
-  }
-
-  nav {
-    flex-direction: row;
-    gap: 10px;
-  }
-
-  header h1 {
-    font-size: 20px;
-  }
-
-  nav a {
-    padding: 5px 8px;
-    margin: 5px 0;
-  }
 }

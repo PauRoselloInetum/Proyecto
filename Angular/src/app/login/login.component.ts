@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  loading: boolean = false;
+  loading: string = '';
   error: string = '';
   info: string = '';
 
