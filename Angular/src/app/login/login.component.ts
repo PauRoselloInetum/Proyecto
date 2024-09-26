@@ -23,6 +23,14 @@ export class LoginComponent {
     this.authservice.loading$.subscribe((loading) => {
       this.loading = loading;
     });
+
+    this.authservice.error$.subscribe((error) => {
+      this.error = error;
+    });
+
+    this.authservice.info$.subscribe((info) => {
+      this.info = info;
+    });
   }
 
   async login() {

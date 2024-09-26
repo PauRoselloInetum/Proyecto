@@ -1,5 +1,5 @@
 header {
-  background-color: #333;
+  background-color: #2f2f2f;
   color: white;
   text-align: center;
   transition: transform 0.5s ease;
@@ -39,7 +39,7 @@ nav a {
   color: white;
   text-decoration: none;
   padding: 7px 10px;
-  margin: 10px;
+  margin: px;
   transition: background-color 0.5s ease;
   border-radius: 5px;
 }
