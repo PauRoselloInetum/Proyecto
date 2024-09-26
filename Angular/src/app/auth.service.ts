@@ -19,55 +19,56 @@ export class AuthService {
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
 
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
   ) {}
 
-  login(email: string, password: string): Promise<any> {
-    this.loading = true;
+  login(email: string, password: string): void {
+    this.loadingSubject.next(true);
     this.authUrl = this.loginUrl;
     const loginData = { email, password };
-    return this.postAuth(loginData)
-      .toPromise()
-      .then(
-        (response) => {
-          this.loading = false;
-          this.cookieService.set('token', response);
-          this.error = '';
-          this.info = 'Inicio de sesion exitoso, redireccionando...';
-        },
-        (error) => {
-          this.loading = false;
-          this.error =
-            error.status === 401
-              ? 'Usuario o Contraseña incorrectas.'
-              : 'Error con el Servidor. Intente nuevamente.';
-        },
-      );
+
+    this.postAuth(loginData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next(false);
+        this.cookieService.set('token', response);
+        this.error = '';
+        this.info = 'Inicio de sesión exitoso, redireccionando...';
+      },
+      error: (error) => {
+        this.loadingSubject.next(false);
+        this.error =
+          error.status === 401
+            ? 'Usuario o Contraseña incorrectas.'
+            : 'Error con el Servidor. Intente nuevamente.';
+      },
+    });
   }
 
-  register(email: string, password: string): Promise<any> {
-    this.loading = true;
+  register(email: string, password: string): void {
+    this.loadingSubject.next(true);
     this.authUrl = this.registerUrl;
     const loginData = { email, password };
-    return this.postAuth(loginData)
-      .toPromise()
-      .then(
-        (response) => {
-          this.loading = false;
-          this.cookieService.set('token', response);
-          this.error = '';
-          this.info = 'Registro exitoso, redireccionando...';
-        },
-        (error) => {
-          this.loading = false;
-          this.error =
-            error.status === 401
-              ? 'Ya estas registrado'
-              : 'Error con el Servidor. Intente nuevamente.';
-        },
-      );
+
+    this.postAuth(loginData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next(false);
+        this.cookieService.set('token', response);
+        this.error = '';
+        this.info = 'Registro exitoso, redireccionando...';
+      },
+      error: (error) => {
+        this.loadingSubject.next(false);
+        this.error =
+          error.status === 401
+            ? 'Ya estás registrado'
+            : 'Error con el Servidor. Intente nuevamente.';
+      },
+    });
   }
 
   validateSession(session: string) {
@@ -85,7 +86,7 @@ export class AuthService {
 
   postAuth(data: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
     });
     return this.http.post(this.authUrl, data, { headers });
@@ -93,7 +94,7 @@ export class AuthService {
 
   postValidate(data: { token: string }): Observable<any> {
     const headers = new HttpHeaders({
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
     });
     return this.http.post(this.validateUrl, data, { headers });

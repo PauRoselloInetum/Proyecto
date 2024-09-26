@@ -1,0 +1,78 @@
+header {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  transition: transform 0.5s ease;
+  padding: 5px 10px;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header.compact {
+  transform: scale(0.9);
+  border-radius: 5px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+header.compact nav {
+  flex-direction: row;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 7px 10px;
+  margin: 10px;
+  transition: background-color 0.5s ease;
+  border-radius: 5px;
+}
+
+nav a:hover {
+  background-color: #555;
+}
+
+p {
+  text-align: justify;
+}
+
+main {
+  padding-top: 80px;
+}
+
+@media (max-width: 550px) {
+  header {
+    flex-direction: column;
+    padding: 10px 5px;
+  }
+
+  nav {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  nav a {
+    padding: 5px 8px;
+    margin: 5px 0;
+  }
+}

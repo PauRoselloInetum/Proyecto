@@ -7,7 +7,6 @@ import { AuthService } from '../auth.service';
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, LoadingComponent],
-  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrls: ['../../assets/css/auth.css'],
 })
@@ -20,6 +19,12 @@ export class LoginComponent {
 
   constructor(private authservice: AuthService) {}
 
+  ngOnInit() {
+    this.authservice.loading$.subscribe((loading) => {
+      this.loading = loading;
+    });
+  }
+
   async login() {
     if (this.email.trim() === '' || this.password.trim() === '') {
       this.error = 'Email y Contraseña son requeridos.';
@@ -28,7 +33,6 @@ export class LoginComponent {
 
     this.error = '';
     this.info = '';
-    this.loading = true;
 
     try {
       await this.authservice.login(this.email, this.password);
@@ -41,10 +45,6 @@ export class LoginComponent {
       }
     } catch (err) {
       this.error = this.authservice.error;
-    } finally {
-      this.loading = false;
     }
   }
-
-  ngOnInit() {}
 }
