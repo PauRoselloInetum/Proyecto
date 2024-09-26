@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './login/login.component';
 import { WrongRouteComponent } from './404/404.component';
 import { LoadingComponent } from './loading/loading.component';
@@ -7,9 +8,10 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { VerificationComponent } from './verification/verification.component';
 import { ComponentsComponent } from './components/components.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'components' , pathMatch: 'full' },
+  { path: '', component: LandingPageComponent , pathMatch: 'full' },
   { path: 'login', component: LoginComponent , pathMatch: 'full' },
   { path: 'register', component: RegisterComponent , pathMatch: 'full' },
   { path: 'loading', component: LoadingComponent , pathMatch: 'full' },
