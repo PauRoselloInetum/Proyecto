@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using System.IO;
 using static Google.Rpc.Context.AttributeContext.Types;
 using HireAProBackend.Services;
+using HireAProBackend.Templates;
 
 
 namespace HireAProBackend.Controllers
@@ -322,15 +323,19 @@ namespace HireAProBackend.Controllers
             }
         }
 
+        //Usuario envía su correo y se genera un link con el token, que se envía por correo electrónico
         [HttpPost("forgotPassword")]
         public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
         {
             EmailDTO emailRequest = new EmailDTO();
+            EmailContent emailContent = new EmailContent();
             string email = passwordRequest.Email;
             
             emailRequest.To = email;
-            emailRequest.Subject = "Solicitud de regeneración de contraseña";
-            emailRequest.Body = "Haz click aquí para regenerar la contraseña";
+            emailRequest.Subject = emailContent.ChangePassSubject;
+            string body = emailContent.PassBody(email, "http://localhost:4200/prueba");
+            emailRequest.Body = body;
+           
             
 
             // Comprueba la existencia del usuario en la base de datos
@@ -348,7 +353,7 @@ namespace HireAProBackend.Controllers
        
 
         
-
+        //Página de cambiar la contraseña
         [HttpPost("changeRequest")]
         public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
         {

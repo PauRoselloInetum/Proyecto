@@ -40,8 +40,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "changeRequest",
-        "Type": "HireAProBackend.Models.ChangeRequest",
+        "Name": "passwordRequest",
+        "Type": "HireAProBackend.Models.PasswordRequest",
         "IsRequired": true
       }
     ],
