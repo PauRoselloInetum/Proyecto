@@ -56,19 +56,28 @@ namespace HireAProBackend.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest)
+        public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest) //Timeout aplciado
         {
           
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
             string password = ComputeSha256Hash(loginRequest.Password);
 
+            //Variables del timeout
+            int timeout = 5000;
+            var cancellationTokenSource = new CancellationTokenSource();
+            try
+            {
+
             //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
 
-            //Realiza la consulta a la base de datos y la almacena en respuestaDb
-            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
 
+               
+            if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+             QuerySnapshot respuestaDb = await queryTask;
             //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
             if (respuestaDb.Documents.Count == 0)
             {
@@ -102,9 +111,27 @@ namespace HireAProBackend.Controllers
                 );
             //Retorna el token en formato de cadena de texto
             return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
+           
+                }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado.");
+                }
+            }
+            catch(TimeoutException)
+            {
+                return StatusCode(408, "La operación fue cancelada");
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+
+            }
+
         }
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest)
+        public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest) //Timeout aplicado
         {
             //Consigue las credenciales de registerRequest
             string correo = registerRequest.Email;
@@ -155,6 +182,10 @@ namespace HireAProBackend.Controllers
             {
                 return StatusCode(408, "La operación fue cancelada, ha tardado demasiado");
             }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
             
             }
             
@@ -186,14 +217,11 @@ namespace HireAProBackend.Controllers
         }
 
         [HttpPost("home")] //Comprueba si la firma es correcta pero ha de validar la fecha
-        public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest)
+        public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest) //Timeout aplicado
         {
             //Obtiene el token en formato de string, desde el frontend
             string token = authenticateRequest.Token;
 
-            
-
-           
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("Token no proporcionado");
@@ -288,13 +316,17 @@ namespace HireAProBackend.Controllers
             {
                 return Unauthorized($"Error al validar el token: {ex.Message} " + ex);
             }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
         }
 
         [HttpPost("forgotPassword")]
-        public async Task<ActionResult> ForgottenPassword([FromBody] Models.ChangeRequest changeRequest)
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
         {
             EmailDTO emailRequest = new EmailDTO();
-            string email = changeRequest.Email;
+            string email = passwordRequest.Email;
             
             emailRequest.To = email;
             emailRequest.Subject = "Solicitud de regeneración de contraseña";
@@ -315,7 +347,7 @@ namespace HireAProBackend.Controllers
         }
        
 
-        //Paso intermedio
+        
 
         [HttpPost("changeRequest")]
         public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
