@@ -37,14 +37,6 @@ export class AppComponent {
   ) {}
 
   ngOnInit() {
-    if (
-      window.location.pathname === '/login' ||
-      window.location.pathname === '/register'
-    ) {
-    } else {
-      this.validateSession();
-    }
-
     this.authservice.email$.subscribe((email) => {
       this.email = email;
     });

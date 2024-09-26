@@ -1,5 +1,5 @@
-**/.vscode
-**/.vs
-**/Path.cs
-**/bin
-**/obj
+.vscode/
+.vs/
+Path.cs
+bin/
+obj/
