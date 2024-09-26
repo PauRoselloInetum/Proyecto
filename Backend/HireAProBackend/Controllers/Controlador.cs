@@ -243,22 +243,6 @@ namespace HireAProBackend.Controllers
             }
         }
 
-        /* //Correo recuperación, que envíe una url a la página de regenerar contraseña y tenga una caducidad
-         [HttpPost("forgotPassword")]
-         public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
-         {
-             string email = passwordRequest.Email;
-             //Comprueba la existencia del usuario en la base de datos para posteriormente enviarle un correo
-             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
-             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-
-             if (respuestaDb.Documents.Count == 0)
-             {
-                 return NotFound("Este usuario no existe en la base de datos");
-             }
-             return Ok("Revisa tu correo");
-         }*/
-
         [HttpPost("forgotPassword")]
         public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
         {

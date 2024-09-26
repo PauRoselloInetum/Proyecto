@@ -1,4 +1,3 @@
-using HireAProBackend.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -7,7 +6,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 IdentityModelEventSource.ShowPII = true;
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // Agregar servicios al contenedor
 builder.Services.AddControllers();
