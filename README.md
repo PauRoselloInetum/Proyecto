@@ -1,4 +1,4 @@
-# PROYECTO (NAME)
+# PROYECTO (NOMBRE)
 
 ## Frontend
 
