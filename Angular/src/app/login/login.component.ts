@@ -46,11 +46,9 @@ export class LoginComponent {
       await this.authservice.login(this.email, this.password);
       this.info = this.authservice.info;
       this.error = this.authservice.error;
-      if (this.info) {
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 3500);
-      }
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3500);
     } catch (err) {
       this.error = this.authservice.error;
     }

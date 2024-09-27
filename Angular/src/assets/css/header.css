@@ -1,3 +1,12 @@
+@media screen and (max-width: 768px) {
+  header.compact {
+    display: none;
+  }
+  header.compact h1 {
+    display: block;
+  }
+}
+
 header {
   background-color: #2f2f2f;
   color: white;
