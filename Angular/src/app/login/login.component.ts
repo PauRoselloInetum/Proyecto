@@ -33,24 +33,7 @@ export class LoginComponent {
     });
   }
 
-  async login() {
-    if (this.email.trim() === '' || this.password.trim() === '') {
-      this.error = 'Email y Contraseña son requeridos.';
-      return;
-    }
-
-    this.error = '';
-    this.info = '';
-
-    try {
-      await this.authservice.login(this.email, this.password);
-      this.info = this.authservice.info;
-      this.error = this.authservice.error;
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 3500);
-    } catch (err) {
-      this.error = this.authservice.error;
-    }
+  login() {
+    this.authservice.login(this.email, this.password);
   }
 }
