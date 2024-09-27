@@ -1,0 +1,44 @@
+# COMO USAR GIT
+
+## Pasos para subir a la rama `main`
+
+1. **`git branch nombre-dev` Solo la primera vez, nombre-dev cambiar por tu nombre (ej, pauR-dev)**
+2. **`git add .`**
+3. **`git commit -m "CAMBIOS HECHOS"`**
+4. **`git pull` Solo el repo local esta desactualizado**
+5. **`git push -m origin nombre-dev` nombre-dev es el nombre de la rama creada inicialmente**
+6. **Abrir el proyecto de github en el navegador y entrar en tu rama**
+
+![[git_branch.png]]
+
+7. **Abrir la PR**
+
+![[git_openpr.png]]
+
+8. **Crea la PR** 
+- El titulo y la descripción deben de descriptivos e intuitivos
+- Se deben de añadir los revisores que quieras (pueden ser todos o solo un minimo de 2)
+
+![[git_createpr.png]]
+
+## Aceptar una PR
+
+1. Ir a Pull Request en GitHub web
+
+![[git_pr.png]]
+
+2. Entrar en la PR
+
+![[git_prenter.png]]
+
+3. Revisar que todo este OK y testear en local `git switch nombre-dev`
+ 
+![[git_sumbitreview.png]]
+
+4. El ultimo revisor debe de hacer merge
+
+![[git_merge.png]]
+
+5. Borrar la rama al acabar
+ 
+![[git_deletebranch.png]]
