@@ -7,14 +7,20 @@ import { Observable, BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  loginUrl = 'https://localhost:7272/api/login';
-  registerUrl = 'https://localhost:7272/api/register';
-  validateUrl = 'https://localhost:7272/api/home';
+  backendUrl = 'https://localhost:7272/api/';
+  loginUrl = this.backendUrl + 'login';
+  registerUrl = this.backendUrl + 'register';
+  validateUrl = this.backendUrl + 'home';
+  forgotUrl = this.backendUrl + 'forgotPassword';
   authUrl: string = '';
   error: string = '';
   info: string = '';
   session: string = this.cookieService.get('token');
   loading: string = '';
+
+  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
+  passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%_*?&.]{8,}$/;
 
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -43,7 +49,7 @@ export class AuthService {
         this.loadingSubject.next('');
         this.cookieService.set('token', response);
         this.errorSubject.next('');
-        this.info = 'Inicio de sesión exitoso, redireccionando...';
+        this.infoSubject.next('Inicio de sesión exitoso, redireccionando...');
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -58,17 +64,33 @@ export class AuthService {
     });
   }
 
-  register(email: string, password: string): void {
-    this.loadingSubject.next("Registrándote...");
-    this.authUrl = this.registerUrl;
-    const loginData = { email, password };
+  register(email: string, password: string, passwordconfirm: string): void {
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
 
-    this.postAuth(loginData).subscribe({
+    if (password !== passwordconfirm) {
+      this.errorSubject.next('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (!this.passwordRegex.test(password)) {
+      this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+      );
+      return;
+    }
+
+    this.loadingSubject.next('Registrándote...');
+    this.authUrl = this.registerUrl;
+    const registerData = { email, password };
+    this.postAuth(registerData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
         this.cookieService.set('token', response);
         this.errorSubject.next('');
-        this.info = 'Registro exitoso, redireccionando...';
+        this.infoSubject.next('Registro exitoso, redireccionando...');
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -97,6 +119,23 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email: string) {
+    this.loadingSubject.next('Enviando correo...');
+    const sessionData = { email: email };
+    this.postForgot(sessionData).subscribe({
+      next: (response) => {
+        this.emailSubject.next(response);
+        this.loadingSubject.next('');
+        this.error = '';
+        console.log(response);
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        console.log(error);
+      },
+    });
+  }
+
   postAuth(data: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
@@ -111,5 +150,13 @@ export class AuthService {
       'Content-Type': 'application/json',
     });
     return this.http.post(this.validateUrl, data, { headers });
+  }
+
+  postForgot(data: { email: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.forgotUrl, data, { headers });
   }
 }
