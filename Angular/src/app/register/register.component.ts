@@ -38,31 +38,17 @@ export class RegisterComponent {
     this.error = '';
     this.info = '';
 
-    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
-
-    if (!emailRegex.test(this.email)) {
-      this.error = 'Formato de correo inválido';
-      return;
-    }
-
-    if (this.password !== this.passwordconfirm) {
-      this.error = 'Las contraseñas no coinciden';
-      return;
-    }
-
-    if (!passwordRegex.test(this.password)) {
-      this.error = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial';
-      return;
-    }
-
     try {
-      await this.authservice.register(this.email, this.password);
-      if (this.info) {
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 3500);
-      }
+      await this.authservice.register(
+        this.email,
+        this.password,
+        this.passwordconfirm,
+      );
+      this.info = this.authservice.info;
+      this.error = this.authservice.error;
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3500);
     } catch (err) {
       this.error = this.authservice.error;
     }
