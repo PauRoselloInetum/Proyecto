@@ -105,7 +105,7 @@ namespace HireAProBackend.Controllers
                 new Claim("password", usuario.Password)
 
             };
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                     var newToken = new JwtSecurityToken(
@@ -277,10 +277,10 @@ namespace HireAProBackend.Controllers
 
                 //Recuperar la clave secreta desde la configuración
                 var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
 
                 //Generar la firma esperada
-                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.Key);
+                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el 
                 string email = "";
@@ -342,7 +342,7 @@ namespace HireAProBackend.Controllers
 
         //Usuario envía su correo y se genera un link con el token, que se envía por correo electrónico
         [HttpPost("forgotPassword")]
-        public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.ForgotPassRequest passwordRequest)
         {
             EmailDTO emailRequest = new EmailDTO();
             EmailContent emailContent = new EmailContent();
@@ -369,16 +369,33 @@ namespace HireAProBackend.Controllers
                         return NotFound("Este usuario no existe en la base de datos");
                     }
 
-                    Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
+                    //Generación de un token con el email del usuario (resulta más seguro y fácil de codificar)
+                    var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
 
+                    var claims = new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("email", email),
 
-                    string tokenRecuperacion = generarTokenRecuperacion(email, usuario.Password);
+                    };
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.ResetPassKey));
+                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+                    var newToken = new JwtSecurityToken(
+                            jwt.Issuer,
+                            jwt.Audience,
+                            claims,
+                            expires: DateTime.Now.AddMinutes(15),
+                            signingCredentials: signIn
+
+                        );
+                    string tokenRecuperacion = new JwtSecurityTokenHandler().WriteToken(newToken);
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como querry por Get
-                    string link = "http://localhost:4200/" + tokenRecuperacion;
+                    string link = "http://localhost:4200/login/reset-password?T=" + tokenRecuperacion;
                     string body = emailContent.PassBody(email, link);
                     emailRequest.Body = body;
-
                     
                     _emailService.SendEmail(emailRequest);
                     return Ok("revisa tu correo");
@@ -408,12 +425,69 @@ namespace HireAProBackend.Controllers
 
             //Página de cambiar la contraseña
             [HttpPost("changeRequest")]
-        public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
+        public async Task<ActionResult> ChangePassword([FromBody] Models.ChangePassRequest changeRequest)
         {
-            //Obtiene el email y la contraseña de la changeRequest, y hashea la contraseña          
-            string email = changeRequest.Email;
+            //Obtiene el email y la contraseña de la changeRequest, y hashea la contraseña
             string newPass = ComputeSha256Hash(changeRequest.Password);
+            //Obtiene el token en formato de string, desde el frontend
+            string token = changeRequest.Token;
 
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token no proporcionado");
+            }
+            //Cada token tiene 3 partes: header, payload y signature
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+            {
+                return Unauthorized("Token incorrecto");
+            }
+
+            //Extraer el encabezado, el payload y la firma
+            var header = parts[0];
+            var payload = parts[1];
+            var signature = parts[2];
+
+            //Convertir Base64Url a Base64 estándar para decodificación
+            string base64Header = header.Replace('-', '+').Replace('_', '/');
+            string base64Payload = payload.Replace('-', '+').Replace('_', '/');
+
+            //Añadir relleno si es necesario
+            base64Header = base64Header.PadRight(base64Header.Length + ((4 - base64Header.Length % 4) % 4), '=');
+            base64Payload = base64Payload.PadRight(base64Payload.Length + ((4 - base64Payload.Length % 4) % 4), '=');
+
+            //Decodificar el encabezado y el payload
+            var jsonBytesHeader = Convert.FromBase64String(base64Header);
+            var jsonBytesPayload = Convert.FromBase64String(base64Payload);
+            string headerJson = Encoding.UTF8.GetString(jsonBytesHeader); //Creo que esta parte es innecesaria
+            string payloadJson = Encoding.UTF8.GetString(jsonBytesPayload);
+
+            //Recuperar la clave secreta desde la configuración
+            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.ResetPassKey));
+
+            //Generar la firma esperada
+            string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.ResetPassKey);
+
+            //Inicializar las variables para poder utilizarlas después, al validar el 
+            string email = "";
+            long exp = 0;
+
+            using (JsonDocument doc = JsonDocument.Parse(payloadJson))
+            {
+                //Extrae el elemento raíz para poder extraer el texto que hay en email, contra y exp
+                JsonElement root = doc.RootElement;
+                email = root.GetProperty("email").GetString();
+                exp = root.GetProperty("exp").GetInt64();
+
+            }
+            //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
+            DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
+            DateTime currentDate = DateTime.UtcNow;
+
+            if (expirationDate <= currentDate || expectedSignature != signature) {
+                return Unauthorized("El enlace de regeneración de contraseña no es válido o ha expirado");
+            }
             //Busca si la cuenta está registrada en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
@@ -455,6 +529,8 @@ namespace HireAProBackend.Controllers
             return Ok("Usuario eliminado.");
         }
 
+
+        //Probablemente en desuso, será mejor utilizar un jwt
         // método que va a crear un token personalizado para la url de recuperación de contraseña.
         // procedimiento --> hash(mail + contra + token perosnalizado)
         private static readonly Random random = new Random();
