@@ -20,6 +20,8 @@ using static Google.Rpc.Context.AttributeContext.Types;
 using HireAProBackend.Services;
 using HireAProBackend.Templates;
 using System.Threading;
+using System.Linq.Expressions;
+using static Google.Rpc.Help.Types;
 
 
 namespace HireAProBackend.Controllers
@@ -51,7 +53,8 @@ namespace HireAProBackend.Controllers
 
             foreach (var document in snapshot.Documents) {
                 if (document.Exists) {
-                    var cancellationTokenSource = new CancellationTokenSource(); ;
+                    var cancellationTokenSource = new CancellationTokenSource();
+                    Usuario usuario = document.ConvertTo<Usuario>();
                     usuarios.Add(usuario); }
             }
             return usuarios;
@@ -62,39 +65,39 @@ namespace HireAProBackend.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest) //Timeout aplciado
         {
-          
+
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
             string password = ComputeSha256Hash(loginRequest.Password);
 
             //Variables del timeout
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
             try
             {
 
-            //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
+                //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
 
-            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
 
-               
-            if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-             QuerySnapshot respuestaDb = await queryTask;
-            //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
-            if (respuestaDb.Documents.Count == 0)
-            {
-                return Unauthorized("Email o contraseña incorrectos");
-            }
+                    QuerySnapshot respuestaDb = await queryTask;
+                    //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
+                    if (respuestaDb.Documents.Count == 0)
+                    {
+                        return Unauthorized("Email o contraseña incorrectos");
+                    }
 
-            //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
-            Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>();
-            //Obtiene los datos desde appsettings.json
-            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+                    //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
+                    Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>();
+                    //Obtiene los datos desde appsettings.json
+                    var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
 
-            var claims = new[]
-            {
+                    var claims = new[]
+                    {
                 new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
@@ -102,20 +105,20 @@ namespace HireAProBackend.Controllers
                 new Claim("password", usuario.Password)
 
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var newToken = new JwtSecurityToken(
-                    jwt.Issuer,
-                    jwt.Audience,
-                    claims,
-                    expires: DateTime.Now.AddDays(10),
-                    signingCredentials: signIn
+                    var newToken = new JwtSecurityToken(
+                            jwt.Issuer,
+                            jwt.Audience,
+                            claims,
+                            expires: DateTime.Now.AddDays(10),
+                            signingCredentials: signIn
 
-                );
-            //Retorna el token en formato de cadena de texto
-            return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
-           
+                        );
+                    //Retorna el token en formato de cadena de texto
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
+
                 }
                 else
                 {
@@ -123,7 +126,7 @@ namespace HireAProBackend.Controllers
                     return StatusCode(408, "La consulta ha tardado demasiado.");
                 }
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
                 return StatusCode(408, "La operación fue cancelada");
             }
@@ -137,28 +140,38 @@ namespace HireAProBackend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest) //Timeout aplicado
         {
-            //Consigue las credenciales de registerRequest
+            EmailDTO emailRequest = new EmailDTO();
+            EmailContent emailContent = new EmailContent();
             string correo = registerRequest.Email;
-            // string password = registerRequest.Password;
+
+            emailRequest.To = correo;
+            emailRequest.Subject = emailContent.WelcomeSubject;
+            string body = emailContent.WelBody(correo);
+            emailRequest.Body = body;
+
+
+
+            //Consigue las credenciales de registerRequest
+            // string password = registerRequest.Password
 
             string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
                 //Busca si existe el documento con los datos proporcionados en la request
-            // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
-            Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
+                // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
 
-            //Realiza la consulta a la base de datos y la almacena en respuestaDb
-            // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+                //Realiza la consulta a la base de datos y la almacena en respuestaDb
+                // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
-                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-                QuerySnapshot respuestaCorreo = await queryTask;
+                    QuerySnapshot respuestaCorreo = await queryTask;
 
                     //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
                     if (respuestaCorreo.Documents.Count == 0)
@@ -171,6 +184,7 @@ namespace HireAProBackend.Controllers
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                         });
 
+                        _emailService.SendEmail(emailRequest);
                         return Ok("Usuario registrado");
                     }
                     return Unauthorized("Ya existe un usuario con este correo");
@@ -179,7 +193,7 @@ namespace HireAProBackend.Controllers
                 {
                     cancellationTokenSource.Cancel();
                     return StatusCode(408, "La consulta ha tardado demasiado");
-                        
+
                 }
             }
             catch (TaskCanceledException)
@@ -190,9 +204,9 @@ namespace HireAProBackend.Controllers
             {
                 cancellationTokenSource.Dispose();
             }
-            
-            }
-            
+
+        }
+
 
         // Función para generar el hash SHA-256 dentro del mismo controlador
         private string ComputeSha256Hash(string rawData)
@@ -251,7 +265,7 @@ namespace HireAProBackend.Controllers
             base64Payload = base64Payload.PadRight(base64Payload.Length + ((4 - base64Payload.Length % 4) % 4), '=');
 
             //Variables del timeout
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
             try
             {
@@ -288,22 +302,22 @@ namespace HireAProBackend.Controllers
 
                 //Consulta con timeout
                 var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
-                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot respuestaDb = await queryTask;
-                //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
-                DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
-                DateTime currentDate = DateTime.UtcNow;
+                    //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
+                    DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
+                    DateTime currentDate = DateTime.UtcNow;
 
-                // Comparar la firma esperada con la firma del token
-                if (expectedSignature != signature || currentDate > expirationDate || respuestaDb.Documents.Count == 0) //Añadir fecha de expiración
-                {
-                    return Unauthorized("Token no válido");
-                }
-                else
-                {
-                    return Ok(email);
-                }
+                    // Comparar la firma esperada con la firma del token
+                    if (expectedSignature != signature || currentDate > expirationDate || respuestaDb.Documents.Count == 0) //Añadir fecha de expiración
+                    {
+                        return Unauthorized("Token no válido");
+                    }
+                    else
+                    {
+                        return Ok(email);
+                    }
                 }
                 else
                 {
@@ -333,40 +347,67 @@ namespace HireAProBackend.Controllers
             EmailDTO emailRequest = new EmailDTO();
             EmailContent emailContent = new EmailContent();
             string email = passwordRequest.Email;
-            
+
             emailRequest.To = email;
             emailRequest.Subject = emailContent.ChangePassSubject;
 
-            // Comprueba la existencia del usuario en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
-            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-            Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
-
-
-            string tokenRecuperacion = generarTokenRecuperacion(email, usuario.Password);
-
-            // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como querry por Get
-            string link = "http://localhost:4200" + tokenRecuperacion;
-            string body = emailContent.PassBody(email,  link);
-            emailRequest.Body = body;
-           
-            
-
-           
-
-            if (respuestaDb.Documents.Count == 0)
+            //Variables del timeout
+            int timeout = 10000;
+            var cancellationTokenSource = new CancellationTokenSource();
+            try
             {
-                return NotFound("Este usuario no existe en la base de datos");
-            }
-            
-            _emailService.SendEmail(emailRequest);
-            return Ok("revisa tu correo");
-        }
-       
+                // Comprueba la existencia del usuario en la base de 
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
+                //Consulta con timeout
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+                    QuerySnapshot respuestaDb = await queryTask;
 
-        
-        //Página de cambiar la contraseña
-        [HttpPost("changeRequest")]
+                    if (respuestaDb.Documents.Count == 0)
+                    {
+                        return NotFound("Este usuario no existe en la base de datos");
+                    }
+
+                    Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
+
+
+                    string tokenRecuperacion = generarTokenRecuperacion(email, usuario.Password);
+
+                    // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como querry por Get
+                    string link = "http://localhost:4200/" + tokenRecuperacion;
+                    string body = emailContent.PassBody(email, link);
+                    emailRequest.Body = body;
+
+                    
+                    _emailService.SendEmail(emailRequest);
+                    return Ok("revisa tu correo");
+                }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada");
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Error al realizar la operación: {ex.Message} " + ex);
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
+        }
+
+
+
+
+            //Página de cambiar la contraseña
+            [HttpPost("changeRequest")]
         public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
         {
             //Obtiene el email y la contraseña de la changeRequest, y hashea la contraseña          
@@ -399,6 +440,7 @@ namespace HireAProBackend.Controllers
             //Busca si existe el documento con los datos proporcionados en la request
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+            
 
             if (respuestaDb.Documents.Count == 0)
             {
