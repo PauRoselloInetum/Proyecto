@@ -2,7 +2,7 @@
 {
     public class EmailContent
     {
-        public string WelcomeSubject { get; set; } = "¡Te damos la bienvenida a Hire a pro!";
+        public string WelcomeSubject { get; set; } = "¡Te damos la bienvenida a [nombre empresa]!";
         public string WelcomeBody { get; set; }
         public string ChangePassSubject { get; set; } = "Solicitud de regeneración de contraseña";
         public string ChangePassBody { get; set; }
