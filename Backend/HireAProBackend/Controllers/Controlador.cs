@@ -167,7 +167,16 @@ namespace HireAProBackend.Controllers
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                         });
+                        EmailDTO emailRequest = new EmailDTO();
+                        EmailContent emailContent = new EmailContent();
+                        string email = registerRequest.Email;
 
+                        emailRequest.To = email;
+                        emailRequest.Subject = emailContent.WelcomeSubject;
+                        string body = emailContent.WelBody(email);
+                        emailRequest.Body = body;
+
+                        _emailService.SendEmail(emailRequest);
                         return Ok("Usuario registrado");
                     }
                     return Unauthorized("Ya existe un usuario con este correo");
