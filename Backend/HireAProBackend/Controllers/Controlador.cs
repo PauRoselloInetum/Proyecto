@@ -10,6 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
@@ -17,6 +19,7 @@ using System.IO;
 using static Google.Rpc.Context.AttributeContext.Types;
 using HireAProBackend.Services;
 using HireAProBackend.Templates;
+using System.Threading;
 
 
 namespace HireAProBackend.Controllers
@@ -48,7 +51,7 @@ namespace HireAProBackend.Controllers
 
             foreach (var document in snapshot.Documents) {
                 if (document.Exists) {
-                    var usuario = document.ConvertTo<Usuario>();
+                    var cancellationTokenSource = new CancellationTokenSource(); ;
                     usuarios.Add(usuario); }
             }
             return usuarios;
@@ -167,16 +170,7 @@ namespace HireAProBackend.Controllers
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                         });
-                        EmailDTO emailRequest = new EmailDTO();
-                        EmailContent emailContent = new EmailContent();
-                        string email = registerRequest.Email;
 
-                        emailRequest.To = email;
-                        emailRequest.Subject = emailContent.WelcomeSubject;
-                        string body = emailContent.WelBody(email);
-                        emailRequest.Body = body;
-
-                        _emailService.SendEmail(emailRequest);
                         return Ok("Usuario registrado");
                     }
                     return Unauthorized("Ya existe un usuario con este correo");
@@ -342,14 +336,23 @@ namespace HireAProBackend.Controllers
             
             emailRequest.To = email;
             emailRequest.Subject = emailContent.ChangePassSubject;
-            string body = emailContent.PassBody(email, "http://localhost:4200/prueba");
-            emailRequest.Body = body;
-           
-            
 
             // Comprueba la existencia del usuario en la base de datos
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+            Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
+
+
+            string tokenRecuperacion = generarTokenRecuperacion(email, usuario.Password);
+
+            // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como querry por Get
+            string link = "http://localhost:4200" + tokenRecuperacion;
+            string body = emailContent.PassBody(email,  link);
+            emailRequest.Body = body;
+           
+            
+
+           
 
             if (respuestaDb.Documents.Count == 0)
             {
@@ -408,6 +411,20 @@ namespace HireAProBackend.Controllers
                 await _firestoreDb.Collection("users").Document(document.Id).DeleteAsync();
             }
             return Ok("Usuario eliminado.");
+        }
+
+        // método que va a crear un token personalizado para la url de recuperación de contraseña.
+        // procedimiento --> hash(mail + contra + token perosnalizado)
+        private static readonly Random random = new Random();
+        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private static string generarTokenRecuperacion(string mail, string contra)
+        {
+
+            string bufferToken = mail + contra;
+
+
+            return  bufferToken + new string(Enumerable.Repeat(chars, 7)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
     }
