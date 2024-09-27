@@ -99,6 +99,7 @@ body{
         transform: translate(0, -50%); /* Asegura que esté alineado verticalmente con el círculo */
         opacity: 0; /* Oculta el texto inicialmente */
         pointer-events: none; /* Evita interacciones con el texto cuando está oculto */
+        text-align: justify;
     }
     
     .foto:hover .texto {
