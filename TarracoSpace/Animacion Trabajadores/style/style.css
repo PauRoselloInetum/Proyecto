@@ -86,15 +86,15 @@ body{
     }
     
     .foto:hover .circle {
-        left: 20px; /* Mueve el círculo a la izquierda con un margen de 20px */
+        left: 30%; /* Mueve el círculo a la izquierda con un margen de 20px */
         transform: translate(0, -50%); /* Asegura que permanezca centrado verticalmente */
     }
     
     /* Estilos para el texto que aparecerá */
     .texto {
         position: absolute;
-        left: 25%; /* Coloca el texto a la derecha del círculo */
-        width: 50%;
+        left: 50%; /* Coloca el texto a la derecha del círculo */
+        width: 30%;
         top: 50%;
         transform: translate(0, -50%); /* Asegura que esté alineado verticalmente con el círculo */
         opacity: 0; /* Oculta el texto inicialmente */
