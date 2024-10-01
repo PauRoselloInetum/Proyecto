@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './login/login.component';
 import { WrongRouteComponent } from './404/404.component';
 import { LoadingComponent } from './loading/loading.component';
@@ -9,7 +10,6 @@ import { VerificationComponent } from './verification/verification.component';
 import { ComponentsComponent } from './components/components.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 
-// Define las rutas de la aplicación que estamos creando. Asocia los diferentes cmponentes con direcciones URLs. Se añade el valor de 'path' a la URL raíz en el navegador
 export const routes: Routes = [
   { path: '', component: LandingPageComponent , pathMatch: 'full' },
   { path: 'login', component: LoginComponent , pathMatch: 'full' },
