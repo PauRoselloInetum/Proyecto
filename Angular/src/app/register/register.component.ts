@@ -11,6 +11,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['../../assets/css/auth.css'],
 })
 export class RegisterComponent {
+  username: string = '';
   email: string = '';
   password: string = '';
   passwordconfirm: string = '';

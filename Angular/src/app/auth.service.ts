@@ -11,6 +11,7 @@ export class AuthService {
   loginUrl = this.backendUrl + 'login';
   registerUrl = this.backendUrl + 'register';
   validateUrl = this.backendUrl + 'home';
+  verifyUserUrl = this.backendUrl + 'verifyAccount';
   forgotUrl = this.backendUrl + 'forgotPassword';
   forgotChangeUrl = this.backendUrl + 'changePass';
   authUrl: string = '';
@@ -192,6 +193,31 @@ export class AuthService {
     });
   }
 
+  verifyUser(token: string) {
+    this.loadingSubject.next('Verificando...');
+    const verifyData = { token: token };
+    this.postVerifyUser(verifyData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next('');
+        this.infoSubject.next('Te has verificado correctamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Token inválido o expirado.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente.',
+        );
+      },
+    });
+  }
+
   postAuth(data: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
@@ -222,5 +248,13 @@ export class AuthService {
       'Content-Type': 'application/json',
     });
     return this.http.post(this.forgotChangeUrl, data, { headers });
+  }
+
+  postVerifyUser(data: { token: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.verifyUserUrl, data, { headers });
   }
 }

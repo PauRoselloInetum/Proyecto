@@ -1,11 +1,10 @@
 <title>Verification</title>
-<div class="parent">
-    <div class="child">
-      <h2>Verifica tu correo</h2>
-        <div class="input-group">
-          <i class="fas fa-codig"></i>
-          <input type="text" placeholder="Codigo de 6 digitos" required />
-        </div>
-        <button onclick="window.location.href='./login';">Enviar</button>
+@if (this.info) {
+  <div class="parent">
+    <div class="info child">
+      <p>{{ this.info }}</p>
     </div>
   </div>
+} @else {
+  <app-loading></app-loading>
+}
