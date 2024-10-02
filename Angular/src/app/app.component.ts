@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { RouterOutlet } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { VerificationComponent } from './verification/verification.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,7 +16,6 @@ import { HttpClientModule } from '@angular/common/http';
     LoginComponent,
     VerificationComponent,
     RegisterComponent,
-    ResetPasswordComponent,
     ForgotPasswordComponent,
     HttpClientModule,
   ],
