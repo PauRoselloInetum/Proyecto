@@ -9,7 +9,7 @@
     "Parameters": [
       {
         "Name": "changeRequest",
-        "Type": "HireAProBackend.Models.ChangeRequest",
+        "Type": "HireAProBackend.Models.ChangePassRequest",
         "IsRequired": true
       }
     ],
@@ -41,7 +41,7 @@
     "Parameters": [
       {
         "Name": "passwordRequest",
-        "Type": "HireAProBackend.Models.PasswordRequest",
+        "Type": "HireAProBackend.Models.ForgotPassRequest",
         "IsRequired": true
       }
     ],
