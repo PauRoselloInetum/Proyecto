@@ -201,7 +201,8 @@ namespace HireAProBackend.Controllers
                             username = registerRequest.Username,
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
-                            verified = false
+                            verified = false,
+                            createdAt = DateTime.UtcNow
                         });
 
                         _emailService.SendEmail(verifyEmail);
@@ -493,7 +494,7 @@ namespace HireAProBackend.Controllers
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                     string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
                     await guardarToken(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
-                    string body = emailContent.PassBody(email, link);
+                    string body = emailContent.PassBody(usuario.Username, link); 
 
                     emailRequest.Body = body;
                     
