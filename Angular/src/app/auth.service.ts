@@ -138,6 +138,10 @@ export class AuthService {
   }
 
   forgotPassword(email: string) {
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
     this.loadingSubject.next('Enviando correo...');
     const sessionData = { email: email };
     this.postForgot(sessionData).subscribe({

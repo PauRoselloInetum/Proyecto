@@ -33,17 +33,7 @@ export class ForgotPasswordComponent {
     });
   }
 
-
-  async forgotpassword() {
-    this.error = '';
-    this.info = '';
-
-    try {
-      await this.authservice.forgotPassword(this.email);
-      this.info = this.authservice.info;
-      this.error = this.authservice.error;
-    } catch (err) {
-      this.error = this.authservice.error;
-    }
+  forgotPassword() {
+    this.authservice.forgotPassword(this.email);
   }
 }
