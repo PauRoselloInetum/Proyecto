@@ -18,9 +18,9 @@ export class AuthService {
   session: string = this.cookieService.get('token');
   loading: string = '';
 
-  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
+  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
   passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%_*?&.]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
 
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -40,6 +40,18 @@ export class AuthService {
   ) {}
 
   login(email: string, password: string): void {
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
+
+    if (!this.passwordRegex.test(password)) {
+      this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+      );
+      return;
+    }
+
     this.loadingSubject.next('Iniciando Sesión...');
     this.authUrl = this.loginUrl;
     const loginData = { email, password };
@@ -50,6 +62,9 @@ export class AuthService {
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.infoSubject.next('Inicio de sesión exitoso, redireccionando...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -91,6 +106,9 @@ export class AuthService {
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.infoSubject.next('Registro exitoso, redireccionando...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');

@@ -3,6 +3,7 @@
 ## Pasos para subir a la rama `main`
 
 1. **`git branch nombre-dev` Solo la primera vez, nombre-dev cambiar por tu nombre (ej, pauR-dev)**
+1.1 **`git switch nombre-dev` Cambias a la rama de desarrollo**
 2. **`git add .`**
 3. **`git commit -m "CAMBIOS HECHOS"`**
 4. **`git pull` Solo el repo local esta desactualizado**

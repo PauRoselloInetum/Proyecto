@@ -14,26 +14,27 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// Configuraci髇 de CORS para permitir solicitudes desde Angular (localhost:4200)
+// Configuraci贸n de CORS para permitir solicitudes desde Angular (localhost:4200)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
         builder => builder
             .WithOrigins("http://localhost:4200") // Permitir origen de Angular
-            .AllowAnyMethod() // Permitir todos los m閠odos HTTP (GET, POST, etc.)
+            .AllowAnyMethod() // Permitir todos los m茅todos HTTP (GET, POST, etc.)
             .AllowAnyHeader()); // Permitir cualquier encabezado
 });
 
-// Configuraci髇 de autenticaci髇 con JWT para m鷏tiples esquemas
+// Configuraci贸n de autenticaci贸n con JWT para m煤ltiples esquemas
 builder.Services.AddAuthentication(options =>
+
 {
+    // Esquema predeterminado para login
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
+.AddJwtBearer("LoginScheme", options =>
 {
-    // Configuraci髇 del token de autenticaci髇 (login)
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
@@ -41,7 +42,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:LoginKey"])) // LoginKey
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:LoginKey"]))
     };
 });
 
@@ -52,7 +53,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
-// Configuraci髇 del pipeline de solicitudes HTTP
+// Configuraci贸n del pipeline de solicitudes HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -61,7 +62,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Aplicar la pol韙ica CORS antes de otros middlewares
+// Aplicar la pol铆tica CORS antes de otros middlewares
 app.UseCors("AllowAngularApp");
 
 app.UseAuthentication();
