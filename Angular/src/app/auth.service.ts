@@ -11,6 +11,7 @@ export class AuthService {
   loginUrl = this.backendUrl + 'login';
   registerUrl = this.backendUrl + 'register';
   validateUrl = this.backendUrl + 'home';
+  verifyUserUrl = this.backendUrl + 'verifyAccount';
   forgotUrl = this.backendUrl + 'forgotPassword';
   forgotChangeUrl = this.backendUrl + 'changePass';
   authUrl: string = '';
@@ -169,15 +170,40 @@ export class AuthService {
 
   forgotChangePassword(password: string, token: string) {
     this.loadingSubject.next('Cambiando contraseña...');
-
-    const passwordData = { password: password };
-    const params = { token: token };
-
-    this.postForgotChange(passwordData, params).subscribe({
+    const passwordData = { password: password, token: token };
+    this.postForgotChange(passwordData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
         this.errorSubject.next('');
         this.infoSubject.next('Contraseña cambiada exitosamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Token inválido o expirado.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente.',
+        );
+      },
+    });
+  }
+
+  verifyUser(token: string) {
+    this.loadingSubject.next('Verificando...');
+    const verifyData = { token: token };
+    this.postVerifyUser(verifyData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next('');
+        this.infoSubject.next('Te has verificado correctamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -216,11 +242,19 @@ export class AuthService {
     return this.http.post(this.forgotUrl, data, { headers });
   }
 
-  postForgotChange(data: { password: string }, params: { token: string }): Observable<any> {
+  postForgotChange(data: { password: string, token: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
     });
-    return this.http.post(this.forgotChangeUrl, data, { headers, params });
+    return this.http.post(this.forgotChangeUrl, data, { headers });
+  }
+
+  postVerifyUser(data: { token: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.verifyUserUrl, data, { headers });
   }
 }
