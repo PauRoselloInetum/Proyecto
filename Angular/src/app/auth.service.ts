@@ -12,15 +12,16 @@ export class AuthService {
   registerUrl = this.backendUrl + 'register';
   validateUrl = this.backendUrl + 'home';
   forgotUrl = this.backendUrl + 'forgotPassword';
+  forgotChangeUrl = this.backendUrl + 'changePass';
   authUrl: string = '';
   error: string = '';
   info: string = '';
   session: string = this.cookieService.get('token');
   loading: string = '';
 
-  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
   passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%_*?&.]{8,}$/;
 
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -132,7 +133,6 @@ export class AuthService {
       },
       error: (error) => {
         window.location.href = '/login';
-        console.log(error);
       },
     });
   }
@@ -142,18 +142,52 @@ export class AuthService {
       this.errorSubject.next('Formato de correo inválido');
       return;
     }
+
     this.loadingSubject.next('Enviando correo...');
-    const sessionData = { email: email };
-    this.postForgot(sessionData).subscribe({
+    const emailData = { email: email };
+
+    this.postForgot(emailData).subscribe({
       next: (response) => {
-        this.emailSubject.next(response);
         this.loadingSubject.next('');
-        this.error = '';
-        console.log(response);
+        this.infoSubject.next(
+          'Correo de recuperación enviado. Verifica tu bandeja de entrada.',
+        );
+        this.errorSubject.next('');
       },
       error: (error) => {
         this.loadingSubject.next('');
-        console.log(error);
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Correo no registrado'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente más tarde.',
+        );
+      },
+    });
+  }
+
+  forgotChangePassword(password: string, token: string) {
+    this.loadingSubject.next('Cambiando contraseña...');
+
+    const passwordData = { password: password };
+    const params = { token: token };
+
+    this.postForgotChange(passwordData, params).subscribe({
+      next: (response) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next('');
+        this.infoSubject.next('Contraseña cambiada exitosamente.');
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Token inválido o expirado.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente.',
+        );
       },
     });
   }
@@ -180,5 +214,13 @@ export class AuthService {
       'Content-Type': 'application/json',
     });
     return this.http.post(this.forgotUrl, data, { headers });
+  }
+
+  postForgotChange(data: { password: string }, params: { token: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.forgotChangeUrl, data, { headers, params });
   }
 }
