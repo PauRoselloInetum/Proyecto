@@ -169,15 +169,15 @@ export class AuthService {
 
   forgotChangePassword(password: string, token: string) {
     this.loadingSubject.next('Cambiando contraseña...');
-
-    const passwordData = { password: password };
-    const params = { token: token };
-
-    this.postForgotChange(passwordData, params).subscribe({
+    const passwordData = { password: password, token: token };
+    this.postForgotChange(passwordData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
         this.errorSubject.next('');
         this.infoSubject.next('Contraseña cambiada exitosamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -216,11 +216,11 @@ export class AuthService {
     return this.http.post(this.forgotUrl, data, { headers });
   }
 
-  postForgotChange(data: { password: string }, params: { token: string }): Observable<any> {
+  postForgotChange(data: { password: string, token: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
     });
-    return this.http.post(this.forgotChangeUrl, data, { headers, params });
+    return this.http.post(this.forgotChangeUrl, data, { headers });
   }
 }
