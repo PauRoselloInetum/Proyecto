@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { LoadingComponent } from '../loading/loading.component';
 import { AuthService } from '../auth.service';
@@ -13,11 +14,16 @@ import { AuthService } from '../auth.service';
 })
 export class ForgotPasswordComponent {
   email: string = '';
+  password: string = '';
   loading: string = '';
   error: string = '';
   info: string = '';
+  token: string = '';
 
-  constructor(private authservice: AuthService) {}
+  constructor(
+    private authservice: AuthService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
     this.authservice.loading$.subscribe((loading) => {
@@ -31,9 +37,17 @@ export class ForgotPasswordComponent {
     this.authservice.info$.subscribe((info) => {
       this.info = info;
     });
+
+    this.route.queryParams.subscribe((params) => {
+      this.token = params['t'];
+    });
   }
 
   forgotPassword() {
-    this.authservice.forgotPassword(this.email);
+    if (this.token) {
+      this.authservice.forgotChangePassword(this.password, this.token);
+    } else {
+      this.authservice.forgotPassword(this.email);
+    }
   }
 }
