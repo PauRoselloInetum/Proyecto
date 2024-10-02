@@ -132,7 +132,6 @@ export class AuthService {
       },
       error: (error) => {
         window.location.href = '/login';
-        console.log(error);
       },
     });
   }
@@ -148,12 +147,17 @@ export class AuthService {
       next: (response) => {
         this.emailSubject.next(response);
         this.loadingSubject.next('');
-        this.error = '';
-        console.log(response);
+        this.errorSubject.next('');
       },
       error: (error) => {
         this.loadingSubject.next('');
-        console.log(error);
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Correo no registrado'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el Servidor. Intente nuevamente.',
+        );
       },
     });
   }
