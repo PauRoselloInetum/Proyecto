@@ -23,6 +23,8 @@ using System.Threading;
 using System.Linq.Expressions;
 using static Google.Rpc.Help.Types;
 using Newtonsoft.Json.Linq;
+using System.Runtime.ConstrainedExecution;
+using Google.Protobuf.WellKnownTypes;
 
 
 namespace HireAProBackend.Controllers
@@ -141,16 +143,15 @@ namespace HireAProBackend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest) //Timeout aplicado
         {
-            EmailDTO emailRequest = new EmailDTO();
+            EmailDTO welEmail = new EmailDTO();
             EmailContent emailContent = new EmailContent();
-            string correo = registerRequest.Email;
+            string email = registerRequest.Email;
+            string username = registerRequest.Username;
 
-            emailRequest.To = correo;
-            emailRequest.Subject = emailContent.WelcomeSubject;
-            string body = emailContent.WelBody(correo);
-            emailRequest.Body = body;
-
-
+            welEmail.To = email;
+            welEmail.Subject = emailContent.WelcomeSubject;
+            string body = emailContent.WelBody(email);
+            welEmail.Body = body;
 
             //Consigue las credenciales de registerRequest
             // string password = registerRequest.Password
@@ -164,7 +165,7 @@ namespace HireAProBackend.Controllers
             {
                 //Busca si existe el documento con los datos proporcionados en la request
                 // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
-                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
+                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", email);
 
                 //Realiza la consulta a la base de datos y la almacena en respuestaDb
                 // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
@@ -177,15 +178,33 @@ namespace HireAProBackend.Controllers
                     //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
                     if (respuestaCorreo.Documents.Count == 0)
                     {
+                        //Enviar correo de verificación
+                        EmailDTO verifyEmail = new EmailDTO();
+                        EmailContent verifyContent = new EmailContent();
+
+                        verifyEmail.To = email;
+                        verifyEmail.Subject = emailContent.VerifySubject;
+
+                        string verifyToken = ComputeSha256Hash(generarTokenRecuperacion(email));
+
+                        // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
+                        string link = "http://localhost:4200/login/verify?t=" + verifyToken;
+                        await guardarToken(verifyToken, email);
+
+                        string verifyBody = emailContent.VerBody(username, link);//Generar el link
+
                         //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
                         CollectionReference referencia = _firestoreDb.Collection("users");
                         DocumentReference nuevoUserRef = await referencia.AddAsync(new
                         {
+                            username = registerRequest.Username,
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
+                            verified = false
                         });
 
-                        _emailService.SendEmail(emailRequest);
+                        _emailService.SendEmail(verifyEmail);
+                        _emailService.SendEmail(welEmail);
                         return Ok("Usuario registrado");
                     }
                     return Unauthorized("Ya existe un usuario con este correo");
@@ -377,7 +396,7 @@ namespace HireAProBackend.Controllers
                     string tokenRecuperacion = ComputeSha256Hash(generarTokenRecuperacion(email));
 
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
-                    string link = "http://localhost:4200/t=" + tokenRecuperacion;
+                    string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
                     await guardarToken(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
                     string body = emailContent.PassBody(email, link);
 
@@ -412,10 +431,13 @@ namespace HireAProBackend.Controllers
         /** Buscará a usuarios mediante tokens de recuperacion
        */
         [HttpPost("changePass")]
-        public async Task<ActionResult> ChangePassword([FromQuery] string token, [FromBody] string nuevaPassword)
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePassRequest changePassRequest)
         {
             //verificar token. se crea un buffer para tener la instancia a mano y despues sobreescribirla
             TokenPassReset tokenBuffer = new TokenPassReset();
+
+            string token = changePassRequest.Token;
+            string nuevaPassword = changePassRequest.Password;
 
             // Ejecutar consulta para buscar el token
             Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
