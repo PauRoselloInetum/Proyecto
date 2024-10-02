@@ -2,7 +2,7 @@
 {
     public class EmailContent
     {
-        public string WelcomeSubject { get; set; } = "¡Te damos la bienvenida a [nombre empresa]!";
+        public string WelcomeSubject { get; set; } = "¡Te damos la bienvenida a Hire a pro!";
         public string WelcomeBody { get; set; }
         public string ChangePassSubject { get; set; } = "Solicitud de regeneración de contraseña";
         public string ChangePassBody { get; set; }
@@ -58,7 +58,7 @@
                     </tr>
                     <tr>
                         <td style='padding:40px 30px 0px 30px; text-align:center; color:#2f2f2f;'>
-                            <h1>¡Te damos la bienvenida a [nombre empresa]!</h1>
+                            <h1>¡Te damos la bienvenida a Hire a pro!</h1>
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +70,7 @@
                             <br><br>
                             ¡Encuentra los mejores profesionales!
                             <br><br><br>
-                            <b style='color:#333;'>El equipo de [nombre empresa]</b>
+                            <b style='color:#333;'>El equipo de Hire a pro</b>
                         </td>
                     </tr>
                     <tr style='background-color:#3d9970;'>
@@ -157,7 +157,7 @@
                             <br><br>
                             <a href='" + link + @"' class='btn' style='color:white;'> Regenerar mi contrase&ntilde;a</a>
                             <br><br><br>
-                            <b style='color:#333;'>El equipo de [nombre empresa]</b>
+                            <b style='color:#333;'>El equipo de Hire a pro</b>
                         </td>
                     </tr>
                     <tr style='background-color:#3d9970;'>

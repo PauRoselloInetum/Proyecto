@@ -2,7 +2,7 @@
 
 namespace HireAProBackend.Models
 {
-    public class PasswordRequest
+    public class ForgotPassRequest
     {
         public string Email { get; set; }
     }
