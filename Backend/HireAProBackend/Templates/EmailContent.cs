@@ -68,7 +68,7 @@
                     </tr>
                     <tr>
                         <td style='padding:0px 40px 40px 30px; text-align:center; font-size:large; color:#333;'>
-                            "+user +@"te animamos a explorar un poco
+                            "+user+@", te animamos a explorar un poco
                             <br><br>
                             ¡Encuentra los mejores profesionales!
                             <br><br><br>
@@ -236,14 +236,14 @@
                     </tr>
                     <tr>
                         <td style='padding:40px 30px 0px 30px;text-align:center;color:#2f2f2f;'>
-                            <h1>" + user + @"<br>verifica tu cuenta</h1>
+                            <h1>" + user + @"<br>Verifica tu cuenta</h1>
                         </td>
                     </tr>
                     <tr>
                         <td style='padding:0px 40px 40px 30px;text-align:center; font-size:large;'>
                             Has indicado que quieres registrarte en Hire a Pro, para confirmar, ve al siguiente enlace:
                             <br><br>
-                            <a href='" + link + @"' class='btn'>Verificar</a>
+                            <a href='" + link + @"' class='btn' style='color:white;'>Verificar</a>
                             <br><br><br>
                             <b style='color:#333;'>El equipo de Hire a Pro</b>
                         </td>

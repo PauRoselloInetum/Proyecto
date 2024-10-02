@@ -150,7 +150,7 @@ namespace HireAProBackend.Controllers
 
             welEmail.To = email;
             welEmail.Subject = emailContent.WelcomeSubject;
-            string body = emailContent.WelBody(email);
+            string body = emailContent.WelBody(username);
             welEmail.Body = body;
 
             //Consigue las credenciales de registerRequest
@@ -192,6 +192,7 @@ namespace HireAProBackend.Controllers
                         await guardarToken(verifyToken, email);
 
                         string verifyBody = emailContent.VerBody(username, link);//Generar el link
+                        verifyEmail.Body = verifyBody;
 
                         //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
                         CollectionReference referencia = _firestoreDb.Collection("users");
@@ -224,6 +225,100 @@ namespace HireAProBackend.Controllers
             {
                 cancellationTokenSource.Dispose();
             }
+
+        }
+        [HttpPost("verifyAccount")]
+        public async Task<ActionResult> VerifyAccount([FromBody] AuthenticateRequest verifyRequest)
+        {
+            //verificar token. se crea un buffer para tener la instancia a mano y despues sobreescribirla
+            TokenPassReset tokenBuffer = new TokenPassReset();
+
+            string token = verifyRequest.Token;
+
+            int timeout = 10000;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            try
+            {
+            // Ejecutar consulta para buscar el token
+            Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
+
+            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+
+            if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+                    QuerySnapshot tokenEncontrado = await queryTask;
+
+
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                if (document.Exists)
+                {
+                    // Extraemos el email asociado al token
+                    string email = document.GetValue<string>("email");
+                    string tokenValue = document.GetValue<string>("token");
+
+                    // Asignamos los valores al tokenBuffer
+                    tokenBuffer = new TokenPassReset
+                    {
+                        email = email,
+                        token = tokenValue
+                    };
+                }
+                else
+                {
+                    return Unauthorized("Token inexistente");
+                }
+            }
+
+            // buscar al usuario con el email asociado al token
+            Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("email", tokenBuffer.email);
+            QuerySnapshot usuarioEncontrado = await consultaUsuario.GetSnapshotAsync();
+
+            if (!usuarioEncontrado.Documents.Any())
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            // actualizar la verificación del usuario
+            foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
+            {
+                DocumentReference usuarioRef = document.Reference;
+
+                // se actualiza la contraseña, pasándola por hash previamente
+                await usuarioRef.UpdateAsync(new Dictionary<string, object>
+                {
+                    { "verified", true }
+                });
+            }
+
+            // Paso 4: (Opcional) Eliminar el token después de cambiar la contraseña
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                DocumentReference tokenRef = document.Reference;
+                await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
+            }
+
+            return Ok("Tu cuenta ha sido verificada");
+            }
+
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+
+                }
+            }
+
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada, ha tardado demasiado");
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
+
 
         }
 
