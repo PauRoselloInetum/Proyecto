@@ -70,6 +70,7 @@ namespace HireAProBackend.Controllers
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
             string password = ComputeSha256Hash(loginRequest.Password);
+            string username = loginRequest.UserName;
 
             //Variables del timeout
             int timeout = 10000;
@@ -78,18 +79,25 @@ namespace HireAProBackend.Controllers
             {
 
                 //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
-                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
+                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
 
-                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
 
 
                 if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot respuestaDb = await queryTask;
-                    //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
+                    //Si no se encuentra por correo, se buscará por nickname
                     if (respuestaDb.Documents.Count == 0)
                     {
-                        return Unauthorized("Email o contraseña incorrectos");
+                        Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("username", username).WhereEqualTo("password", password);
+                        queryTask = consultaUsuario.GetSnapshotAsync(cancellationTokenSource.Token);
+                        respuestaDb = await queryTask;
+
+                        if (respuestaDb.Documents.Count == 0)
+                        {
+                            return Unauthorized("Email o contraseña incorrectos");
+                        }
                     }
 
                     //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
