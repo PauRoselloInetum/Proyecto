@@ -3,10 +3,20 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HireAProBackend.Services;
+using HireAProBackend.Models;
+using Google.Cloud.Firestore;
 
 var builder = WebApplication.CreateBuilder(args);
 IdentityModelEventSource.ShowPII = true;
 
+
+string path = new HireAProBackend.Models.Path().path; // Asegúrate de que Path esté accesible
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
+
+builder.Services.AddSingleton<FirestoreDb>(provider =>
+{
+    return FirestoreDb.Create("hire-a-pro-database");
+});
 
 // Agregar servicios al contenedor
 builder.Services.AddControllers();
