@@ -150,7 +150,7 @@
                     </tr>
                     <tr>
                         <td style='padding:40px 30px 0px 30px; text-align:center; color:#2f2f2f;'>
-                            <h1>" + user + @" Has solicitado regenerar tu contrase&ntilde;a</h1>
+                            <h1>" + user + @"<br>Has solicitado regenerar tu contrase&ntilde;a</h1>
                         </td>
                     </tr>
                     <tr>

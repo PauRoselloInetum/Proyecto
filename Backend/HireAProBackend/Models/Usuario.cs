@@ -18,6 +18,9 @@ namespace HireAProBackend.Models
         [FirestoreProperty("verified")]
         public bool Verified { get; set; }
 
+        [FirestoreProperty("createdAt")]
+        public DateTime CreatedAt { get; set; }
+
         public Usuario() { }
 
      
