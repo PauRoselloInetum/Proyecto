@@ -1,8 +1,6 @@
-# PROYECTO (NOMBRE)
+# HIRE A PRO
 
 ## Frontend
-
-- [Documentación](/Angular/README.md)
 
 - [Documentación Angular](/Angular/README.md)
 
