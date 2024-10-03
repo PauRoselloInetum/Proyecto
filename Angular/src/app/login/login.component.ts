@@ -12,6 +12,7 @@ import { AuthService } from '../auth.service';
 })
 
 export class LoginComponent {
+  emailusername: string = '';
   username: string = '';
   email: string = '';
   password: string = '';
@@ -36,6 +37,6 @@ export class LoginComponent {
   }
 
   login() {
-    this.authservice.login(this.email, this.password);
+    this.authservice.login(this.emailusername, this.password);
   }
 }
