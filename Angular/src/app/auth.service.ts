@@ -24,6 +24,11 @@ export class AuthService {
   passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-]).{8,}$/;
   usernameRegex = /^[a-z0-9._-]{6,}$/;
 
+  headers = new HttpHeaders({
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  });
+
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
 
@@ -42,8 +47,8 @@ export class AuthService {
   ) {}
 
   login(email: string, password: string): void {
-    if (!this.usernameRegex.test(email)) {
-      this.errorSubject.next('Formato de usuario inválido');
+    if (!email || !password) {
+      this.errorSubject.next('Todos los campos son obligatorios');
       return;
     }
 
@@ -238,50 +243,32 @@ export class AuthService {
     email: string;
     password: string;
   }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.authUrl, data, { headers });
   }
 
   postLogin(data: { email: string; password: string }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.authUrl, data, { headers });
   }
 
   postValidate(data: { token: string }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.validateUrl, data, { headers });
   }
 
   postForgot(data: { email: string }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.forgotUrl, data, { headers });
   }
 
   postForgotChange(data: { password: string; token: string }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.forgotChangeUrl, data, { headers });
   }
 
   postVerifyUser(data: { token: string }): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    });
+    const headers = this.headers;
     return this.http.post(this.verifyUserUrl, data, { headers });
   }
 }
