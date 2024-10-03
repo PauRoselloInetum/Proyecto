@@ -57,7 +57,7 @@ form {
 form:has(.input-group:nth-child(3)) {
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 20px 30px;
+  grid-gap: 25px 30px;
 }
 
 @media (min-width: 768px) {
@@ -79,7 +79,6 @@ form:has(.input-group:nth-child(3)) {
 input, select {
   width: 100%;
   padding: 15px;
-  margin: 10px;
   border: 2px solid #ccc;
   border-radius: 8px;
   background-color: #fff;
