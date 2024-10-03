@@ -81,12 +81,12 @@ export class AuthService {
     });
   }
 
-  register(email: string, password: string, passwordconfirm: string): void {
+  register(username: string, email: string, password: string, passwordconfirm: string): void {
     if (!this.emailRegex.test(email)) {
       this.errorSubject.next('Formato de correo inválido');
       return;
     }
-
+    
     if (password !== passwordconfirm) {
       this.errorSubject.next('Las contraseñas no coinciden');
       return;
