@@ -17,17 +17,15 @@
         }
         <form (submit)="login()">
           <div class="input-group">
-            <i class="fas fa-user"></i>
             <input
               type="text"
-              placeholder="Correo Electrónico"
-              [(ngModel)]="email"
-              name="email"
+              placeholder="Correo Electrónico/Usuario"
+              [(ngModel)]="emailusername"
+              name="emailusername"
               required
             />
           </div>
           <div class="input-group">
-            <i class="fas fa-lock"></i>
             <input
               type="password"
               placeholder="Contraseña"
