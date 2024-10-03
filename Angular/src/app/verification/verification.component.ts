@@ -35,7 +35,6 @@ export class VerificationComponent {
     this.route.queryParams.subscribe((params) => {
       this.token = params['t'];
     });
-    console.log(this.token)
 
     if (!this.token) {
       this.info = 'Token inválido o expirado. Redireccionando...';
@@ -44,7 +43,6 @@ export class VerificationComponent {
       }, 3500);
       return;
     }
-
     this.authservice.verifyUser(this.token);
   }
 }

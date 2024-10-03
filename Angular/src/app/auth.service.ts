@@ -21,8 +21,7 @@ export class AuthService {
   loading: string = '';
 
   emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-  passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-]).{8,}$/;
+  passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-]).{8,}$/;
   usernameRegex = /^[a-z0-9._-]{6,}$/;
 
   private emailSubject = new BehaviorSubject<string>('');
@@ -43,11 +42,6 @@ export class AuthService {
   ) {}
 
   login(email: string, password: string): void {
-    if (!this.emailRegex.test(email)) {
-      this.errorSubject.next('Formato de correo inválido');
-      return;
-    }
-
     if (!this.usernameRegex.test(email)) {
       this.errorSubject.next('Formato de usuario inválido');
       return;
@@ -65,7 +59,7 @@ export class AuthService {
 
     const loginData = { email, password };
 
-    this.postAuth(loginData).subscribe({
+    this.postLogin(loginData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
         this.cookieService.set('token', response);
@@ -88,7 +82,12 @@ export class AuthService {
     });
   }
 
-  register(username: string, email: string, password: string, passwordconfirm: string): void {
+  register(
+    username: string,
+    email: string,
+    password: string,
+    passwordconfirm: string,
+  ): void {
     if (!this.emailRegex.test(email)) {
       this.errorSubject.next('Formato de correo inválido');
       return;
@@ -98,7 +97,7 @@ export class AuthService {
       this.errorSubject.next('Formato de usuario inválido');
       return;
     }
-    
+
     if (password !== passwordconfirm) {
       this.errorSubject.next('Las contraseñas no coinciden');
       return;
@@ -113,8 +112,8 @@ export class AuthService {
 
     this.loadingSubject.next('Registrándote...');
     this.authUrl = this.registerUrl;
-    const registerData = { email, password };
-    this.postAuth(registerData).subscribe({
+    const registerData = { username, email, password };
+    this.postRegister(registerData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
         this.cookieService.set('token', response);
@@ -219,6 +218,7 @@ export class AuthService {
       },
       error: (error) => {
         this.loadingSubject.next('');
+        this.infoSubject.next('Verificación fallida, redireccionando...');
         this.errorSubject.next(
           error.status === 401
             ? 'Token inválido o expirado.'
@@ -226,11 +226,26 @@ export class AuthService {
               ? 'Tiempo de espera agotado. Intente nuevamente.'
               : 'Error con el servidor. Intente nuevamente.',
         );
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
       },
     });
   }
 
-  postAuth(data: { email: string; password: string }): Observable<any> {
+  postRegister(data: {
+    username: string;
+    email: string;
+    password: string;
+  }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.authUrl, data, { headers });
+  }
+
+  postLogin(data: { email: string; password: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -254,7 +269,7 @@ export class AuthService {
     return this.http.post(this.forgotUrl, data, { headers });
   }
 
-  postForgotChange(data: { password: string, token: string }): Observable<any> {
+  postForgotChange(data: { password: string; token: string }): Observable<any> {
     const headers = new HttpHeaders({
       Accept: 'application/json',
       'Content-Type': 'application/json',
