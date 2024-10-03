@@ -25,16 +25,16 @@ namespace HireAProBackend.Models
         public string FullName { get; set; }
 
         [FirestoreProperty("gender")]  // Nombre exacto del campo en Firestore
-        public string gender { get; set; }
+        public string Gender { get; set; }
 
         [FirestoreProperty("birthDate")]  // Nombre exacto del campo en Firestore
         public DateTime BirthDate { get; set; }
 
-        [FirestoreProperty("city")]  // Nombre exacto del campo en Firestore
-        public string City { get; set; }
+        [FirestoreProperty("province")]  // Nombre exacto del campo en Firestore
+        public string Province { get; set; }
 
         public Usuario() { }
 
-     
+
     }
 }
