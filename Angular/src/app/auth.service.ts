@@ -20,9 +20,10 @@ export class AuthService {
   session: string = this.cookieService.get('token');
   loading: string = '';
 
-  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,}$/;
+  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
   passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%_*?&.]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-]).{8,}$/;
+  usernameRegex = /^[a-z0-9._-]{6,}$/;
 
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -47,6 +48,11 @@ export class AuthService {
       return;
     }
 
+    if (!this.usernameRegex.test(email)) {
+      this.errorSubject.next('Formato de usuario inválido');
+      return;
+    }
+
     if (!this.passwordRegex.test(password)) {
       this.errorSubject.next(
         'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
@@ -56,6 +62,7 @@ export class AuthService {
 
     this.loadingSubject.next('Iniciando Sesión...');
     this.authUrl = this.loginUrl;
+
     const loginData = { email, password };
 
     this.postAuth(loginData).subscribe({
@@ -84,6 +91,11 @@ export class AuthService {
   register(username: string, email: string, password: string, passwordconfirm: string): void {
     if (!this.emailRegex.test(email)) {
       this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
+
+    if (!this.usernameRegex.test(username)) {
+      this.errorSubject.next('Formato de usuario inválido');
       return;
     }
     
