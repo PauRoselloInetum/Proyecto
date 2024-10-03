@@ -21,6 +21,18 @@ namespace HireAProBackend.Models
         [FirestoreProperty("createdAt")]
         public DateTime CreatedAt { get; set; }
 
+        [FirestoreProperty("fullName")]  // Nombre exacto del campo en Firestore
+        public string FullName { get; set; }
+
+        [FirestoreProperty("gender")]  // Nombre exacto del campo en Firestore
+        public string gender { get; set; }
+
+        [FirestoreProperty("birthDate")]  // Nombre exacto del campo en Firestore
+        public DateTime BirthDate { get; set; }
+
+        [FirestoreProperty("city")]  // Nombre exacto del campo en Firestore
+        public string City { get; set; }
+
         public Usuario() { }
 
      
