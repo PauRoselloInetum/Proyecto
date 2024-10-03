@@ -20,6 +20,11 @@ using static Google.Rpc.Context.AttributeContext.Types;
 using HireAProBackend.Services;
 using HireAProBackend.Templates;
 using System.Threading;
+using System.Linq.Expressions;
+using static Google.Rpc.Help.Types;
+using Newtonsoft.Json.Linq;
+using System.Runtime.ConstrainedExecution;
+using Google.Protobuf.WellKnownTypes;
 
 
 namespace HireAProBackend.Controllers
@@ -51,7 +56,8 @@ namespace HireAProBackend.Controllers
 
             foreach (var document in snapshot.Documents) {
                 if (document.Exists) {
-                    var cancellationTokenSource = new CancellationTokenSource(); ;
+                    var cancellationTokenSource = new CancellationTokenSource();
+                    Usuario usuario = document.ConvertTo<Usuario>();
                     usuarios.Add(usuario); }
             }
             return usuarios;
@@ -62,39 +68,39 @@ namespace HireAProBackend.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Usuario>> Login([FromBody] Models.LoginRequest loginRequest) //Timeout aplciado
         {
-          
+
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
             string password = ComputeSha256Hash(loginRequest.Password);
 
             //Variables del timeout
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
             try
             {
 
-            //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
+                //Comprueba si el email y la contraseña contenidos en loginRequest (que sería enviado desde Angular, existen en la base de datos
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("password", password);
 
-            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
 
-               
-            if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-             QuerySnapshot respuestaDb = await queryTask;
-            //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
-            if (respuestaDb.Documents.Count == 0)
-            {
-                return Unauthorized("Email o contraseña incorrectos");
-            }
+                    QuerySnapshot respuestaDb = await queryTask;
+                    //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
+                    if (respuestaDb.Documents.Count == 0)
+                    {
+                        return Unauthorized("Email o contraseña incorrectos");
+                    }
 
-            //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
-            Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>();
-            //Obtiene los datos desde appsettings.json
-            var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
+                    //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
+                    Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>();
+                    //Obtiene los datos desde appsettings.json
+                    var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
 
-            var claims = new[]
-            {
+                    var claims = new[]
+                    {
                 new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
@@ -102,20 +108,20 @@ namespace HireAProBackend.Controllers
                 new Claim("password", usuario.Password)
 
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
+                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var newToken = new JwtSecurityToken(
-                    jwt.Issuer,
-                    jwt.Audience,
-                    claims,
-                    expires: DateTime.Now.AddDays(10),
-                    signingCredentials: signIn
+                    var newToken = new JwtSecurityToken(
+                            jwt.Issuer,
+                            jwt.Audience,
+                            claims,
+                            expires: DateTime.Now.AddDays(10),
+                            signingCredentials: signIn
 
-                );
-            //Retorna el token en formato de cadena de texto
-            return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
-           
+                        );
+                    //Retorna el token en formato de cadena de texto
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
+
                 }
                 else
                 {
@@ -123,7 +129,7 @@ namespace HireAProBackend.Controllers
                     return StatusCode(408, "La consulta ha tardado demasiado.");
                 }
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
                 return StatusCode(408, "La operación fue cancelada");
             }
@@ -137,40 +143,70 @@ namespace HireAProBackend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest) //Timeout aplicado
         {
+            EmailDTO welEmail = new EmailDTO();
+            EmailContent emailContent = new EmailContent();
+            string email = registerRequest.Email;
+            string username = registerRequest.Username;
+
+            welEmail.To = email;
+            welEmail.Subject = emailContent.WelcomeSubject;
+            string body = emailContent.WelBody(username);
+            welEmail.Body = body;
+
             //Consigue las credenciales de registerRequest
-            string correo = registerRequest.Email;
-            // string password = registerRequest.Password;
+            // string password = registerRequest.Password
 
             string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
                 //Busca si existe el documento con los datos proporcionados en la request
-            // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
-            Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
+                // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
+                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", email);
 
-            //Realiza la consulta a la base de datos y la almacena en respuestaDb
-            // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+                //Realiza la consulta a la base de datos y la almacena en respuestaDb
+                // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
-                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-                QuerySnapshot respuestaCorreo = await queryTask;
+                    QuerySnapshot respuestaCorreo = await queryTask;
 
                     //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
                     if (respuestaCorreo.Documents.Count == 0)
                     {
+                        //Enviar correo de verificación
+                        EmailDTO verifyEmail = new EmailDTO();
+                        EmailContent verifyContent = new EmailContent();
+
+                        verifyEmail.To = email;
+                        verifyEmail.Subject = emailContent.VerifySubject;
+
+                        string verifyToken = ComputeSha256Hash(generarTokenRecuperacion(email));
+
+                        // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
+                        string link = "http://localhost:4200/login/verify?t=" + verifyToken;
+                        await guardarToken(verifyToken, email);
+
+                        string verifyBody = emailContent.VerBody(username, link);//Generar el link
+                        verifyEmail.Body = verifyBody;
+
                         //Obtiene la referencia de la colección y genera una nueva referencia con los datos del nuevo usuario
                         CollectionReference referencia = _firestoreDb.Collection("users");
                         DocumentReference nuevoUserRef = await referencia.AddAsync(new
                         {
+                            username = registerRequest.Username,
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
+                            verified = false,
+                            createdAt = DateTime.UtcNow
                         });
 
+                        _emailService.SendEmail(verifyEmail);
+                        _emailService.SendEmail(welEmail);
                         return Ok("Usuario registrado");
                     }
                     return Unauthorized("Ya existe un usuario con este correo");
@@ -179,7 +215,7 @@ namespace HireAProBackend.Controllers
                 {
                     cancellationTokenSource.Cancel();
                     return StatusCode(408, "La consulta ha tardado demasiado");
-                        
+
                 }
             }
             catch (TaskCanceledException)
@@ -190,9 +226,103 @@ namespace HireAProBackend.Controllers
             {
                 cancellationTokenSource.Dispose();
             }
-            
+
+        }
+        [HttpPost("verifyAccount")]
+        public async Task<ActionResult> VerifyAccount([FromBody] AuthenticateRequest verifyRequest)
+        {
+            //verificar token. se crea un buffer para tener la instancia a mano y despues sobreescribirla
+            TokenPassReset tokenBuffer = new TokenPassReset();
+
+            string token = verifyRequest.Token;
+
+            int timeout = 10000;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            try
+            {
+            // Ejecutar consulta para buscar el token
+            Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
+
+            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+
+            if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+                    QuerySnapshot tokenEncontrado = await queryTask;
+
+
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                if (document.Exists)
+                {
+                    // Extraemos el email asociado al token
+                    string email = document.GetValue<string>("email");
+                    string tokenValue = document.GetValue<string>("token");
+
+                    // Asignamos los valores al tokenBuffer
+                    tokenBuffer = new TokenPassReset
+                    {
+                        email = email,
+                        token = tokenValue
+                    };
+                }
+                else
+                {
+                    return Unauthorized("Token inexistente");
+                }
             }
-            
+
+            // buscar al usuario con el email asociado al token
+            Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("email", tokenBuffer.email);
+            QuerySnapshot usuarioEncontrado = await consultaUsuario.GetSnapshotAsync();
+
+            if (!usuarioEncontrado.Documents.Any())
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            // actualizar la verificación del usuario
+            foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
+            {
+                DocumentReference usuarioRef = document.Reference;
+
+                // se actualiza la contraseña, pasándola por hash previamente
+                await usuarioRef.UpdateAsync(new Dictionary<string, object>
+                {
+                    { "verified", true }
+                });
+            }
+
+            // Paso 4: (Opcional) Eliminar el token después de cambiar la contraseña
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                DocumentReference tokenRef = document.Reference;
+                await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
+            }
+
+            return Ok("Tu cuenta ha sido verificada");
+            }
+
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+
+                }
+            }
+
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada, ha tardado demasiado");
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
+
+
+        }
+
 
         // Función para generar el hash SHA-256 dentro del mismo controlador
         private string ComputeSha256Hash(string rawData)
@@ -251,7 +381,7 @@ namespace HireAProBackend.Controllers
             base64Payload = base64Payload.PadRight(base64Payload.Length + ((4 - base64Payload.Length % 4) % 4), '=');
 
             //Variables del timeout
-            int timeout = 5000;
+            int timeout = 10000;
             var cancellationTokenSource = new CancellationTokenSource();
             try
             {
@@ -263,10 +393,10 @@ namespace HireAProBackend.Controllers
 
                 //Recuperar la clave secreta desde la configuración
                 var jwt = _configuracion.GetSection("Jwt").Get<Jwt>();
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
 
                 //Generar la firma esperada
-                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.Key);
+                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el 
                 string email = "";
@@ -288,22 +418,22 @@ namespace HireAProBackend.Controllers
 
                 //Consulta con timeout
                 var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
-                if(await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot respuestaDb = await queryTask;
-                //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
-                DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
-                DateTime currentDate = DateTime.UtcNow;
+                    //La fecha de expiración se encuentra en timestamp, por lo que se pasa a un objeto de tipo DateTime
+                    DateTime expirationDate = DateTimeOffset.FromUnixTimeSeconds(exp).DateTime;
+                    DateTime currentDate = DateTime.UtcNow;
 
-                // Comparar la firma esperada con la firma del token
-                if (expectedSignature != signature || currentDate > expirationDate || respuestaDb.Documents.Count == 0) //Añadir fecha de expiración
-                {
-                    return Unauthorized("Token no válido");
-                }
-                else
-                {
-                    return Ok(email);
-                }
+                    // Comparar la firma esperada con la firma del token
+                    if (expectedSignature != signature || currentDate > expirationDate || respuestaDb.Documents.Count == 0) //Añadir fecha de expiración
+                    {
+                        return Unauthorized("Token no válido");
+                    }
+                    else
+                    {
+                        return Ok(email);
+                    }
                 }
                 else
                 {
@@ -328,67 +458,140 @@ namespace HireAProBackend.Controllers
 
         //Usuario envía su correo y se genera un link con el token, que se envía por correo electrónico
         [HttpPost("forgotPassword")]
-        public async Task<ActionResult> ForgottenPassword([FromBody] Models.PasswordRequest passwordRequest)
+        public async Task<ActionResult> ForgottenPassword([FromBody] Models.ForgotPassRequest passwordRequest)
         {
             EmailDTO emailRequest = new EmailDTO();
             EmailContent emailContent = new EmailContent();
             string email = passwordRequest.Email;
-            
+
             emailRequest.To = email;
             emailRequest.Subject = emailContent.ChangePassSubject;
 
-            // Comprueba la existencia del usuario en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
-            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-            Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
-
-
-            string tokenRecuperacion = generarTokenRecuperacion(email, usuario.Password);
-
-            // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como querry por Get
-            string link = "http://localhost:4200" + tokenRecuperacion;
-            string body = emailContent.PassBody(email,  link);
-            emailRequest.Body = body;
-           
-            
-
-           
-
-            if (respuestaDb.Documents.Count == 0)
+            //Variables del timeout
+            int timeout = 100000000;
+            var cancellationTokenSource = new CancellationTokenSource();
+            try
             {
-                return NotFound("Este usuario no existe en la base de datos");
-            }
-            
-            _emailService.SendEmail(emailRequest);
-            return Ok("revisa tu correo");
-        }
-       
-
-        
-        //Página de cambiar la contraseña
-        [HttpPost("changeRequest")]
-        public async Task<ActionResult> ChangePassword([FromBody] Models.ChangeRequest changeRequest)
-        {
-            //Obtiene el email y la contraseña de la changeRequest, y hashea la contraseña          
-            string email = changeRequest.Email;
-            string newPass = ComputeSha256Hash(changeRequest.Password);
-
-            //Busca si la cuenta está registrada en la base de datos
-            Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
-            QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-
-          if (respuestaDb.Documents.Count == 0)
+                // Comprueba la existencia del usuario en la base de 
+                Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", email);
+                //Consulta con timeout
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
-                    return NotFound("Este usuario no existe en la base de datos");
+                    QuerySnapshot respuestaDb = await queryTask;
+
+                    if (respuestaDb.Documents.Count == 0)
+                    {
+                        return NotFound("Este usuario no existe en la base de datos");
+                    }
+
+
+                    Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
+
+                    // esto es: hash(mail + contra + "clave supersecreta")
+                    string tokenRecuperacion = ComputeSha256Hash(generarTokenRecuperacion(email));
+
+                    // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
+                    string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
+                    await guardarToken(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
+                    string body = emailContent.PassBody(usuario.Username, link); 
+
+                    emailRequest.Body = body;
+                    
+                    _emailService.SendEmail(emailRequest);
+                    return Ok("revisa tu correo");
                 }
-            //En caso de que exista, actualiza la contraseña en la base de datos
-            DocumentReference docRef = respuestaDb.Documents[0].Reference;
-            await docRef.UpdateAsync(new Dictionary<string, object>
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado");
+                }
+            }
+            catch (TaskCanceledException)
             {
-                {"password",newPass}
-            });
-            return Ok("Contraseña actualizada");
+                return StatusCode(408, "La operación fue cancelada");
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Error al realizar la operación: {ex.Message} " + ex);
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
         }
+
+
+
+
+        /** Buscará a usuarios mediante tokens de recuperacion
+       */
+        [HttpPost("changePass")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePassRequest changePassRequest)
+        {
+            //verificar token. se crea un buffer para tener la instancia a mano y despues sobreescribirla
+            TokenPassReset tokenBuffer = new TokenPassReset();
+
+            string token = changePassRequest.Token;
+            string nuevaPassword = changePassRequest.Password;
+
+            // Ejecutar consulta para buscar el token
+            Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
+            QuerySnapshot tokenEncontrado = await consulta.GetSnapshotAsync();
+
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                if (document.Exists)
+                {
+                    // Extraemos el email asociado al token
+                    string email = document.GetValue<string>("email");
+                    string tokenValue = document.GetValue<string>("token");
+
+                    // Asignamos los valores al tokenBuffer
+                    tokenBuffer = new TokenPassReset
+                    {
+                        email = email,
+                        token = tokenValue
+                    };
+                }
+                else
+                {
+                    return Unauthorized("Token inexistente");
+                }
+            }
+
+            // buscar al usuario con el email asociado al token
+            Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("email", tokenBuffer.email);
+            QuerySnapshot usuarioEncontrado = await consultaUsuario.GetSnapshotAsync();
+
+            if (!usuarioEncontrado.Documents.Any())
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            // actualizar la contraseña del usuario
+            foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
+            {
+                DocumentReference usuarioRef = document.Reference;
+
+                // se actualiza la contraseña, pasándola por hash previamente
+                await usuarioRef.UpdateAsync(new Dictionary<string, object>
+        {
+            { "password", ComputeSha256Hash(nuevaPassword) }
+        });
+            }
+
+            // Paso 4: (Opcional) Eliminar el token después de cambiar la contraseña
+            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+            {
+                DocumentReference tokenRef = document.Reference;
+                await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
+            }
+
+            return Ok("Contraseña cambiada exitosamente");
+        }
+
+
 
         [HttpDelete("eliminarUsuario")]
         public async Task<ActionResult> DeleteUser([FromBody] Models.DeleteRequest deleteRequest)
@@ -399,6 +602,7 @@ namespace HireAProBackend.Controllers
             //Busca si existe el documento con los datos proporcionados en la request
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
+            
 
             if (respuestaDb.Documents.Count == 0)
             {
@@ -413,19 +617,67 @@ namespace HireAProBackend.Controllers
             return Ok("Usuario eliminado.");
         }
 
+
         // método que va a crear un token personalizado para la url de recuperación de contraseña.
         // procedimiento --> hash(mail + contra + token perosnalizado)
         private static readonly Random random = new Random();
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private static string generarTokenRecuperacion(string mail, string contra)
+
+        public static string RandomString(int length)
         {
 
-            string bufferToken = mail + contra;
-
-
-            return  bufferToken + new string(Enumerable.Repeat(chars, 7)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        private static string generarTokenRecuperacion(string mail)
+        {
+
+            string bufferToken = mail;
+
+
+            return bufferToken + RandomString(10);
+        }
+
+        /** Función que sencillamente pasa el token y el mail al que va asociado a la base de datos
+        */
+        private async Task<ActionResult> guardarToken(string tokenEntrada, string correo)
+        {
+            TokenPassReset tokenUsuario = new TokenPassReset();
+
+            tokenUsuario.token = tokenEntrada;
+            tokenUsuario.email = correo;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            // consultar si previamente existe este usuario
+            Query consultarUser = _firestoreDb.Collection("tokens").WhereNotEqualTo("token", tokenUsuario.email);
+
+
+            var queryTask = consultarUser.GetSnapshotAsync(cancellationTokenSource.Token);
+
+            if (await Task.WhenAny(queryTask) == queryTask)
+            {
+                QuerySnapshot respuestaDb = await queryTask;
+                //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica error
+                if (respuestaDb.Documents.Count == 0)
+                {
+                    return Unauthorized("El email no corresponde a ningun usuario");
+                }
+            };
+
+
+
+            CollectionReference referencia = _firestoreDb.Collection("tokens");
+            DocumentReference nuevoToken = await referencia.AddAsync(new
+            {
+                token = tokenEntrada,
+                email = correo,
+            });
+
+            return Ok("token guardado");
+        }
+
+
 
     }
 }

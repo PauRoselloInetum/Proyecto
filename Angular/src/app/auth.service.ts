@@ -11,7 +11,9 @@ export class AuthService {
   loginUrl = this.backendUrl + 'login';
   registerUrl = this.backendUrl + 'register';
   validateUrl = this.backendUrl + 'home';
+  verifyUserUrl = this.backendUrl + 'verifyAccount';
   forgotUrl = this.backendUrl + 'forgotPassword';
+  forgotChangeUrl = this.backendUrl + 'changePass';
   authUrl: string = '';
   error: string = '';
   info: string = '';
@@ -40,6 +42,18 @@ export class AuthService {
   ) {}
 
   login(email: string, password: string): void {
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
+
+    if (!this.passwordRegex.test(password)) {
+      this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+      );
+      return;
+    }
+
     this.loadingSubject.next('Iniciando Sesión...');
     this.authUrl = this.loginUrl;
     const loginData = { email, password };
@@ -50,6 +64,9 @@ export class AuthService {
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.infoSubject.next('Inicio de sesión exitoso, redireccionando...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -91,6 +108,9 @@ export class AuthService {
         this.cookieService.set('token', response);
         this.errorSubject.next('');
         this.infoSubject.next('Registro exitoso, redireccionando...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3500);
       },
       error: (error) => {
         this.loadingSubject.next('');
@@ -114,24 +134,86 @@ export class AuthService {
       },
       error: (error) => {
         window.location.href = '/login';
-        console.log(error);
       },
     });
   }
 
   forgotPassword(email: string) {
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
+
     this.loadingSubject.next('Enviando correo...');
-    const sessionData = { email: email };
-    this.postForgot(sessionData).subscribe({
+    const emailData = { email: email };
+
+    this.postForgot(emailData).subscribe({
       next: (response) => {
-        this.emailSubject.next(response);
         this.loadingSubject.next('');
-        this.error = '';
-        console.log(response);
+        this.infoSubject.next(
+          'Correo de recuperación enviado. Verifica tu bandeja de entrada.',
+        );
+        this.errorSubject.next('');
       },
       error: (error) => {
         this.loadingSubject.next('');
-        console.log(error);
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Correo no registrado'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente más tarde.',
+        );
+      },
+    });
+  }
+
+  forgotChangePassword(password: string, token: string) {
+    this.loadingSubject.next('Cambiando contraseña...');
+    const passwordData = { password: password, token: token };
+    this.postForgotChange(passwordData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next('');
+        this.infoSubject.next('Contraseña cambiada exitosamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Token inválido o expirado.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente.',
+        );
+      },
+    });
+  }
+
+  verifyUser(token: string) {
+    this.loadingSubject.next('Verificando...');
+    const verifyData = { token: token };
+    this.postVerifyUser(verifyData).subscribe({
+      next: (response) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next('');
+        this.infoSubject.next('Te has verificado correctamente.');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 3500);
+      },
+      error: (error) => {
+        this.loadingSubject.next('');
+        this.errorSubject.next(
+          error.status === 401
+            ? 'Token inválido o expirado.'
+            : error.status === 408
+              ? 'Tiempo de espera agotado. Intente nuevamente.'
+              : 'Error con el servidor. Intente nuevamente.',
+        );
       },
     });
   }
@@ -158,5 +240,21 @@ export class AuthService {
       'Content-Type': 'application/json',
     });
     return this.http.post(this.forgotUrl, data, { headers });
+  }
+
+  postForgotChange(data: { password: string, token: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.forgotChangeUrl, data, { headers });
+  }
+
+  postVerifyUser(data: { token: string }): Observable<any> {
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(this.verifyUserUrl, data, { headers });
   }
 }

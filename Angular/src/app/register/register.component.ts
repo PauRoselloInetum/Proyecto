@@ -11,6 +11,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['../../assets/css/auth.css'],
 })
 export class RegisterComponent {
+  username: string = '';
   email: string = '';
   password: string = '';
   passwordconfirm: string = '';
@@ -34,23 +35,7 @@ export class RegisterComponent {
     });
   }
 
-  async register() {
-    this.error = '';
-    this.info = '';
-
-    try {
-      await this.authservice.register(
-        this.email,
-        this.password,
-        this.passwordconfirm,
-      );
-      this.info = this.authservice.info;
-      this.error = this.authservice.error;
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 3500);
-    } catch (err) {
-      this.error = this.authservice.error;
-    }
+  register() {
+    this.authservice.register(this.email, this.password, this.passwordconfirm);
   }
 }
