@@ -112,13 +112,13 @@ namespace HireAProBackend.Controllers
 
                     var claims = new[]
                     {
-                new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim("email", usuario.Email),
-                new Claim("password", usuario.Password)
+                        new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("email", usuario.Email),
+                        new Claim("password", usuario.Password)
 
-            };
+                    };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -130,6 +130,12 @@ namespace HireAProBackend.Controllers
                             signingCredentials: signIn
 
                         );
+
+                    if (usuario.Verified == false)
+                    {
+                        return Unauthorized("Tu cuenta no ha sido verificada");
+                    }
+
                     //Retorna el token en formato de cadena de texto
                     return Ok("Bienvenido, " + usuario.Username + "\n"  + new JwtSecurityTokenHandler().WriteToken(newToken));
 
