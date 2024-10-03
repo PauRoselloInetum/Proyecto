@@ -43,3 +43,17 @@
 5. Borrar la rama al acabar
  
 ![alt text](../img/git_deletebranch.png)
+
+## Pasos para actualizar una rama secundaria en base de la `main`
+
+> main se puede cambiar por cualquier otra rama actualizada
+
+1. **`git checkout nombre-de-la-rama-secundaria` Cambia a la rama secundaria (ej. pauR-dev)**
+
+2. `git checkout main` `git pull origin main` **Actualiza la rama `main` local**
+
+3. `git checkout nombre-de-la-rama-secundaria` **Vuelve a la rama secundaria**
+
+4. `git merge main` **Haz un merge de los cambios de `main` en la rama secundaria**
+
+5. `git push origin nombre-de-la-rama-secundaria` **Sube los cambios a la rama remota secundaria**

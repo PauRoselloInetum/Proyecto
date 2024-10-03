@@ -36,6 +36,6 @@ export class RegisterComponent {
   }
 
   register() {
-    this.authservice.register(this.email, this.password, this.passwordconfirm);
+    this.authservice.register(this.username, this.email, this.password, this.passwordconfirm);
   }
 }
