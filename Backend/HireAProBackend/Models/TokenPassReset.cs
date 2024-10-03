@@ -13,6 +13,8 @@ namespace HireAProBackend.Models
         [FirestoreProperty("token")]  // Nombre exacto del campo en Firestore
         public string token { get; set; }
 
+        [FirestoreProperty("caducidad")]
+        public string caducidad { get; set; }
         public TokenPassReset() { }
 
 
