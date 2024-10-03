@@ -50,11 +50,14 @@ namespace HireAProBackend.Controllers
             Query consulta = _firestoreDb.Collection("users");
             QuerySnapshot snapshot = await consulta.GetSnapshotAsync();
 
-            foreach (var document in snapshot.Documents) {
-                if (document.Exists) {
+            foreach (var document in snapshot.Documents)
+            {
+                if (document.Exists)
+                {
                     var cancellationTokenSource = new CancellationTokenSource();
                     Usuario usuario = document.ConvertTo<Usuario>();
-                    usuarios.Add(usuario); }
+                    usuarios.Add(usuario);
+                }
             }
             return usuarios;
         }
@@ -108,13 +111,13 @@ namespace HireAProBackend.Controllers
 
                     var claims = new[]
                     {
-                new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim("email", usuario.Email),
-                new Claim("password", usuario.Password)
+                        new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("email", usuario.Email),
+                        new Claim("password", usuario.Password)
 
-            };
+                    };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -126,8 +129,14 @@ namespace HireAProBackend.Controllers
                             signingCredentials: signIn
 
                         );
+
+                    if (usuario.Verified == false)
+                    {
+                        return Unauthorized("Tu cuenta no ha sido verificada");
+                    }
+
                     //Retorna el token en formato de cadena de texto
-                    return Ok("Bienvenido, " + usuario.Username + "\n"  + new JwtSecurityTokenHandler().WriteToken(newToken));
+                    return Ok("Bienvenido, " + usuario.Username + "\n" + new JwtSecurityTokenHandler().WriteToken(newToken));
 
                 }
                 else
@@ -163,7 +172,7 @@ namespace HireAProBackend.Controllers
 
             string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
-            int timeout = 10000;
+            int timeout = 100000;
             var cancellationTokenSource = new CancellationTokenSource();
 
             try
@@ -247,69 +256,65 @@ namespace HireAProBackend.Controllers
 
             try
             {
-            // Ejecutar consulta para buscar el token
-            Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
+                // Ejecutar consulta para buscar el token
+                Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
 
-            var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryTask = consulta.GetSnapshotAsync(cancellationTokenSource.Token);
 
-            if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot tokenEncontrado = await queryTask;
 
 
-            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
-            {
-                if (document.Exists)
-                {
-                    // Extraemos el email asociado al token
-                    string email = document.GetValue<string>("email");
-                    string tokenValue = document.GetValue<string>("token");
-                    string caducidad = document.GetValue<string>("caducidad");
-                    // Asignamos los valores al tokenBuffer
-                    tokenBuffer = new TokenPassReset
+                    foreach (DocumentSnapshot document in tokenEncontrado.Documents)
                     {
-                        email = email,
-                        token = tokenValue,
-                        caducidad = caducidad
+                        if (document.Exists)
+                        {
+                            // Extraemos el email asociado al token
+                            string email = document.GetValue<string>("email");
+                            string tokenValue = document.GetValue<string>("token");
+                            // Asignamos los valores al tokenBuffer
+                            tokenBuffer = new TokenPassReset
+                            {
+                                email = email,
+                                token = tokenValue,
 
-                    };
-                }
-                else
-                {
-                    return Unauthorized("Token inexistente");
-                }
-            }
+                            };
+                        }
+                        else
+                        {
+                            return Unauthorized("Token inexistente");
+                        }
+                    }
 
-            // buscar al usuario con el email asociado al token
-            Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("email", tokenBuffer.email);
-            QuerySnapshot usuarioEncontrado = await consultaUsuario.GetSnapshotAsync();
+                    // buscar al usuario con el email asociado al token
+                    Query consultaUsuario = _firestoreDb.Collection("users").WhereEqualTo("email", tokenBuffer.email);
+                    QuerySnapshot usuarioEncontrado = await consultaUsuario.GetSnapshotAsync();
 
-            if (!usuarioEncontrado.Documents.Any())
-            {
-                return NotFound("Usuario no encontrado");
-            }
+                    if (!usuarioEncontrado.Documents.Any())
+                    {
+                        return NotFound("Usuario no encontrado");
+                    }
 
-            // actualizar la verificación del usuario
-            foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
-            {
-                DocumentReference usuarioRef = document.Reference;
+                    // actualizar la verificación del usuario
+                    foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
+                    {
+                        DocumentReference usuarioRef = document.Reference;
 
-                // se actualiza la contraseña, pasándola por hash previamente
-                await usuarioRef.UpdateAsync(new Dictionary<string, object>
+                        // se actualiza la contraseña, pasándola por hash previamente
+                        await usuarioRef.UpdateAsync(new Dictionary<string, object>
                 {
                     { "verified", true }
                 });
-            }
+                    }
 
-            // eliminar el token después de cambiar la contraseña
-            foreach (DocumentSnapshot document in tokenEncontrado.Documents)
-            {
-                DocumentReference tokenRef = document.Reference;
-                await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
-            }
+                    foreach (var document in tokenEncontrado.Documents)
+                    {
+                        await _firestoreDb.Collection("tokens").Document(document.Id).DeleteAsync();
+                    }
 
-            return Ok("Tu cuenta ha sido verificada");
-            }
+                    return Ok("Tu cuenta ha sido verificada");
+                }
 
                 else
                 {
@@ -564,10 +569,10 @@ namespace HireAProBackend.Controllers
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                     string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
                     await guardarToken(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
-                    string body = emailContent.PassBody(usuario.Username, link); 
+                    string body = emailContent.PassBody(usuario.Username, link);
 
                     emailRequest.Body = body;
-                    
+
                     _emailService.SendEmail(emailRequest);
                     return Ok("revisa tu correo");
                 }
@@ -652,8 +657,8 @@ namespace HireAProBackend.Controllers
                     await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
                 }
                 return Unauthorized("La clave de recuperación usada ha caducado");
-               
-                
+
+
             }
 
             // actualizar la contraseña del usuario
@@ -689,7 +694,7 @@ namespace HireAProBackend.Controllers
             //Busca si existe el documento con los datos proporcionados en la request
             Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo);
             QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
-            
+
 
             if (respuestaDb.Documents.Count == 0)
             {
@@ -719,8 +724,8 @@ namespace HireAProBackend.Controllers
 
         private static string generarTokenRecuperacion(string mail)
         {
-            
-           
+
+
             string bufferToken = mail;
 
 
@@ -753,7 +758,7 @@ namespace HireAProBackend.Controllers
                 }
             };
 
-            
+
             DateTime fechaCaducidad = (DateTime.UtcNow).AddMinutes(15);
 
             CollectionReference referencia = _firestoreDb.Collection("tokens");

@@ -59,6 +59,7 @@ builder.Services.AddAuthentication(options =>
 
 //Configuracion servicio de correo
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHostedService<DelUsersService>();
 
 
 var app = builder.Build();
