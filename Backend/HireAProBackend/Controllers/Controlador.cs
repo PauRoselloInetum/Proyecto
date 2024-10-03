@@ -73,8 +73,9 @@ namespace HireAProBackend.Controllers
             string correo = loginRequest.Email;
             string password = ComputeSha256Hash(loginRequest.Password);
 
+
             //Variables del timeout
-            int timeout = 10000;
+            int timeout = 1000000000;
             var cancellationTokenSource = new CancellationTokenSource();
             try
             {
@@ -88,10 +89,20 @@ namespace HireAProBackend.Controllers
                 if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot respuestaDb = await queryTask;
-                    //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica un error al Angular
+                    //Si no se encuentra el correo, se buscará por username
                     if (respuestaDb.Documents.Count == 0)
                     {
-                        return Unauthorized("Email o contraseña incorrectos");
+                        // pese a llamrse username el campo por el que se busca, está buscando ahora por nombre de usuario, porque llegaod
+                        // aqui, no se ha hallado por correo
+                        Query consultaUser = _firestoreDb.Collection("users").WhereEqualTo("username", correo).WhereEqualTo("password", password);
+                        queryTask = consultaUser.GetSnapshotAsync(cancellationTokenSource.Token);
+
+                        respuestaDb = await queryTask;
+
+                        if (respuestaDb.Documents.Count == 0)
+                        {
+                            return Unauthorized("Error en el login");
+                        }
                     }
 
                     //Si está correcto, devuelve 200 OK y el token JWT generado a partir de los datos del usuario, el cual se almacenará en el pc del usuario
@@ -120,7 +131,7 @@ namespace HireAProBackend.Controllers
 
                         );
                     //Retorna el token en formato de cadena de texto
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(newToken));
+                    return Ok("Bienvenido, " + usuario.Username + "\n"  + new JwtSecurityTokenHandler().WriteToken(newToken));
 
                 }
                 else
@@ -258,12 +269,14 @@ namespace HireAProBackend.Controllers
                     // Extraemos el email asociado al token
                     string email = document.GetValue<string>("email");
                     string tokenValue = document.GetValue<string>("token");
-
+                    string caducidad = document.GetValue<string>("caducidad");
                     // Asignamos los valores al tokenBuffer
                     tokenBuffer = new TokenPassReset
                     {
                         email = email,
-                        token = tokenValue
+                        token = tokenValue,
+                        caducidad = caducidad
+
                     };
                 }
                 else
@@ -293,7 +306,7 @@ namespace HireAProBackend.Controllers
                 });
             }
 
-            // Paso 4: (Opcional) Eliminar el token después de cambiar la contraseña
+            // eliminar el token después de cambiar la contraseña
             foreach (DocumentSnapshot document in tokenEncontrado.Documents)
             {
                 DocumentReference tokenRef = document.Reference;
@@ -538,6 +551,7 @@ namespace HireAProBackend.Controllers
             // Ejecutar consulta para buscar el token
             Query consulta = _firestoreDb.Collection("tokens").WhereEqualTo("token", token);
             QuerySnapshot tokenEncontrado = await consulta.GetSnapshotAsync();
+            DateTime fechaCaducidad = new DateTime();
 
             foreach (DocumentSnapshot document in tokenEncontrado.Documents)
             {
@@ -546,6 +560,7 @@ namespace HireAProBackend.Controllers
                     // Extraemos el email asociado al token
                     string email = document.GetValue<string>("email");
                     string tokenValue = document.GetValue<string>("token");
+                    fechaCaducidad = document.GetValue<DateTime>("caducidad");
 
                     // Asignamos los valores al tokenBuffer
                     tokenBuffer = new TokenPassReset
@@ -569,6 +584,21 @@ namespace HireAProBackend.Controllers
                 return NotFound("Usuario no encontrado");
             }
 
+            // ver si el token no ha caducado
+            if (fechaCaducidad < DateTime.UtcNow)
+            {
+
+                // eliminar el token después de cambiar la contraseña
+                foreach (DocumentSnapshot document in tokenEncontrado.Documents)
+                {
+                    DocumentReference tokenRef = document.Reference;
+                    await tokenRef.DeleteAsync();  // Eliminamos el token una vez usado
+                }
+                return Unauthorized("La clave de recuperación usada ha caducado");
+               
+                
+            }
+
             // actualizar la contraseña del usuario
             foreach (DocumentSnapshot document in usuarioEncontrado.Documents)
             {
@@ -581,7 +611,7 @@ namespace HireAProBackend.Controllers
         });
             }
 
-            // Paso 4: (Opcional) Eliminar el token después de cambiar la contraseña
+            // eliminar el token después de cambiar la contraseña
             foreach (DocumentSnapshot document in tokenEncontrado.Documents)
             {
                 DocumentReference tokenRef = document.Reference;
@@ -632,7 +662,8 @@ namespace HireAProBackend.Controllers
 
         private static string generarTokenRecuperacion(string mail)
         {
-
+            
+           
             string bufferToken = mail;
 
 
@@ -665,17 +696,21 @@ namespace HireAProBackend.Controllers
                 }
             };
 
-
+            
+            DateTime fechaCaducidad = (DateTime.UtcNow).AddMinutes(15);
 
             CollectionReference referencia = _firestoreDb.Collection("tokens");
             DocumentReference nuevoToken = await referencia.AddAsync(new
             {
                 token = tokenEntrada,
                 email = correo,
+                caducidad = fechaCaducidad
             });
 
             return Ok("token guardado");
         }
+
+
 
 
 
