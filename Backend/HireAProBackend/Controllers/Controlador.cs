@@ -33,17 +33,13 @@ namespace HireAProBackend.Controllers
     [ApiController]
     public class Controlador : ControllerBase
     {
-        private FirestoreDb _firestoreDb;
+        private readonly FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
-        public Models.Path _path;
         private readonly IEmailService _emailService;
 
-        public Controlador(IConfiguration configuracion, IEmailService emailService)
+        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService)
         {
-            _path = new Models.Path();
-            string path = _path.path; // Ruta del archivo de credenciales
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
-            _firestoreDb = FirestoreDb.Create("hire-a-pro-database");
+            _firestoreDb = firestoreDb;
             _configuracion = configuracion;
             _emailService = emailService;
         }
