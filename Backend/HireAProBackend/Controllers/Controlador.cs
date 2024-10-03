@@ -140,6 +140,7 @@ namespace HireAProBackend.Controllers
             }
 
         }
+
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] Models.RegisterRequest registerRequest) //Timeout aplicado
         {
@@ -152,9 +153,6 @@ namespace HireAProBackend.Controllers
             welEmail.Subject = emailContent.WelcomeSubject;
             string body = emailContent.WelBody(username);
             welEmail.Body = body;
-
-            //Consigue las credenciales de registerRequest
-            // string password = registerRequest.Password
 
             string hashedPassword = ComputeSha256Hash(registerRequest.Password);
 
@@ -171,6 +169,7 @@ namespace HireAProBackend.Controllers
                 // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
+
                 if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
                 {
                     QuerySnapshot respuestaCorreo = await queryTask;
@@ -187,7 +186,6 @@ namespace HireAProBackend.Controllers
 
                         string verifyToken = ComputeSha256Hash(generarTokenRecuperacion(email));
 
-                        // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                         string link = "http://localhost:4200/login/verify?t=" + verifyToken;
                         await guardarToken(verifyToken, email);
 
@@ -228,6 +226,7 @@ namespace HireAProBackend.Controllers
             }
 
         }
+
         [HttpPost("verifyAccount")]
         public async Task<ActionResult> VerifyAccount([FromBody] AuthenticateRequest verifyRequest)
         {
@@ -323,6 +322,68 @@ namespace HireAProBackend.Controllers
 
         }
 
+        // Método para añadir la información extra del usuario una vez registrado, o para actualizar la información más tarde
+        [HttpPost("completeProfile")]
+        public async Task<ActionResult> AddData([FromBody] Models.CompleteProfileRequest completeProfileRequest) //Timeout aplicado
+        {
+            string email = completeProfileRequest.Email;
+            string fullName = completeProfileRequest.FullName;
+            string gender = completeProfileRequest.Gender;
+            DateTime birthDate = completeProfileRequest.BirthDate.Date;
+            string city = completeProfileRequest.City;
+
+            int timeout = 1000000;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            try
+            {
+                // Busca si existe el usuario por correo electrónico
+                Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", email);
+                var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
+
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                {
+                    QuerySnapshot respuestaCorreo = await queryTask;
+
+                    if (respuestaCorreo.Documents.Count > 0)
+                    {
+                        // Si el usuario existe, actualiza la información personal
+                        DocumentSnapshot documentoUsuario = respuestaCorreo.Documents[0];
+                        DocumentReference usuarioRef = documentoUsuario.Reference;
+
+                        Dictionary<string, object> userData = new Dictionary<string, object>
+                        {
+                            { "fullName", fullName },
+                            { "gender", gender },
+                            { "birthDate", birthDate },
+                            { "city", city },
+                        };
+
+                        await usuarioRef.UpdateAsync(userData);
+
+                        return Ok("Información personal actualizada correctamente.");
+
+                    }
+                    else
+                    {
+                        return NotFound("No se encontró un usuario con ese correo.");
+                    }
+                }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                    return StatusCode(408, "La consulta ha tardado demasiado.");
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return StatusCode(408, "La operación fue cancelada, ha tardado demasiado.");
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+            }
+        }
 
         // Función para generar el hash SHA-256 dentro del mismo controlador
         private string ComputeSha256Hash(string rawData)
