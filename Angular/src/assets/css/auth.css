@@ -12,28 +12,19 @@
   transition: all 0.4s ease-in-out;
 }
 
-*:focus,
-*:active {
-  border-color: #14ca8d;
-}
-
 .parent {
-  background-color: #2f2f2f;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
   font-family: "Poppins", sans-serif;
-  color: #ffffff;
 }
 
 .child {
-  background: linear-gradient(135deg, #3a3a3a, #40473d);
   padding: 40px;
   border-radius: 12px;
   min-width: 360px;
-  box-shadow: 0px 10px 30px #000000b3;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -44,7 +35,6 @@
 h2 {
   margin-bottom: 20px;
   font-size: 24px;
-  color: #ffffff;
 }
 
 form {
@@ -76,35 +66,27 @@ form:has(.input-group:nth-child(3)) {
   grid-gap: 8px;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 15px;
-  border: 2px solid #ccc;
   border-radius: 8px;
-  background-color: #fff;
-  color: #333;
   font-size: 16px;
   transition: all 1s ease;
   outline: none;
 }
 
-input:focus {
-  border: 2px solid #00bd7e;
-}
-
 button {
-  background-color: #00ffab;
-  color: black;
   padding: 15px;
   border: none;
   border-radius: 8px;
   width: 100%;
   font-size: 18px;
   transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
 a {
-  color: #a7ffeb;
   text-decoration: none;
   font-size: 14px;
   display: block;
@@ -118,13 +100,82 @@ a {
 }
 
 .error {
-  color: red;
   width: 100%;
   margin-bottom: 15px;
 }
 
-label{
+label {
   text-align: left;
 }
 
+@media (prefers-color-scheme: light) {
+  .parent {
+    background-color: #e3f2fd;
+    color: #2c3e50;
+  }
 
+  .child {
+    background: linear-gradient(135deg, #ffffff, #bbdefbde);
+    box-shadow: 0px 10px 30px #90caf9;
+  }
+
+  input:focus {
+    border: 2px solid #3498db;
+  }
+
+  input,
+  select {
+    background-color: #ffffff;
+    border: 2px solid #90caf9;
+    color: #2c3e50;
+  }
+
+  button {
+    background-color: #76e1ef;
+    color: white;
+  }
+
+  a {
+    color: #3498db;
+  }
+
+  .error {
+    color: #e74c3c;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .parent {
+    background-color: #1b1f24;
+    color: #dcdcdc;
+  }
+
+  .child {
+    background: linear-gradient(135deg, #2c3e50, #1c2536);
+    box-shadow: 0px 10px 30px #000000;
+  }
+
+  input,
+  select {
+    background-color: #313131;
+    border: 2px solid #3498db;
+    color: #dcdcdc;
+  }
+
+  input:focus {
+    border: 2px solid #e6e6e6;
+  }
+
+  button {
+    background-color: #3498db;
+    color: white;
+  }
+
+  a {
+    color: #76e1ef;
+  }
+
+  .error {
+    color: #e74c3c;
+  }
+}
