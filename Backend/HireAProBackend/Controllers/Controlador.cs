@@ -212,7 +212,7 @@ namespace HireAProBackend.Controllers
                         verifyEmail.To = email;
                         verifyEmail.Subject = emailContent.VerifySubject;
 
-                        string verifyToken = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
+                        string verifyToken = _shaHash.ComputeSha256Hash(_genTokenReset.generarTokenRecuperacion(email));
 
                         string link = "http://localhost:4200/login/verify?t=" + verifyToken;
                         await guardarToken(verifyToken, email);
@@ -551,7 +551,7 @@ namespace HireAProBackend.Controllers
                     Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
 
                     // esto es: hash(mail + contra + "clave supersecreta")
-                    string tokenRecuperacion = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
+                    string tokenRecuperacion = _shaHash.ComputeSha256Hash(_genTokenReset.generarTokenRecuperacion(email));
 
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                     string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
