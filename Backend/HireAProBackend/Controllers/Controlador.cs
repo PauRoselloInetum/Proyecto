@@ -38,14 +38,17 @@ namespace HireAProBackend.Controllers
         private readonly IEmailService _emailService;
         private readonly IHmacShaHash _hmacShaHash;
         private readonly IShaHash _shaHash;
+        private readonly IGenTokenReset _genTokenReset;
 
-        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService, IHmacShaHash hmacShaHash, IShaHash shaHash)
+        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService, IHmacShaHash hmacShaHash, IShaHash shaHash, IGenTokenReset genTokenReset)
         {
             _firestoreDb = firestoreDb;
             _configuracion = configuracion;
             _emailService = emailService;
             _hmacShaHash = hmacShaHash;
             _shaHash = shaHash;
+            _genTokenReset = genTokenReset;
+
         }
         [HttpGet("usuarios")] //Función de prueba para comprobar que están todos los usuarios en la base de datos
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
@@ -693,28 +696,28 @@ namespace HireAProBackend.Controllers
             return Ok("Usuario eliminado.");
         }
 
+        // ARA ESTÀ A LA CARPETA SERVICES!
+        //// método que va a crear un token personalizado para la url de recuperación de contraseña.
+        //// procedimiento --> hash(mail + contra + token perosnalizado)
+        //private static readonly Random random = new Random();
+        //private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        // método que va a crear un token personalizado para la url de recuperación de contraseña.
-        // procedimiento --> hash(mail + contra + token perosnalizado)
-        private static readonly Random random = new Random();
-        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        //public static string RandomString(int length)
+        //{
 
-        public static string RandomString(int length)
-        {
+        //    return new string(Enumerable.Repeat(chars, length)
+        //        .Select(s => s[random.Next(s.Length)]).ToArray());
+        //}
 
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        private static string generarTokenRecuperacion(string mail)
-        {
-
-
-            string bufferToken = mail;
+        //private static string generarTokenRecuperacion(string mail)
+        //{
 
 
-            return bufferToken + RandomString(10);
-        }
+        //    string bufferToken = mail;
+
+
+        //    return bufferToken + RandomString(10);
+        //}
 
         /** Función que sencillamente pasa el token y el mail al que va asociado a la base de datos
         */

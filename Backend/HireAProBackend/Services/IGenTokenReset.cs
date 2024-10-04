@@ -1,6 +1,6 @@
 ﻿namespace HireAProBackend.Services
 {
-    public interface IGenTokenRecuperacion
+    public interface IGenTokenReset
     {
 
         string generarTokenRecuperacion(string mail);
