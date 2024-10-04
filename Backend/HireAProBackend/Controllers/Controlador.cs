@@ -36,6 +36,7 @@ namespace HireAProBackend.Controllers
         private readonly FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
         private readonly IEmailService _emailService;
+        private readonly IHmacShaHash _hmacShaHash;
 
         public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService)
         {
@@ -414,16 +415,7 @@ namespace HireAProBackend.Controllers
                 return builder.ToString();
             }
         }
-        private string ComputeHMACSha256Hash(string data, string secretKey)
-        {
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            using (var hmacsha256 = new HMACSHA256(keyBytes))
-            {
-                var dataBytes = Encoding.UTF8.GetBytes(data);
-                var hashBytes = hmacsha256.ComputeHash(dataBytes);
-                return Convert.ToBase64String(hashBytes).Replace('+', '-').Replace('/', '_').TrimEnd('='); // Convertir a Base64Url
-            }
-        }
+      
 
         [HttpPost("home")] //Comprueba si la firma es correcta pero ha de validar la fecha
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest) //Timeout aplicado
@@ -471,7 +463,7 @@ namespace HireAProBackend.Controllers
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
 
                 //Generar la firma esperada
-                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
+                string expectedSignature = _hmacShaHash.ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el 
                 string email = "";

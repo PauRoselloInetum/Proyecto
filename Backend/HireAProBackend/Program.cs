@@ -56,7 +56,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
+builder.Services.AddTransient<IHmacShaHash,HmacShaHash>();
 //Configuracion servicio de correo
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHostedService<DelUsersService>();
