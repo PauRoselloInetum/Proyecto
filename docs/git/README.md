@@ -3,23 +3,25 @@
 ## Pasos para subir a la rama `main`
 
 > [!important]
->  El punto **2**, **3** Y **4** son de vital importancia
+> El punto **3**, **4** Y **5** son de vital importancia.
+> 
+> No se puede usar `git add .`
 
 1. **`git branch nombre-dev` Solo la primera vez, nombre-dev cambiar por tu nombre (ej, pauR-dev)**
-1.1. **`git switch nombre-dev` Cambias a la rama de desarrollo**
-2. **Cerrar el Visual Studio 2022 y abrir el Visual Studio Code**
-3. **Descartar los cambios NO hechos por ti (Puedes seleccionar varios a la vez con Ctrl o Shift)**
+2. **`git switch nombre-dev` Cambias a la rama de desarrollo**
+3. **Cerrar el Visual Studio 2022 y abrir el Visual Studio Code**
+4. **Descartar los cambios NO hechos por ti (Puedes seleccionar varios a la vez con Ctrl o Shift)**
 
-![[../img/git_discart.png]]
+![alt text](../img/git_discart.png)
 
-4. **Añadir los cambios SI por ti con "Stage Changes" (Puedes seleccionar varios a la vez con Ctrl o Shift)**
+5. **Añadir los cambios SI hechos por ti con "Stage Changes" (Puedes seleccionar varios a la vez con Ctrl o Shift)**
 
-![[../img/git_stage.png]]
+![alt text](../img/git_stage.png)
 
-5. **`git commit -m "CAMBIOS HECHOS"`**
-6. **`git pull` Solo el repo local esta desactualizado**
-7. **`git push -u origin nombre-dev` nombre-dev es el nombre de la rama creada inicialmente**
-8. **Abrir el proyecto de github en el navegador y entrar en tu rama**
+6. **`git commit -m "CAMBIOS HECHOS"`**
+7. **`git pull` Solo el repo local esta desactualizado**
+8. **`git push -u origin nombre-dev` nombre-dev es el nombre de la rama creada inicialmente**
+9. **Abrir el proyecto de github en el navegador y entrar en tu rama**
 
 ![alt text](../img/git_branch.png)
 
