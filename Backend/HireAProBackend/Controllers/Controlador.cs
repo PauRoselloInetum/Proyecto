@@ -36,12 +36,16 @@ namespace HireAProBackend.Controllers
         private readonly FirestoreDb _firestoreDb;
         public IConfiguration _configuracion;
         private readonly IEmailService _emailService;
+        private readonly IHmacShaHash _hmacShaHash;
+        private readonly IShaHash _shaHash;
 
-        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService)
+        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService, IHmacShaHash hmacShaHash, IShaHash shaHash)
         {
             _firestoreDb = firestoreDb;
             _configuracion = configuracion;
             _emailService = emailService;
+            _hmacShaHash = hmacShaHash;
+            _shaHash = shaHash;
         }
         [HttpGet("usuarios")] //Función de prueba para comprobar que están todos los usuarios en la base de datos
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
@@ -70,7 +74,7 @@ namespace HireAProBackend.Controllers
 
             //Convertir lo datos obtenidos desde el front-end en string
             string correo = loginRequest.Email;
-            string password = ComputeSha256Hash(loginRequest.Password);
+            string password = _shaHash.ComputeSha256Hash(loginRequest.Password);
 
 
             //Variables del timeout
@@ -132,7 +136,7 @@ namespace HireAProBackend.Controllers
 
                     if (usuario.Verified == false)
                     {
-                        return Unauthorized("Tu cuenta no ha sido verificada");
+                        return StatusCode(403, "Tu cuenta no ha sido verificada");
                     }
 
                     //Retorna el token en formato de cadena de texto
@@ -170,7 +174,7 @@ namespace HireAProBackend.Controllers
             string body = emailContent.WelBody(username);
             welEmail.Body = body;
 
-            string hashedPassword = ComputeSha256Hash(registerRequest.Password);
+            string hashedPassword = _shaHash.ComputeSha256Hash(registerRequest.Password);
 
             int timeout = 100000;
             var cancellationTokenSource = new CancellationTokenSource();
@@ -181,17 +185,22 @@ namespace HireAProBackend.Controllers
                 // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
                 Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", email);
 
+                // Busca si ya hay un usuario en la base de datos con es mismo usuario para que no se repita
+                Query consultaUser = _firestoreDb.Collection("users").WhereEqualTo("username", username);
+
                 //Realiza la consulta a la base de datos y la almacena en respuestaDb
                 // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryUser = consultaUser.GetSnapshotAsync(cancellationTokenSource.Token);
 
-                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask && await Task.WhenAny(queryUser, Task.Delay(timeout)) == queryUser)
                 {
                     QuerySnapshot respuestaCorreo = await queryTask;
+                    QuerySnapshot respuestaUsuario= await queryUser;
 
                     //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
-                    if (respuestaCorreo.Documents.Count == 0)
+                    if (respuestaCorreo.Documents.Count == 0 && respuestaUsuario.Documents.Count == 0)
                     {
                         //Enviar correo de verificación
                         EmailDTO verifyEmail = new EmailDTO();
@@ -200,7 +209,7 @@ namespace HireAProBackend.Controllers
                         verifyEmail.To = email;
                         verifyEmail.Subject = emailContent.VerifySubject;
 
-                        string verifyToken = ComputeSha256Hash(generarTokenRecuperacion(email));
+                        string verifyToken = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
 
                         string link = "http://localhost:4200/login/verify?t=" + verifyToken;
                         await guardarToken(verifyToken, email);
@@ -223,7 +232,7 @@ namespace HireAProBackend.Controllers
                         _emailService.SendEmail(welEmail);
                         return Ok("Usuario registrado");
                     }
-                    return Unauthorized("Ya existe un usuario con este correo");
+                    return Unauthorized("Ya existe un usuario con este correo o usuario");
                 }
                 else
                 {
@@ -398,32 +407,7 @@ namespace HireAProBackend.Controllers
                 cancellationTokenSource.Dispose();
             }
         }
-
-        // Función para generar el hash SHA-256 dentro del mismo controlador
-        private string ComputeSha256Hash(string rawData)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in bytes)
-                {
-                    builder.Append(b.ToString("x2")); // Convertir a hexadecimal
-                }
-                return builder.ToString();
-            }
-        }
-        private string ComputeHMACSha256Hash(string data, string secretKey)
-        {
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            using (var hmacsha256 = new HMACSHA256(keyBytes))
-            {
-                var dataBytes = Encoding.UTF8.GetBytes(data);
-                var hashBytes = hmacsha256.ComputeHash(dataBytes);
-                return Convert.ToBase64String(hashBytes).Replace('+', '-').Replace('/', '_').TrimEnd('='); // Convertir a Base64Url
-            }
-        }
+      
 
         [HttpPost("home")] //Comprueba si la firma es correcta pero ha de validar la fecha
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest) //Timeout aplicado
@@ -471,7 +455,7 @@ namespace HireAProBackend.Controllers
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.LoginKey));
 
                 //Generar la firma esperada
-                string expectedSignature = ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
+                string expectedSignature = _hmacShaHash.ComputeHMACSha256Hash($"{header}.{payload}", jwt.LoginKey);
 
                 //Inicializar las variables para poder utilizarlas después, al validar el 
                 string email = "";
@@ -564,7 +548,7 @@ namespace HireAProBackend.Controllers
                     Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
 
                     // esto es: hash(mail + contra + "clave supersecreta")
-                    string tokenRecuperacion = ComputeSha256Hash(generarTokenRecuperacion(email));
+                    string tokenRecuperacion = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
 
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                     string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
@@ -669,7 +653,7 @@ namespace HireAProBackend.Controllers
                 // se actualiza la contraseña, pasándola por hash previamente
                 await usuarioRef.UpdateAsync(new Dictionary<string, object>
         {
-            { "password", ComputeSha256Hash(nuevaPassword) }
+            { "password", _shaHash.ComputeSha256Hash(nuevaPassword) }
         });
             }
 
