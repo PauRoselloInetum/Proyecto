@@ -133,7 +133,7 @@ namespace HireAProBackend.Controllers
 
                     if (usuario.Verified == false)
                     {
-                        return Unauthorized("Tu cuenta no ha sido verificada");
+                        return Forbid("Tu cuenta no ha sido verificada");
                     }
 
                     //Retorna el token en formato de cadena de texto

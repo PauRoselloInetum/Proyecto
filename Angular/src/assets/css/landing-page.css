@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border: 2px solid #000;
+  width: 530px;
+  height: 100px;
+  position: relative;
+}
+
+.left-title {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.right-scroll {
+  position: relative;
+  overflow: hidden;
+  height: 50px;
+  width: 300px;
+}
+
+.professions {
+  display: block;
+  position: absolute;
+  animation: scroll 15s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateY(50px);
+  }
+  100% {
+    transform: translateY(-600px);
+  }
+}
+
+.professions div {
+  font-size: 48px;
+  font-weight: bold;
+  height: 50px;
+  line-height: 50px;
+}
