@@ -572,7 +572,7 @@ namespace HireAProBackend.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized($"Error al realizar la operación: {ex.Message} " + ex);
+                return StatusCode(503, $"Error al realizar la operación: {ex.Message} " + ex);
             }
             finally
             {
