@@ -1,6 +1,6 @@
 ﻿namespace HireAProBackend.Services
 {
-    public class GenTokenRecuperacion : IGenTokenRecuperacion
+    public class GenTokenReset : IGenTokenReset
     {
 
         // método que va a crear un token personalizado para la url de recuperación de contraseña.
