@@ -136,7 +136,7 @@ namespace HireAProBackend.Controllers
 
                     if (usuario.Verified == false)
                     {
-                        return StatusCode(403, "Tu cuenta no ha sido verificada");
+                     return StatusCode(403, "Tu cuenta no ha sido verificada");
                     }
 
                     //Retorna el token en formato de cadena de texto

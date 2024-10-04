@@ -24,8 +24,8 @@ import { HttpClientModule } from '@angular/common/http';
   providers: [AuthService],
 })
 export class AppComponent {
-  loading: boolean = false;
-  public email: string = '';
+  loading: string = '';
+  email: string = '';
   error: string = '';
   info: string = '';
 
@@ -38,13 +38,14 @@ export class AppComponent {
     this.authservice.email$.subscribe((email) => {
       this.email = email;
     });
+    this.authservice.loading$.subscribe((loading) => {
+      this.loading = loading;
+    });
   }
 
   validateSession() {
-    this.loading = true;
     const session = this.cookieService.get('token');
     this.authservice.validateSession(session);
-    this.loading = false;
     this.error = this.authservice.error;
     this.info = this.authservice.info;
   }

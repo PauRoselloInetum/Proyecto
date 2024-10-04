@@ -79,9 +79,11 @@ export class AuthService {
         this.errorSubject.next(
           error.status === 401
             ? 'Usuario o Contraseña incorrectas.'
-            : error.status === 408
-              ? 'Tiempo de espera agotado. Intente nuevamente.'
-              : 'Error con el Servidor. Intente nuevamente.',
+            : error.status === 403
+              ? 'Debes de verificar tu cuenta.'
+              : error.status === 408
+                ? 'Tiempo de espera agotado. Intente nuevamente.'
+                : 'Error con el Servidor. Intente nuevamente.',
         );
       },
     });
