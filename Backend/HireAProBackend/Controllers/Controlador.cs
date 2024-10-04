@@ -132,7 +132,7 @@ namespace HireAProBackend.Controllers
 
                     if (usuario.Verified == false)
                     {
-                        return Forbid("Tu cuenta no ha sido verificada");
+                        return StatusCode(403, "Tu cuenta no ha sido verificada");
                     }
 
                     //Retorna el token en formato de cadena de texto
@@ -181,17 +181,22 @@ namespace HireAProBackend.Controllers
                 // Query consulta = _firestoreDb.Collection("users").WhereEqualTo("email", correo).WhereEqualTo("contra", password);
                 Query consultaCorreo = _firestoreDb.Collection("users").WhereEqualTo("email", email);
 
+                // Busca si ya hay un usuario en la base de datos con es mismo usuario para que no se repita
+                Query consultaUser = _firestoreDb.Collection("users").WhereEqualTo("username", username);
+
                 //Realiza la consulta a la base de datos y la almacena en respuestaDb
                 // QuerySnapshot respuestaDb = await consulta.GetSnapshotAsync();
 
                 var queryTask = consultaCorreo.GetSnapshotAsync(cancellationTokenSource.Token);
+                var queryUser = consultaUser.GetSnapshotAsync(cancellationTokenSource.Token);
 
-                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask)
+                if (await Task.WhenAny(queryTask, Task.Delay(timeout)) == queryTask && await Task.WhenAny(queryUser, Task.Delay(timeout)) == queryUser)
                 {
                     QuerySnapshot respuestaCorreo = await queryTask;
+                    QuerySnapshot respuestaUsuario= await queryUser;
 
                     //Si el documento no existe, es decir, el usuario no esta registrado en la base de datos, crea el nuevo documento con sus datos
-                    if (respuestaCorreo.Documents.Count == 0)
+                    if (respuestaCorreo.Documents.Count == 0 && respuestaUsuario.Documents.Count == 0)
                     {
                         //Enviar correo de verificación
                         EmailDTO verifyEmail = new EmailDTO();
@@ -223,7 +228,7 @@ namespace HireAProBackend.Controllers
                         _emailService.SendEmail(welEmail);
                         return Ok("Usuario registrado");
                     }
-                    return Unauthorized("Ya existe un usuario con este correo");
+                    return Unauthorized("Ya existe un usuario con este correo o usuario");
                 }
                 else
                 {

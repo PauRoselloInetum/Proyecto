@@ -2,14 +2,30 @@
   {
     "ContainingType": "HireAProBackend.Controllers.Controlador",
     "Method": "ChangePassword",
-    "RelativePath": "api/changeRequest",
+    "RelativePath": "api/changePass",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "changeRequest",
+        "Name": "changePassRequest",
         "Type": "HireAProBackend.Models.ChangePassRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
+    "Method": "AddData",
+    "RelativePath": "api/completeProfile",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "completeProfileRequest",
+        "Type": "HireAProBackend.Models.CompleteProfileRequest",
         "IsRequired": true
       }
     ],
@@ -124,6 +140,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "HireAProBackend.Controllers.Controlador",
+    "Method": "VerifyAccount",
+    "RelativePath": "api/verifyAccount",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "verifyRequest",
+        "Type": "HireAProBackend.Models.AuthenticateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "HireAProBackend.Controllers.WeatherForecastController",
