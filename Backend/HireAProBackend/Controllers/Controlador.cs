@@ -415,16 +415,7 @@ namespace HireAProBackend.Controllers
                 return builder.ToString();
             }
         }
-       private string ComputeHMACSha256Hash(string data, string secretKey)
-        {
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            using (var hmacsha256 = new HMACSHA256(keyBytes))
-            {
-                var dataBytes = Encoding.UTF8.GetBytes(data);
-                var hashBytes = hmacsha256.ComputeHash(dataBytes);
-                return Convert.ToBase64String(hashBytes).Replace('+', '-').Replace('/', '_').TrimEnd('='); // Convertir a Base64Url
-            }
-        }
+      
 
         [HttpPost("home")] //Comprueba si la firma es correcta pero ha de validar la fecha
         public async Task<ActionResult> ValidateToken([FromBody] Models.AuthenticateRequest authenticateRequest) //Timeout aplicado
