@@ -24,7 +24,7 @@ header {
 
 header.compact {
   transform: scale(0.85);
-  width: 300px;
+  width: 320px;
   border-radius: 5px;
   margin-top: 20px;
 }

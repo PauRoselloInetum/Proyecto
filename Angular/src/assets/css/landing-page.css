@@ -15,6 +15,7 @@
   width: 530px;
   height: 100px;
   position: relative;
+  transition: width 1s ease;
 }
 
 .left-title {
@@ -27,21 +28,49 @@
   overflow: hidden;
   height: 50px;
   width: 300px;
+  transition: all 1s ease;
 }
 
 .professions {
   display: block;
   position: absolute;
-  animation: scroll 15s linear infinite;
+  animation: scroll 6s linear forwards;
   white-space: nowrap;
 }
 
 @keyframes scroll {
   0% {
-    transform: translateY(50px);
+    transform: translateY(0px);
+  }
+  10% {
+    transform: translateY(0px);
+  }
+  20% {
+    transform: translateY(-50px);
+  }
+  30% {
+    transform: translateY(-50px);
+  }
+  40% {
+    transform: translateY(-100px);
+  }
+  50% {
+    transform: translateY(-100px);
+  }
+  60% {
+    transform: translateY(-150px);
+  }
+  70% {
+    transform: translateY(-150px);
+  }
+  80% {
+    transform: translateY(-200px);
+  }
+  90% {
+    transform: translateY(-200px);
   }
   100% {
-    transform: translateY(-600px);
+    transform: translateY(-250px);
   }
 }
 
