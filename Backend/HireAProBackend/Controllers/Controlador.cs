@@ -39,8 +39,9 @@ namespace HireAProBackend.Controllers
         private readonly IHmacShaHash _hmacShaHash;
         private readonly IShaHash _shaHash;
         private readonly IGenTokenReset _genTokenReset;
+        private readonly ISaveToken _saveToken;
 
-        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService, IHmacShaHash hmacShaHash, IShaHash shaHash, IGenTokenReset genTokenReset)
+        public Controlador(FirestoreDb firestoreDb, IConfiguration configuracion, IEmailService emailService, IHmacShaHash hmacShaHash, IShaHash shaHash, IGenTokenReset genTokenReset, ISaveToken saveToken)
         {
             _firestoreDb = firestoreDb;
             _configuracion = configuracion;
@@ -48,7 +49,7 @@ namespace HireAProBackend.Controllers
             _hmacShaHash = hmacShaHash;
             _shaHash = shaHash;
             _genTokenReset = genTokenReset;
-
+            _saveToken = saveToken;
         }
         [HttpGet("usuarios")] //Función de prueba para comprobar que están todos los usuarios en la base de datos
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
@@ -212,10 +213,10 @@ namespace HireAProBackend.Controllers
                         verifyEmail.To = email;
                         verifyEmail.Subject = emailContent.VerifySubject;
 
-                        string verifyToken = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
+                        string verifyToken = _shaHash.ComputeSha256Hash(_genTokenReset.generarTokenRecuperacion(email));
 
                         string link = "http://localhost:4200/login/verify?t=" + verifyToken;
-                        await guardarToken(verifyToken, email);
+                        await _saveToken.GuardarTokenAsync(verifyToken, email);
 
                         string verifyBody = emailContent.VerBody(username, link);//Generar el link
                         verifyEmail.Body = verifyBody;
@@ -551,11 +552,11 @@ namespace HireAProBackend.Controllers
                     Usuario usuario = respuestaDb.Documents[0].ConvertTo<Usuario>(); // instanciar Usuario para poder sacarle así la contraseña
 
                     // esto es: hash(mail + contra + "clave supersecreta")
-                    string tokenRecuperacion = _shaHash.ComputeSha256Hash(generarTokenRecuperacion(email));
+                    string tokenRecuperacion = _shaHash.ComputeSha256Hash(_genTokenReset.generarTokenRecuperacion(email));
 
                     // TODO configurar el endpoint o una variable que alojará el valor de tokenRecupoeracion como query por Get
                     string link = "http://localhost:4200/login/forgot-password?t=" + tokenRecuperacion;
-                    await guardarToken(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
+                    await _saveToken.GuardarTokenAsync(tokenRecuperacion, email); // envia el token a la base de datos en la coleccion "tokens"
                     string body = emailContent.PassBody(usuario.Username, link);
 
                     emailRequest.Body = body;
@@ -695,73 +696,6 @@ namespace HireAProBackend.Controllers
             }
             return Ok("Usuario eliminado.");
         }
-
-        // ARA ESTÀ A LA CARPETA SERVICES!
-        //// método que va a crear un token personalizado para la url de recuperación de contraseña.
-        //// procedimiento --> hash(mail + contra + token perosnalizado)
-        //private static readonly Random random = new Random();
-        //private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        //public static string RandomString(int length)
-        //{
-
-        //    return new string(Enumerable.Repeat(chars, length)
-        //        .Select(s => s[random.Next(s.Length)]).ToArray());
-        //}
-
-        //private static string generarTokenRecuperacion(string mail)
-        //{
-
-
-        //    string bufferToken = mail;
-
-
-        //    return bufferToken + RandomString(10);
-        //}
-
-        /** Función que sencillamente pasa el token y el mail al que va asociado a la base de datos
-        */
-        private async Task<ActionResult> guardarToken(string tokenEntrada, string correo)
-        {
-            TokenPassReset tokenUsuario = new TokenPassReset();
-
-            tokenUsuario.token = tokenEntrada;
-            tokenUsuario.email = correo;
-            var cancellationTokenSource = new CancellationTokenSource();
-
-            // consultar si previamente existe este usuario
-            Query consultarUser = _firestoreDb.Collection("tokens").WhereNotEqualTo("token", tokenUsuario.email);
-
-
-            var queryTask = consultarUser.GetSnapshotAsync(cancellationTokenSource.Token);
-
-            if (await Task.WhenAny(queryTask) == queryTask)
-            {
-                QuerySnapshot respuestaDb = await queryTask;
-                //Si no existen documentos, es decir, si no está el usuario en la base de datos, le indica error
-                if (respuestaDb.Documents.Count == 0)
-                {
-                    return Unauthorized("El email no corresponde a ningun usuario");
-                }
-            };
-
-
-            DateTime fechaCaducidad = (DateTime.UtcNow).AddMinutes(15);
-
-            CollectionReference referencia = _firestoreDb.Collection("tokens");
-            DocumentReference nuevoToken = await referencia.AddAsync(new
-            {
-                token = tokenEntrada,
-                email = correo,
-                caducidad = fechaCaducidad
-            });
-
-            return Ok("token guardado");
-        }
-
-
-
-
 
     }
 }

@@ -58,8 +58,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddTransient<IHmacShaHash,HmacShaHash>();
 builder.Services.AddTransient<IShaHash, ShaHash>();
-
 builder.Services.AddTransient<IGenTokenReset, GenTokenReset>();
+builder.Services.AddTransient<ISaveToken, SaveToken>();
+
 
 //Configuracion servicio de correo
 builder.Services.AddScoped<IEmailService, EmailService>();
