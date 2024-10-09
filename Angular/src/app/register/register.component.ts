@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoadingComponent } from '../loading/loading.component';
 import { AuthService } from '../auth.service';
@@ -9,7 +9,11 @@ import { AuthService } from '../auth.service';
   imports: [FormsModule, LoadingComponent],
   templateUrl: './register.component.html',
   styleUrls: ['../../assets/css/auth.css'],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ],
 })
+
 export class RegisterComponent {
   username: string = '';
   email: string = '';

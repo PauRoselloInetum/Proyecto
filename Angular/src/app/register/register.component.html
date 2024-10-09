@@ -16,28 +16,36 @@
         }
         @if (this.submitted) {
           <h2>Selecciona tu rol</h2>
-          <form (submit)="register()">
-            <div class="roletype register input-group">
-              <label>
-                <input
-                  type="radio"
-                  [(ngModel)]="type"
-                  name="type"
-                  value="client"
-                  required
-                />
-                <span>Cliente</span>
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  [(ngModel)]="type"
-                  name="type"
-                  value="professional"
-                  required
-                />
-                <span>Profesional</span>
-              </label>
+          <form class="radioform" (submit)="register()">
+            <div class="container">
+              <div class="radio-tile-group">
+                <div class="input-container">
+                  <input
+                    type="radio"
+                    value="User"
+                    [(ngModel)]="type"
+                    name="type"
+                    required
+                  />
+                  <div class="radio-tile">
+                    <ion-icon name="person"></ion-icon>
+                    <label>Client</label>
+                  </div>
+                </div>
+                <div class="input-container">
+                  <input
+                    type="radio"
+                    value="Professional"
+                    [(ngModel)]="type"
+                    name="type"
+                    required
+                  />
+                  <div class="radio-tile">
+                    <ion-icon name="cash"></ion-icon>
+                    <label>Professional</label>
+                  </div>
+                </div>
+              </div>
             </div>
             <button type="submit">Registrarse</button>
           </form>
