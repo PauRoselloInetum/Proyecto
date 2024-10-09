@@ -87,6 +87,35 @@ export class AuthService {
     });
   }
 
+  preregister(    
+    username: string,
+    email: string,
+    password: string,
+    passwordconfirm: string,
+    ){
+      if (!this.emailRegex.test(email)) {
+        this.errorSubject.next('Formato de correo inválido');
+        return;
+      }
+  
+      if (!this.usernameRegex.test(username)) {
+        this.errorSubject.next('Formato de usuario inválido');
+        return;
+      }
+  
+      if (password !== passwordconfirm) {
+        this.errorSubject.next('Las contraseñas no coinciden');
+        return;
+      }
+  
+      if (!this.passwordRegex.test(password)) {
+        this.errorSubject.next(
+          'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+        );
+        return;
+      }
+  }
+
   register(
     username: string,
     email: string,
@@ -94,28 +123,6 @@ export class AuthService {
     passwordconfirm: string,
     type: string
   ): void {
-    if (!this.emailRegex.test(email)) {
-      this.errorSubject.next('Formato de correo inválido');
-      return;
-    }
-
-    if (!this.usernameRegex.test(username)) {
-      this.errorSubject.next('Formato de usuario inválido');
-      return;
-    }
-
-    if (password !== passwordconfirm) {
-      this.errorSubject.next('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (!this.passwordRegex.test(password)) {
-      this.errorSubject.next(
-        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
-      );
-      return;
-    }
-
     this.loadingSubject.next('Registrándote...');
     this.authUrl = this.registerUrl;
     const registerData = { username, email, password, type };

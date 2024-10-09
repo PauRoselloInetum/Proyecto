@@ -15,7 +15,10 @@
             <p>{{ this.error }}</p>
           </div>
         }
-        <form (submit)="register()">
+        @if (this.submitted){
+
+        }@else{
+        <form (submit)="preregister()">
           <div class="register input-group">
             <input
               type="text"
@@ -52,26 +55,12 @@
               required
             />
           </div>
-          <div class="radio-types">
-            <input
-              type="radio"
-              name="cliente_o_profesional"
-              [(ngModel)]="type"
-              value="cliente"
-              checked
-            />Cliente
-            <input
-              type="radio"
-              name="cliente_o_profesional"
-              [(ngModel)]="type"
-              value="profesional"
-            />Profesional
-          </div>
           <button type="submit">Registrarse</button>
         </form>
         <div class="bottomlinks">
           <a href="./login">Iniciar Sesión</a>
         </div>
+      }
       </div>
     </div>
   }
