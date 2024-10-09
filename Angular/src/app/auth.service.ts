@@ -92,6 +92,7 @@ export class AuthService {
     email: string,
     password: string,
     passwordconfirm: string,
+    type: string
   ): void {
     if (!this.emailRegex.test(email)) {
       this.errorSubject.next('Formato de correo inválido');
@@ -117,7 +118,7 @@ export class AuthService {
 
     this.loadingSubject.next('Registrándote...');
     this.authUrl = this.registerUrl;
-    const registerData = { username, email, password };
+    const registerData = { username, email, password, type };
     this.postRegister(registerData).subscribe({
       next: (response) => {
         this.loadingSubject.next('');
@@ -184,7 +185,15 @@ export class AuthService {
     });
   }
 
+  /**/
   forgotChangePassword(password: string, token: string) {
+    if (!this.passwordRegex.test(password)) {
+      this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+      );
+      return;
+    }
+    
     this.loadingSubject.next('Cambiando contraseña...');
     const passwordData = { password: password, token: token };
     this.postForgotChange(passwordData).subscribe({

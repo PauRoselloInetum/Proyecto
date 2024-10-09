@@ -52,6 +52,21 @@
               required
             />
           </div>
+          <div class="radio-types">
+            <input
+              type="radio"
+              name="cliente_o_profesional"
+              [(ngModel)]="type"
+              value="cliente"
+              checked
+            />Cliente
+            <input
+              type="radio"
+              name="cliente_o_profesional"
+              [(ngModel)]="type"
+              value="profesional"
+            />Profesional
+          </div>
           <button type="submit">Registrarse</button>
         </form>
         <div class="bottomlinks">

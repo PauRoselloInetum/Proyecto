@@ -18,6 +18,7 @@ export class RegisterComponent {
   loading: string = '';
   error: string = '';
   info: string = '';
+  type: string = '';
 
   constructor(private authservice: AuthService) {}
 
@@ -36,6 +37,6 @@ export class RegisterComponent {
   }
 
   register() {
-    this.authservice.register(this.username, this.email, this.password, this.passwordconfirm);
+    this.authservice.register(this.username, this.email, this.password, this.passwordconfirm, this.type);
   }
 }

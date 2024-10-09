@@ -172,6 +172,7 @@ namespace HireAProBackend.Controllers
             EmailContent emailContent = new EmailContent();
             string email = registerRequest.Email;
             string username = registerRequest.Username;
+            string type = registerRequest.Type;
 
             welEmail.To = email;
             welEmail.Subject = emailContent.WelcomeSubject;
@@ -229,7 +230,8 @@ namespace HireAProBackend.Controllers
                             email = registerRequest.Email,
                             password = hashedPassword, // lo que se enviará será la contraseña hasheada anteriormente
                             verified = false,
-                            createdAt = DateTime.UtcNow
+                            createdAt = DateTime.UtcNow,
+                            type = registerRequest.Type
                         });
 
                         _emailService.SendEmail(verifyEmail);
