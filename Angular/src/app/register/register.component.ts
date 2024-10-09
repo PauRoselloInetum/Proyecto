@@ -19,6 +19,7 @@ export class RegisterComponent {
   error: string = '';
   info: string = '';
   type: string = '';
+  submitted: boolean = false;
 
   constructor(private authservice: AuthService) {}
 
@@ -38,5 +39,12 @@ export class RegisterComponent {
 
   register() {
     this.authservice.register(this.username, this.email, this.password, this.passwordconfirm, this.type);
+  }
+
+
+  // crea funcion preregister
+  preregister(){
+    this.submitted = true;
+    this.authservice.preregister(this.username, this.email, this.password, this.passwordconfirm);
   }
 }
