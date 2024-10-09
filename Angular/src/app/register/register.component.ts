@@ -35,16 +35,28 @@ export class RegisterComponent {
     this.authservice.info$.subscribe((info) => {
       this.info = info;
     });
+
+    this.authservice.submitted$.subscribe((submitted) => {
+      this.submitted = submitted;
+    });
   }
 
   register() {
-    this.authservice.register(this.username, this.email, this.password, this.passwordconfirm, this.type);
+    this.authservice.register(
+      this.username,
+      this.email,
+      this.password,
+      this.type,
+    );
   }
 
-
   // crea funcion preregister
-  preregister(){
-    this.submitted = true;
-    this.authservice.preregister(this.username, this.email, this.password, this.passwordconfirm);
+  preregister() {
+    this.authservice.preregister(
+      this.username,
+      this.email,
+      this.password,
+      this.passwordconfirm,
+    );
   }
 }

@@ -9,58 +9,83 @@
   } @else {
     <div class="parent">
       <div class="child">
-        <h2>Regístrate</h2>
         @if (this.error) {
           <div class="error">
             <p>{{ this.error }}</p>
           </div>
         }
-        @if (this.submitted){
-
-        }@else{
-        <form (submit)="preregister()">
-          <div class="register input-group">
-            <input
-              type="text"
-              placeholder="Usuario"
-              [(ngModel)]="username"
-              name="username"
-              required
-            />
+        @if (this.submitted) {
+          <h2>Selecciona tu rol</h2>
+          <form (submit)="register()">
+            <div class="roletype register input-group">
+              <label>
+                <input
+                  type="radio"
+                  [(ngModel)]="type"
+                  name="type"
+                  value="client"
+                  required
+                />
+                <span>Cliente</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  [(ngModel)]="type"
+                  name="type"
+                  value="professional"
+                  required
+                />
+                <span>Profesional</span>
+              </label>
+            </div>
+            <button type="submit">Registrarse</button>
+          </form>
+        } @else {
+          <h2>Regístrate</h2>
+          <form (submit)="preregister()">
+            <div class="register input-group">
+              <input
+                type="text"
+                placeholder="Usuario"
+                [(ngModel)]="username"
+                name="username"
+                required
+              />
+            </div>
+            <div class="register input-group">
+              <input
+                type="text"
+                placeholder="Correo Electrónico"
+                [(ngModel)]="email"
+                name="email"
+                required
+              />
+            </div>
+            <div class="register input-group">
+              <input
+                type="password"
+                placeholder="Contraseña"
+                [(ngModel)]="password"
+                name="password"
+                required
+              />
+            </div>
+            <div class="register input-group">
+              <input
+                type="password"
+                placeholder="Confirma la contraseña"
+                [(ngModel)]="passwordconfirm"
+                name="passwordconfirm"
+                required
+              />
+            </div>
+            <button type="submit">Siguiente</button>
+          </form>
+          <div class="bottomlinks">
+            <a href="./login">Iniciar Sesión</a>
           </div>
-          <div class="register input-group">
-            <input
-              type="text"
-              placeholder="Correo Electrónico"
-              [(ngModel)]="email"
-              name="email"
-              required
-            />
-          </div>
-          <div class="register input-group">
-            <input
-              type="password"
-              placeholder="Contraseña"
-              [(ngModel)]="password"
-              name="password"
-              required
-            />
-          </div>
-          <div class="register input-group">
-            <input
-              type="password"
-              placeholder="Confirma la contraseña"
-              [(ngModel)]="passwordconfirm"
-              name="passwordconfirm"
-              required
-            />
-          </div>
-          <button type="submit">Registrarse</button>
-        </form>
-        <div class="bottomlinks">
-          <a href="./login">Iniciar Sesión</a>
-        </div>
-      }
+        }
       </div>
     </div>
   }

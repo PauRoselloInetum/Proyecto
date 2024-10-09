@@ -19,6 +19,7 @@ export class AuthService {
   info: string = '';
   session: string = this.cookieService.get('token');
   loading: string = '';
+  submitted: boolean = false;
 
   emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
   passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-]).{8,}$/;
@@ -40,6 +41,9 @@ export class AuthService {
 
   private loadingSubject = new BehaviorSubject<string>('');
   loading$ = this.loadingSubject.asObservable();
+
+  private submittedSubject = new BehaviorSubject<boolean>(false);
+  submitted$ = this.submittedSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -87,41 +91,42 @@ export class AuthService {
     });
   }
 
-  preregister(    
+  preregister(
     username: string,
     email: string,
     password: string,
     passwordconfirm: string,
-    ){
-      if (!this.emailRegex.test(email)) {
-        this.errorSubject.next('Formato de correo inválido');
-        return;
-      }
-  
-      if (!this.usernameRegex.test(username)) {
-        this.errorSubject.next('Formato de usuario inválido');
-        return;
-      }
-  
-      if (password !== passwordconfirm) {
-        this.errorSubject.next('Las contraseñas no coinciden');
-        return;
-      }
-  
-      if (!this.passwordRegex.test(password)) {
-        this.errorSubject.next(
-          'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
-        );
-        return;
-      }
+  ) {
+    this.errorSubject.next('');
+    if (!this.emailRegex.test(email)) {
+      this.errorSubject.next('Formato de correo inválido');
+      return;
+    }
+
+    if (!this.usernameRegex.test(username)) {
+      this.errorSubject.next('Formato de usuario inválido');
+      return;
+    }
+
+    if (password !== passwordconfirm) {
+      this.errorSubject.next('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (!this.passwordRegex.test(password)) {
+      this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
+      );
+      return;
+    }
+    this.submittedSubject.next(true);
   }
 
   register(
     username: string,
     email: string,
     password: string,
-    passwordconfirm: string,
-    type: string
+    type: string,
   ): void {
     this.loadingSubject.next('Registrándote...');
     this.authUrl = this.registerUrl;
@@ -192,7 +197,6 @@ export class AuthService {
     });
   }
 
-  /**/
   forgotChangePassword(password: string, token: string) {
     if (!this.passwordRegex.test(password)) {
       this.errorSubject.next(
@@ -200,7 +204,7 @@ export class AuthService {
       );
       return;
     }
-    
+
     this.loadingSubject.next('Cambiando contraseña...');
     const passwordData = { password: password, token: token };
     this.postForgotChange(passwordData).subscribe({
@@ -258,6 +262,7 @@ export class AuthService {
     username: string;
     email: string;
     password: string;
+    type: string;
   }): Observable<any> {
     const headers = this.headers;
     return this.http.post(this.authUrl, data, { headers });
