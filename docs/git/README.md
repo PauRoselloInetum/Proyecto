@@ -1,72 +1,134 @@
-# COMO USAR GIT
+# Guía para usar Git
 
 ## Pasos para subir a la rama `main`
 
-> [!important]
-> El punto **3**, **4** Y **5** son de vital importancia.
-> 
-> No se puede usar `git add .`
+> [!IMPORTANT]
+> Los pasos **3**, **4** y **5** son de vital importancia.  
+> **NO** se debe usar `git add .`
 
-1. **`git branch nombre-dev` Solo la primera vez, nombre-dev cambiar por tu nombre (ej, pauR-dev)**
-2. **`git switch nombre-dev` Cambias a la rama de desarrollo**
-3. **Cerrar el Visual Studio 2022 y abrir el Visual Studio Code**
-4. **Descartar los cambios NO hechos por ti (Puedes seleccionar varios a la vez con Ctrl o Shift)**
+1. **Crear una rama de desarrollo:**
 
-![alt text](../img/git_discart.png)
+   ```bash
+   git branch nombre-dev
+   ```
 
-5. **Añadir los cambios SI hechos por ti con "Stage Changes" (Puedes seleccionar varios a la vez con Ctrl o Shift)**
+   > Solo la primera vez. Cambia `nombre-dev` por tu nombre (ej., `pauR-dev`).
 
-![alt text](../img/git_stage.png)
+2. **Cambiar a la rama de desarrollo:**
 
-6. **`git commit -m "CAMBIOS HECHOS"`**
-7. **`git pull` Solo el repo local esta desactualizado**
-8. **`git push -u origin nombre-dev` nombre-dev es el nombre de la rama creada inicialmente**
-9. **Abrir el proyecto de github en el navegador y entrar en tu rama**
+   ```bash
+   git switch nombre-dev
+   ```
 
-![alt text](../img/git_branch.png)
+3. **Cerrar Visual Studio 2022 y abrir Visual Studio Code.**
 
-7. **Abrir la PR**
+4. **Descartar cambios no realizados por ti:**  
+   Selecciona múltiples cambios con `Ctrl` o `Shift`.
 
-![alt text](../img/git_openpr.png)
+   ![Descartar cambios](../img/git_discart.png)
 
-8. **Crea la PR** 
-- El titulo y la descripción deben de descriptivos e intuitivos
-- Se deben de añadir los revisores que quieras (pueden ser todos o solo un minimo de 2)
+5. **Agregar solo tus cambios:**  
+   Utiliza la opción `"Stage Changes"`. Selecciona varios archivos con `Ctrl` o `Shift`.
 
-![alt text](../img/git_createpr.png)
+   ![Añadir cambios](../img/git_stage.png)
+
+6. **Crear un commit:**
+
+   ```bash
+   git commit -m "CAMBIOS HECHOS"
+   ```
+
+7. **Actualizar repositorio local (si es necesario):**
+
+   ```bash
+   git pull
+   ```
+
+8. **Subir cambios a la rama remota:**
+
+   ```bash
+   git push -u origin nombre-dev
+   ```
+
+   > `nombre-dev` es la rama creada en el paso 1.
+
+9. **Abrir el proyecto en GitHub y acceder a tu rama:**
+
+   ![Abrir rama](../img/git_branch.png)
+
+10. **Abrir la PR (Pull Request):**
+
+    ![Abrir PR](../img/git_openpr.png)
+
+11. **Crear la PR:**
+
+    - El título y la descripción deben ser descriptivos e intuitivos.
+    - Añadir los revisores necesarios (mínimo 2 o todos).
+
+    ![Crear PR](../img/git_createpr.png)
+
+---
 
 ## Aceptar una PR
 
-1. Ir a Pull Request en GitHub web
+1. **Acceder a la sección de Pull Requests en GitHub Web.**
 
-![alt text](../img/git_pr.png)
+   ![Acceder a PR](../img/git_pr.png)
 
-2. Entrar en la PR
+2. **Entrar en la PR.**
 
-![alt text](../img/git_prenter.png)
+   ![Entrar en PR](../img/git_prenter.png)
 
-3. Revisar que todo este OK y testear en local `git switch nombre-dev`
- 
-![alt text](../img/git_sumbitreview.png)
+3. **Revisar y testear los cambios localmente:**
 
-4. El ultimo revisor debe de hacer merge
+   ```bash
+   git switch nombre-dev
+   ```
 
-![alt text](../img/git_merge.png)
+   ![Revisión](../img/git_sumbitreview.png)
 
-5. Borrar la rama al acabar
- 
-![alt text](../img/git_deletebranch.png)
+4. **Realizar el merge (último revisor).**
 
-## Pasos para actualizar una rama secundaria en base de la `main`
+   ![Merge](../img/git_merge.png)
 
-> main se puede cambiar por cualquier otra rama actualizada
+5. **Eliminar la rama una vez finalizado el merge.**
 
-1. **`git checkout nombre-de-la-rama-secundaria` Cambia a la rama secundaria (ej. pauR-dev)**
+   ![Borrar rama](../img/git_deletebranch.png)
 
-2. `git checkout main` `git pull origin main` **Actualiza la rama `main` local**
+---
 
-3. `git checkout nombre-de-la-rama-secundaria` **Vuelve a la rama secundaria**
+## Actualizar una rama secundaria basada en `main`
 
-4. `git merge main` **Haz un merge de los cambios de `main` en la rama secundaria**
+> `main` puede ser sustituida por cualquier otra rama actualizada.
 
-5. `git push origin nombre-de-la-rama-secundaria` **Sube los cambios a la rama remota secundaria**
+1. **Cambiar a la rama secundaria:**
+
+   ```bash
+   git checkout nombre-de-la-rama-secundaria
+   ```
+
+   > Por ejemplo, `pauR-dev`.
+
+2. **Actualizar la rama `main` local:**
+
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+
+3. **Volver a la rama secundaria:**
+
+   ```bash
+   git checkout nombre-de-la-rama-secundaria
+   ```
+
+4. **Realizar el merge de los cambios de `main` en la rama secundaria:**
+
+   ```bash
+   git merge main
+   ```
+
+5. **Subir los cambios a la rama remota secundaria:**
+   ```bash
+   git push origin nombre-de-la-rama-secundaria
+   ```
