@@ -8,24 +8,47 @@ on:
 
 jobs:
   remove_unwanted_files:
+    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
+    - name: Configurar variables
+      id: vars
+      run: |
+        if [ "${{ github.event_name }}" = "push" ]; then
+          BRANCH_NAME="${{ github.ref#refs/heads/ }}"
+          echo "branch=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+          echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+        else
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "branch=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "repo=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_OUTPUT
+          echo "token=${{ secrets.PAT_TOKEN }}" >> $GITHUB_OUTPUT
+        fi
     - uses: actions/checkout@v3
       with:
-        ref: ${{ github.event.pull_request.head.ref }}
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ steps.vars.outputs.branch }}
+        repository: ${{ steps.vars.outputs.repo }}
     - name: Eliminar carpeta obj
       run: |
+        # Configurar el usuario de Git
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
+
+        # Configurar la autenticación con el token
+        git remote set-url origin https://x-access-token:${{ steps.vars.outputs.token }}@github.com/${{ steps.vars.outputs.repo }}.git
+
+        # Ruta de la carpeta a eliminar
         UNWANTED_PATH="Backend/HireAProBackend/obj"
+
+        # Eliminar la carpeta no deseada
         git rm -rf --ignore-unmatch "$UNWANTED_PATH"
+
+        # Confirmar y empujar los cambios si hay modificaciones
         if [ -n "$(git status --porcelain)" ]; then
           git commit -m "Eliminando carpeta no deseada: $UNWANTED_PATH"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          git push origin HEAD:${{ steps.vars.outputs.branch }}
         else
           echo "No hay cambios para comprometer."
         fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
       shell: bash
