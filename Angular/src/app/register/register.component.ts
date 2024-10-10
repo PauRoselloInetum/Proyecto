@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoadingComponent } from '../loading/loading.component';
 import { AuthService } from '../auth.service';
@@ -9,7 +9,11 @@ import { AuthService } from '../auth.service';
   imports: [FormsModule, LoadingComponent],
   templateUrl: './register.component.html',
   styleUrls: ['../../assets/css/auth.css'],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ],
 })
+
 export class RegisterComponent {
   username: string = '';
   email: string = '';
@@ -35,16 +39,28 @@ export class RegisterComponent {
     this.authservice.info$.subscribe((info) => {
       this.info = info;
     });
+
+    this.authservice.submitted$.subscribe((submitted) => {
+      this.submitted = submitted;
+    });
   }
 
   register() {
-    this.authservice.register(this.username, this.email, this.password, this.passwordconfirm, this.type);
+    this.authservice.register(
+      this.username,
+      this.email,
+      this.password,
+      this.type,
+    );
   }
 
-
   // crea funcion preregister
-  preregister(){
-    this.submitted = true;
-    this.authservice.preregister(this.username, this.email, this.password, this.passwordconfirm);
+  preregister() {
+    this.authservice.preregister(
+      this.username,
+      this.email,
+      this.password,
+      this.passwordconfirm,
+    );
   }
 }
