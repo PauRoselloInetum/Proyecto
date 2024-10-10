@@ -2,18 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  backendUrl = 'https://localhost:7272/api/';
-  loginUrl = this.backendUrl + 'login';
-  registerUrl = this.backendUrl + 'register';
-  validateUrl = this.backendUrl + 'home';
-  verifyUserUrl = this.backendUrl + 'verifyAccount';
-  forgotUrl = this.backendUrl + 'forgotPassword';
-  forgotChangeUrl = this.backendUrl + 'changePass';
+  private readonly BASE_URL = 'https://localhost:7272/api/';
+  private readonly LOGIN_URL = `${this.BASE_URL}login`;
+  private readonly REGISTER_URL = `${this.BASE_URL}register`;
+  private readonly VALIDATE_URL = `${this.BASE_URL}home`;
+  private readonly VERIFY_URL = `${this.BASE_URL}verifyAccount`;
+  private readonly FORGOT_URL = `${this.BASE_URL}forgotPassword`;
+  private readonly FORGOT_CHANGE_URL = `${this.BASE_URL}changePass`;
   authUrl: string = '';
   error: string = '';
   info: string = '';
@@ -48,23 +49,59 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
+    private router: Router,
   ) {}
 
-  login(email: string, password: string): void {
-    if (!email || !password) {
-      this.errorSubject.next('Todos los campos son obligatorios');
-      return;
+  private areFieldsComplete(fields: { [key: string]: any }): boolean {
+    for (const value of Object.values(fields)) {
+      if (!value) {
+        this.errorSubject.next('Todos los campos deben estar completos.');
+        return false;
+      }
     }
+    return true;
+  }
 
-    if (!this.passwordRegex.test(password)) {
-      this.errorSubject.next(
-        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
-      );
+
+  private isValidEmail(email: string): boolean {
+    return (
+      this.emailRegex.test(email) ||
+      (this.errorSubject.next('Formato de correo inválido.'), false)
+    );
+  }
+  private isValidPassword(password: string): boolean {
+    return (
+      this.passwordRegex.test(password) ||
+      (this.errorSubject.next(
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.',
+      ),
+      false)
+    );
+  }
+  private isValidUsername(username: string): boolean {
+    return (
+      this.usernameRegex.test(username) ||
+      (this.errorSubject.next('Formato de usuario inválido.'), false)
+    );
+  }
+  private EqualPasswords(password: string, passwordconfirm: string): boolean {
+    return (
+      password === passwordconfirm ||
+      (this.errorSubject.next('Las contraseñas no coinciden.'), false)
+    );
+  }
+
+  login(email: string, password: string): void {
+    if (
+      !this.areFieldsComplete({ email, password }) ||
+      !this.isValidEmail(email) ||
+      !this.isValidPassword(password)
+    ) {
       return;
     }
 
     this.loadingSubject.next('Iniciando Sesión...');
-    this.authUrl = this.loginUrl;
+    this.authUrl = this.LOGIN_URL;
 
     const loginData = { email, password };
 
@@ -75,7 +112,7 @@ export class AuthService {
         this.errorSubject.next('');
         this.infoSubject.next('Inicio de sesión exitoso, redireccionando...');
         setTimeout(() => {
-          window.location.href = '/';
+          this.router.navigate(['/']);
         }, 3500);
       },
       error: (error) => {
@@ -98,27 +135,17 @@ export class AuthService {
     passwordconfirm: string,
   ) {
     this.errorSubject.next('');
-    if (!this.emailRegex.test(email)) {
-      this.errorSubject.next('Formato de correo inválido');
+
+    if (
+      !this.areFieldsComplete({ username, email, password, passwordconfirm }) ||
+      !this.isValidEmail(email) ||
+      !this.isValidUsername(username) ||
+      !this.isValidPassword(password) ||
+      !this.EqualPasswords(password, passwordconfirm)
+    ) {
       return;
     }
 
-    if (!this.usernameRegex.test(username)) {
-      this.errorSubject.next('Formato de usuario inválido');
-      return;
-    }
-
-    if (password !== passwordconfirm) {
-      this.errorSubject.next('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (!this.passwordRegex.test(password)) {
-      this.errorSubject.next(
-        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial',
-      );
-      return;
-    }
     this.submittedSubject.next(true);
   }
 
@@ -128,8 +155,11 @@ export class AuthService {
     password: string,
     type: string,
   ): void {
+    if (!this.areFieldsComplete({ type })){
+      return
+    }
     this.loadingSubject.next('Registrándote...');
-    this.authUrl = this.registerUrl;
+    this.authUrl = this.REGISTER_URL;
     const registerData = { username, email, password, type };
     this.postRegister(registerData).subscribe({
       next: (response) => {
@@ -138,7 +168,7 @@ export class AuthService {
         this.errorSubject.next('');
         this.infoSubject.next('Registro exitoso, redireccionando...');
         setTimeout(() => {
-          window.location.href = '/';
+          this.router.navigate(['/']);
         }, 3500);
       },
       error: (error) => {
@@ -162,7 +192,7 @@ export class AuthService {
         this.error = '';
       },
       error: (error) => {
-        window.location.href = '/login';
+        this.router.navigate(['/login']);
       },
     });
   }
@@ -213,7 +243,7 @@ export class AuthService {
         this.errorSubject.next('');
         this.infoSubject.next('Contraseña cambiada exitosamente.');
         setTimeout(() => {
-          window.location.href = '/login';
+          this.router.navigate(['/login']);
         }, 3500);
       },
       error: (error) => {
@@ -238,7 +268,7 @@ export class AuthService {
         this.errorSubject.next('');
         this.infoSubject.next('Te has verificado correctamente.');
         setTimeout(() => {
-          window.location.href = '/login';
+          this.router.navigate(['/login']);
         }, 3500);
       },
       error: (error) => {
@@ -252,7 +282,7 @@ export class AuthService {
               : 'Error con el servidor. Intente nuevamente.',
         );
         setTimeout(() => {
-          window.location.href = '/login';
+          this.router.navigate(['/login']);
         }, 3500);
       },
     });
@@ -275,21 +305,21 @@ export class AuthService {
 
   postValidate(data: { token: string }): Observable<any> {
     const headers = this.headers;
-    return this.http.post(this.validateUrl, data, { headers });
+    return this.http.post(this.VALIDATE_URL, data, { headers });
   }
 
   postForgot(data: { email: string }): Observable<any> {
     const headers = this.headers;
-    return this.http.post(this.forgotUrl, data, { headers });
+    return this.http.post(this.FORGOT_URL, data, { headers });
   }
 
   postForgotChange(data: { password: string; token: string }): Observable<any> {
     const headers = this.headers;
-    return this.http.post(this.forgotChangeUrl, data, { headers });
+    return this.http.post(this.FORGOT_CHANGE_URL, data, { headers });
   }
 
   postVerifyUser(data: { token: string }): Observable<any> {
     const headers = this.headers;
-    return this.http.post(this.verifyUserUrl, data, { headers });
+    return this.http.post(this.VERIFY_URL, data, { headers });
   }
 }
