@@ -9,13 +9,13 @@
   } @else {
     <div class="parent">
       <div class="child">
-        @if (this.error) {
-          <div class="error">
-            <p>{{ this.error }}</p>
-          </div>
-        }
         @if (this.submitted) {
           <h2>Selecciona tu rol</h2>
+          @if (this.error) {
+            <div class="error">
+              <p>{{ this.error }}</p>
+            </div>
+          }
           <form class="radioform" (submit)="register()">
             <div class="container">
               <div class="radio-tile-group">
@@ -51,6 +51,11 @@
           </form>
         } @else {
           <h2>Regístrate</h2>
+          @if (this.error) {
+            <div class="error">
+              <p>{{ this.error }}</p>
+            </div>
+          }
           <form (submit)="preregister()">
             <div class="register input-group">
               <input
